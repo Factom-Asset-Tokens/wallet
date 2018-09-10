@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+    <meta charset="UTF-8">
+    <title>FAT Wallet 0.0</title>
+    <!--<link rel="icon" href="https://png.icons8.com/cotton/50/000000/cheap-2.png">-->
+    <!--<link rel="icon" href="https://png.icons8.com/cotton/50/000000/get-cash.png">-->
+    <link rel="icon" href="https://png.icons8.com/ultraviolet/50/000000/wallet.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/index.js"></script>
+    <script src="/util.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <link href="/index.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+</head>
+<body style=" height: 100%; font-family: 'Roboto Slab', serif; background-color:  #f0f0f0">
+
+<div class="w3-display-container" style="height:100%;">
+
+    <div class="w3-display-left" style="width: 100px; height: 100%; background-color: #959595; z-index: 1000">
+
+        <div style="height: 100%; width: 100%">
+
+            <div id="tokenicons" style="text-align: center; max-height: 90%;">
+
+                <div id="addtokenbutton" class="tooltip" style="display: inline-block; margin-top: 16px">
+
+                    <a href="/addtoken">
+                        <div style="padding: 8px; height: 72px;width: 72px; border-radius: 50%; border: 2px dashed white; cursor: pointer; text-align: center">
+                            <div><i class="material-icons" style="color: white; margin-top: 10px; font-size: 32px">
+                                add
+                            </i></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div
+                    style="margin-bottom: 8px; width: 100%; text-align: center; position: absolute; bottom: 0;">
+                <i class="material-icons" style="color: #ffffff; font-size: 28px">
+                    settings
+                </i>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Main Token Page-->
+    <div id="tokenpage" class="w3-display-right"
+         style="display:none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+        <!--<div style="margin-top: 22px; padding-left: 32px">
+            <i class="material-icons" style="font-size: 36px; cursor: pointer"  onclick="window.history.go(-1); return false;">
+                arrow_back
+            </i>
+        </div>-->
+
+        <!--placeholder for top bar-->
+        <div style="height: 16px;"></div>
+
+        <!--Token Descriptor & summary-->
+        <div class="w3-display-container"
+             style="width: calc(100% - 64px); background-color: white; margin: 16px auto 32px auto; height: 164px">
+            <div class="w3-display-middle" style="font-size: 40px; height: 100px; width: 600px; text-align: center">
+                <div style="display:inline;">
+                    <img id="tokenpagetokenicon"
+                         src="https://explorer.factom.com/favicon.png"
+                         style="height: 100px; width: 100px; padding: 8px; background-color: white; border-radius: 50%;"><span
+                        style="margin-left:6px;vertical-align: middle" id="tokenpagetokenname">YTN Token</span><span
+                        style="color: darkgrey;vertical-align: middle; margin-left: 6px"
+                        id="tokenpagetokensymbol">(YTN)</span>
+                </div>
+            </div>
+        </div>
+
+        <!--Token stats-->
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px 32px 26px 32px;">
+            <div id="statsprogress" class="lds-ellipsis" style="left: 47%; z-index: 3000">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <div id="tokenstats" style="display: none;">
+                <div class="w3-row">
+                    <div class="w3-col s3 w3-center"><span><span style="">Asset Type</span><br><span
+                            id="tokentype" style="font-size: 28px">-</span></span>
+                    </div>
+                    <div class="w3-col s3 w3-center"><span><span style="">First Issued</span><br><span
+                            id="tokenfirstissued" style="font-size: 28px">Dec 3, 2018</span></span>
+                    </div>
+                    <div class="w3-col s3 w3-center"><span><span style="">Circ. Supply</span><br><span
+                            id="tokencirculatingsupply" style="font-size: 28px">9.71M (97.1%)</span></span>
+                    </div>
+                    <div class="w3-col s3 w3-center"><span><span style="">Transactions </span><br><span
+                            id="tokentransactioncount" style="font-size: 28px">1.1K</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--My Addresses/Balances-->
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto;padding: 32px;">
+            <div style="font-size: 22px">My Addresses</div>
+            <div id="balancesprogress" class="lds-ellipsis" style="left: 47%; z-index: 3000">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div id="balances" style="display: none; margin-top: 26px">
+
+            </div>
+        </div>
+
+        <!--Transactions-->
+        <div style="width: calc(100% - 64px); background-color: white; height: auto;  margin: 32px auto;padding: 32px;">
+            <div style="font-size: 22px">Transactions</div>
+            <div id="transactionsprogress" class="lds-ellipsis" style="left: 47%; z-index: 3000">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div id="transactions"
+                 style="display: none; max-height: 400px; overflow-y: auto; font-size: 13px; margin-top: 26px">
+
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <!--Address Info Page-->
+    <div id="addresspage" class="w3-display-right"
+         style="display: none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+        <!--Token Descriptor & summary-->
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding-bottom: 32px; padding-top: 16px">
+
+
+            <div style="height: 40px">
+                <div
+                        style="font-size: 30px; height: 120px; width: 100%; margin-top: 10px; margin-left: 32px">
+
+                    <img id="addresspagetokenicon" src="https://explorer.factom.com/favicon.png"
+                         style="height: 28px; width: 28px; background-color: white; border-radius: 50%; ">
+                    <span
+                            style="vertical-align: middle"><span
+                            id="addresspagetokenname">YTN Token</span> Address:</span>
+                </div>
+
+            </div>
+
+            <div
+                    style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px; margin-top: 32px">
+                <span id="addresspageaddress"
+                      style="z-index: 100;">FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH</span>
+            </div>
+            <!--
+
+                        <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px">
+                            FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH
+                        </div>-->
+
+        </div>
+
+        <!--My Balances. Based on the addresses stored in the wallet under (index.js)-->
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 0 auto; padding: 32px">
+
+            <div style="font-size: 22px">Balance</div>
+            <div id="addresspagebalance"
+                 style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 48px">
+                -
+            </div>
+
+            <div style="text-align: center; font-family: 'Inconsolata', monospace;">
+                <div id="fat1tokens" style="display: none; width: 100%">
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <div id="addresssendtokens"
+             style="display: none; width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">Send Tokens</div>
+            <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 40px; margin-top: 16px;">
+                <input id="addresssendtokenamount" disabled style="padding-left:8px;height: 48px;" placeholder="Amount"
+                       type="number"
+                       onkeypress="return isNumberKey(event)"></input>
+                <input id="addresssendtokenaddress" style="padding-left:8px;height: 48px;" placeholder="Address"
+                       type="text"></input>
+                <span id="addresssendtokenbutton"
+                      style="cursor:pointer; position:relative; top:-4px; padding: 10px 20px; background-color: darkgrey; color: white; border-radius: 3px; text-align: center; vertical-align: middle; font-size: 26px">Send</span>
+
+                <div id="addresssendtokenbuttonprogress" class="lds-ellipsis"
+                     style="display:none;vertical-align: middle; left: -95px; top: -4px; z-index: 3000">
+                    <div style="background-color: white"></div>
+                    <div style="background-color: white"></div>
+                    <div style="background-color: white"></div>
+                    <div style="background-color: white"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">Transaction History</div>
+            <div id="addresstransactionsprogress" class="lds-ellipsis" style="left: 47%; z-index: 3000">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <div id="addresstransactions"
+                 style="display:none; overflow-y: auto; font-size: 13px; margin-top: 26px">
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!--Transaction Info Page-->
+    <div id="transactionpage" class="w3-display-right"
+         style="display:none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding-bottom: 32px">
+
+
+            <div class="w3-display-container" style="height: 100px">
+                <div class="w3-display-topleft"
+                     style="font-size: 30px; height: 120px; width: 100%; margin-top: 32px; margin-left: 32px">
+
+                    <img id="transactiontokenicon" src="https://explorer.factom.com/favicon.png"
+                         style="height: 28px; width: 28px; background-color: white; border-radius: 50%; ">
+                    <span
+                            style="margin-left:0px;vertical-align: middle"><span
+                            id="transactiontokenname">YTN Token</span> Transaction:</span>
+                </div>
+
+            </div>
+
+            <div id="transactionid"
+                 style="margin-left: 32px; margin-right: 32px; text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px; ">
+                FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH
+            </div>
+            <!--
+
+                        <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px">
+                            FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH
+                        </div>-->
+
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">Amount</div>
+            <div id="transactionamount"
+                 style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 48px;">
+                -
+            </div>
+
+        </div>
+
+        <div id="transactiontokenspanel"
+             style="display: none;width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">Token IDs</div>
+            <div id="transactiontokenids"
+                 style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 28px; margin-top: 16px; margin-bottom: 16px;">
+            </div>
+
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">From</div>
+            <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px; margin-top: 16px">
+                <a id="transactionfromlink" href="/"><span
+                        id="transactionfrom">-</span></a>
+            </div>
+
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">To</div>
+            <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px; margin-top: 16px">
+                <a id="transactiontolink"><span id="transactionto">-</span></a>
+            </div>
+
+        </div>
+
+
+        <!--TX info-->
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto;padding: 32px;">
+            <!--<div id="txprogress" class="lds-ellipsis" style="left: 47%; z-index: 3000">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>-->
+            <div style="">
+                <div class="w3-row">
+
+                    <div class="w3-col s4 w3-center"><span><span style="">Executed</span><br><span
+                            id="transactiontimestamp"
+                            style="font-size: 28px">-</span></span>
+                    </div>
+
+                    <div class="w3-col s4 w3-center"><span><span style="">Status</span><br><span id="transactionstatus"
+                                                                                                 style="font-size: 28px">Confirmed</span></span>
+                    </div>
+
+                    <div class="w3-col s4 w3-center"><span><span style="">Coinbase</span><br><span
+                            id="transactioncoinbase"
+                            style="font-size: 28px">No</span></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--Individual Token Info Page-->
+    <div id="individualtokeninfopage" class="w3-display-right"
+         style="display:none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding-bottom: 32px">
+
+
+            <div class="w3-display-container" style="height: 100px">
+                <div class="w3-display-topleft"
+                     style="font-size: 30px; height: 120px; width: 100%; margin-top: 32px; margin-left: 32px">
+
+                    <img id="individualtokeninfoicon" src="https://explorer.factom.com/favicon.png"
+                         style="height: 28px; width: 28px; background-color: white; border-radius: 50%; ">
+                    <span
+                            style="margin-left:0px;vertical-align: middle"><span
+                            id="individualtokeninfoname">YTN Token</span> Token:</span>
+                </div>
+
+            </div>
+
+            <div id="individualtokeninfotokenid"
+                 style="margin-left: 32px; margin-right: 32px; text-align: center; font-family: 'Inconsolata', monospace; font-size: 48px; ">
+
+            </div>
+            <!--
+
+                        <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px">
+                            FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH
+                        </div>-->
+
+        </div>
+
+
+        <!--TX info-->
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto;padding: 32px;">
+            <!--<div id="txprogress" class="lds-ellipsis" style="left: 47%; z-index: 3000">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>-->
+            <div style="">
+                <div class="w3-row">
+
+                    <div class="w3-col s6 w3-center"><span><span style="">Issued On</span><br><span
+                            id="individualtokeninfoussuancetimestamp"
+
+                            style="font-size: 28px">-</span></span>
+                    </div>
+
+                    <div class="w3-col s6 w3-center"><span><span style="">Transactions</span><br><span
+
+                            id="individualtokeninfotransactioncount" style="font-size: 28px">-</span></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px">Current Address</div>
+            <div
+                    style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 32px;">
+                <a id="individualtokeninfocurrentaddress">-</a>
+            </div>
+
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px 32px 16px 32px">
+
+            <div style="font-size: 22px">Transaction History</div>
+            <div id="individualtokeninfotransactions"
+                 style="overflow-y: auto; font-size: 13px; margin-top: 26px">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!--Error Page-->
+    <div id="errorpage" class="w3-display-right"
+         style="display: none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+
+        <div style="width: calc(100% - 64px); background-color: white; height: 500px; margin: 32px auto;padding: 32px;">
+            <div class="w3-display-container" style="width: 100%; height: 100%">
+                <div class="w3-display-middle"
+                     style="text-align: center;">
+                    <i class="material-icons" style="color: #959595; font-size: 48px">
+                        error
+                    </i>
+                    <div style="height: 12px;"></div>
+                    <span id="errortext" style=" font-family: 'Inconsolata', monospace; font-size: 26px;"></span>
+                    <br>
+                    <br>
+                    <span style="cursor: pointer;text-decoration: underline; font-size: 16px;"
+                          onclick="window.history.go(-1); return false;">Back</span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!--Add Token Page-->
+    <div id="addtokenpage" class="w3-display-right"
+         style="display:none;width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+        <div style="width: calc(100% - 64px); background-color: white; height: 500px; margin: 32px auto;padding: 32px;">
+            <div class="w3-display-container" style="width: 100%; height: 100%">
+                <div class="w3-display-middle"
+                     style="text-align: center; width: 550px; font-family: 'Inconsolata', monospace; font-size: 40px;">
+
+                    <input id="addtokenpagetokenid"
+                           style="padding-left:8px;height: 48px;/* border: 1px solid darkgrey*/" placeholder="Token ID"
+                           type="text"></input>
+                    <a id="addtokenpageaddbuttonlink" style="text-decoration: none;"><span id="addtokenpageaddbutton"
+                                                                                           style="cursor:pointer; position:relative; top:-4px; padding: 10px 20px; background-color: darkgrey; color: white; border-radius: 3px; text-align: center; vertical-align: middle; font-size: 26px">Add</span></a>
+
+                    <br>
+                    <!--<span style="cursor: pointer;text-decoration: underline; font-size: 16px;"
+                          onclick="window.history.go(-1); return false;">Back</span>-->
+                    <span style="font-size: 26px;">or</span>
+
+                    <br>
+                    <a style="text-decoration: none;"><span
+                            style="cursor:pointer; padding: 10px 20px; background-color: green; color: white; border-radius: 3px; text-align: center; vertical-align: middle; font-size: 26px">Issue a New Token</span></a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!--Issuance Page-->
+    <div id="issuancepage" class="w3-display-right"
+         style="display: none; z-index: 5000; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px 32px 26px 32px;">
+            <div style="font-size: 22px">Basic Information (<span style="color: red;">*</span> = required)</div>
+            <div style="margin-top: 16px; font-size: 26px">
+                <span style="font-size: 14px">Token ID<span style="color: red;">*</span></span>
+                <br>
+                <input style="padding-left:8px;height: 48px; width: 300px;" placeholder="Unique ID of the Token"
+                       type="text">
+                <br>
+                <span style="margin-top: 16px;font-size: 14px">Token Name</span>
+                <br>
+                <input style="padding-left:8px;height: 48px; width: 300px;"
+                       placeholder="Token Display Name"
+                       type="text">
+                <br>
+                <span style="font-size: 14px">Symbol</span>
+                <br>
+                <input style="padding-left:8px;height: 48px; width: 300px;" placeholder="Symbol"
+                       type="text">
+
+            </div>
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px 32px 12px 32px;">
+            <div style="font-size: 22px">Token Type</div>
+            <div style="">
+                <div class="w3-row" style="">
+                    <div class="w3-col s6 w3-center" style="padding: 32px;">
+                        <div style="border-radius: 12px; border: 1px solid darkgrey;  padding: 16px; cursor: pointer; background-color: #f0f0f0">
+
+                            <span style="font-size: 32px;">FAT-0</span>
+                            <br>
+                            <span style="font-size: 16px; color: darkgrey">A fungible token</span>
+                        </div>
+                    </div>
+
+                    <div class="w3-col s6 w3-center" style="padding: 32px;">
+                        <div style="border-radius: 12px; border: 1px solid darkgrey; padding: 16px; cursor: pointer">
+
+                            <span style="font-size: 32px;">FAT-1</span>
+                            <br>
+                            <span style="font-size: 16px; color: darkgrey">A non-fungible token</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px 32px 24px 32px;">
+            <div style="font-size: 22px">Economic Rules</div>
+            <div style="">
+                <div style="margin-top: 26px; font-size: 30px">
+                    <span style="margin-top: 16px;font-size: 14px">Maximum Supply</span>
+                    <br>
+                    <input style="padding-left:8px;height: 48px;; width: 300px" placeholder="Maximum Supply"
+                           type="number" onkeypress="return isNumberKey(event) ">
+
+                </div>
+            </div>
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px">
+            <div style="font-size: 22px">Coinbase Transactions</div>
+            <!--<div style="">
+                <div style="margin-top: 26px; margin-bottom: 32px; font-size: 30px">
+                    <div class="w3-display-container"
+                         style="height: 65px; width: 100%; background-color: #e1e8ef; font-family: 'Inconsolata', monospace; margin-bottom: 16px">
+                        <div>
+                            <div class="w3-display-left" style="margin-left: 16px; font-size: 13px">
+                                <input style="padding-left:8px; width: 250px" placeholder="Address"
+                                       type="text">
+
+                            </div>
+
+                            <div class="w3-display-right"
+                                 style="margin-left: 16px; margin-right: 16px; font-size: 13px">
+
+                                <input style="padding-left:8px;" placeholder="Amount"
+                                       type="number" onkeypress="return isNumberKey(event) ">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px 32px 24px 32px;">
+            <div style="font-size: 22px">Metadata</div>
+            <div style="">
+                <div style="margin-top: 26px; font-size: 30px">
+                    <textarea style="padding :16px;height: 200px; width: 100%; font-size: 20px"
+                              placeholder="Enter JSON Metadata"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px">
+
+
+            <div class="w3-display-container" style=" font-size: 22px">
+                <div class="w3-display-left">
+                    <span style="vertical-align: middle; margin-left: 6px;">Issuance Cost</span>
+                </div>
+
+                <div class="w3-display-right">
+                    <span>4 Entry Credits</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto; padding: 32px">
+
+            <div class="w3-display-container" style="height: 100px">
+                <div class="w3-display-left">
+                    <input style="vertical-align: middle" type="checkbox">
+                    <span style="vertical-align: middle; margin-left: 6px">I certify that I am not in violation of securities laws in my jurisdiction<span
+                            style="color: red;">*</span></span>
+                </div>
+
+                <div class="w3-display-right">
+                    <span id=""
+                          style=" vertical-align: middle; cursor:pointer; position:relative;  padding: 10px 20px; background-color: darkgrey; color: white; border-radius: 3px; text-align: center; vertical-align: middle; font-size: 26px">Issue Token</span>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div id="eventlayout"
+             style="display:none; position: absolute; bottom: 0; left: 100px; right: 0; background-color: green; color: white; font-size: 20px; padding: 16px; font-family: 'Inconsolata', monospace;">
+            <span id="eventtext" style="vertical-align: middle">Sent Tokens</span>
+
+            <i id="eventlayoutclose" class="material-icons"
+               style="cursor: pointer;color: white; font-size: 32px; float: right">
+                check
+            </i>
+
+        </div>
+
+        <!--Templates-->
+<div style="display: none">
+    <div id="fat0tx" class="w3-display-container"
+         style="height: 40px; width: 100%; background-color: #e1e8ef; margin-bottom: 16px; font-family: 'Inconsolata', monospace;">
+        <span class="w3-display-left timestamp" style="display:none; margin-left: 16px; ">2018-07-26 12:12</span>
+        <span class="w3-display-left" style="margin-left: 16px; "><a class="addresses"
+                                                                     href="./"></a></span>
+        <span class="w3-display-right amount" style="margin-right: 16px;">13.1224 YTN</span>
+    </div>
+
+    <div id="fat0address" class="w3-display-container"
+         style="height: 40px; width: 100%; background-color: #e1e8ef; font-family: 'Inconsolata', monospace; margin-bottom: 16px">
+        <div>
+            <span class="w3-display-left" style="margin-left: 16px; font-size: 13px">
+                        <span class="name"
+                              style="font-size: 16px">Account 2</span>
+                       <a class="addresslink" href="/"> <span
+                               class="address">(FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH)</span></a></span>
+        </div>
+        <span class="w3-display-right amount" style="margin-right: 16px;">300 YTN</span>
+    </div>
+
+    <div id="tokenicon" class="tooltip" style="display: inline-block; margin-top: 16px">
+        <span class="tooltiptext name">YTN Token</span>
+        <a class="tokenlink"><img class="image"
+                                  style="padding: 8px; background-color: white; border-radius: 50%; cursor: pointer"
+                                  height="72px" width="72px"
+                                  src="https://explorer.factom.com/favicon.png"></a>
+    </div>
+
+    <div id="fat1token" class="w3-display-container"
+         style="height: 40px; width: 100%; background-color: #e1e8ef; margin-top: 16px; font-family: 'Inconsolata', monospace;">
+        <div class="w3-display-right timestamp" style="margin-right: 16px; "><input class="check" type="checkbox"
+                                                                                    style="vertical-align: middle; width: 20px; height: 20px">
+        </div>
+        <div class="w3-display-left" style="margin-left: 16px; ">
+
+            <span style=" background-color: #f0f0f0; vertical-align: middle;">Token ID:</span><span class="id"
+                                                                                                    style="margin-left: 8px; font-size: 18px; vertical-align: middle">0x3245nu1n</span>
+        </div>
+    </div>
+    <span id="tokenid" style="padding: 12px 16px; border-radius: 3px; background-color: #f0f0f0;"><a
+            class="tokenid" href="/">01725311737</a></span>
+</div>
+    </div>
+</div>
+</body>
+</html>

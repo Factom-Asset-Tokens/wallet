@@ -1,0 +1,18 @@
+{
+  "name": "fatwallet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.16.3",
+    "factom": "0.2.5",
+    "factom-identity-lib": "0.1.4",
+    "flat-cache": "1.3.0",
+    "express-ws": "4.0.0"
+  }
+}
