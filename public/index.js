@@ -18,6 +18,12 @@ let sendAddressValid = false;
 
 let selectedTokenIds = new Set();
 
+setTimeout(function () {
+
+    showEventLayout('Success sending transaction!', true)
+}, 1000)
+
+
 window.onload = function () {
 
     //parse the URL path
@@ -77,15 +83,26 @@ window.onload = function () {
         console.log('PREF:');
         console.log(JSON.stringify(pref, undefined, 2));
 
+
+        //redirect on root dir
+        if (pathArray[0] === '') window.location.href = '../token/' + prefs.tokens[0].id;
+
+        prefs.tokens.forEach(function (token) {
+            let tokenIconTemplate = getTokenIconElement(token);
+            //insert the template
+            document.getElementById('tokenicons').insertBefore(tokenIconTemplate, document.getElementById('tokenicons').firstChild);
+        });
+
         //if the token we're displaying doesn't exist in the cache, add it
-        if (assetId) {
-            let tokenExists = prefs.tokens.find(function (token) {
+
+        let tokenExists = prefs.tokens.find(function (token) {
                 return token.id === assetId;
             });
-            if (!tokenExists) {
+        if (!tokenExists) {
                 //set display defaults
                 assetName = assetId;
                 assetName = assetName[0].toUpperCase() + assetName.slice(1);
+
                 // console.log('TOKEN: '+JSON.stringify(token));
                 // assetName = assetId;
 
@@ -118,17 +135,11 @@ window.onload = function () {
                 })
             } else {
 
-                console.log('Displaying token: ' + JSON.stringify(tokenExists, undefined, 2))
+            console.log('Displaying token: ' + JSON.stringify(tokenExists, undefined, 2));
 
-                assetType = tokenExists.type
-            }
+            assetType = tokenExists.type
         }
 
-        prefs.tokens.forEach(function (token) {
-            let tokenIconTemplate = getTokenIconElement(token);
-            //insert the template
-            document.getElementById('tokenicons').insertBefore(tokenIconTemplate, document.getElementById('tokenicons').firstChild);
-        });
 
         //load the required page
         if (showToken) showTokenPage();
@@ -253,6 +264,7 @@ window.onload = function () {
 
 };
 
+
 function sendFAT0Tokens(from, to, amount, callback) {
     $.get("/api/asset/" + assetId + "/address/" + from + '/send?amount=' + encodeURIComponent(amount) + '&to=' + encodeURIComponent(to), function (data, status) {
 
@@ -267,6 +279,7 @@ function sendFAT0Tokens(from, to, amount, callback) {
         console.log(tx);
         callback(undefined, tx);
 
+        alert('Success sending transaction!');
         showEventLayout('Success sending transaction!', true)
     });
 }
@@ -284,13 +297,14 @@ function sendFAT1Tokens(from, to, ids, callback) {
         console.log(tx);
         callback(undefined, tx);
 
-        showEventLayout('Success sending transaction!', true)
+        alert('Success sending transaction!');
+        showEventLayout('Success sending transaction!', true);
     });
 }
 
 function showEventLayout(message, health) {
-    if (health) document.getElementById('eventlayout').style.backgroundColor = 'green'
-    else document.getElementById('eventlayout').style.backgroundColor = 'red'
+    if (health) document.getElementById('eventlayout').style.backgroundColor = 'green';
+    else document.getElementById('eventlayout').style.backgroundColor = 'red';
 
     document.getElementById('eventtext').innerText = message;
 
@@ -484,29 +498,30 @@ function loadStats(stats) {
     document.getElementById('tokenstats').style.display = '';
 }
 
-function reloadTokenPage(assetId) {
-    $.ajax({
-        type: 'GET',
-        url: "/api/asset/" + assetId,
-        success: function (data) {
-            let txsAndBalances = JSON.parse(data);
 
-            if (txsAndBalances.issuances && txsAndBalances.issuances[0].type === 'FAT-1') assetType = 'FAT-1'
-            else if (txsAndBalances.issuance && txsAndBalances.issuance.type === 'FAT-0') assetType = 'FAT-0';
-            else {
-                alert('unknown asset type!');
-                throw new Error('unknown asset type!');
-            }
+function reloadAssetPage(assetId) {
+    getIssuance(function (err, issuance) {
+        if (err) throw err;
 
-            reloadTokenPageStats(assetId);
-            loadTransactions(txsAndBalances.transactions);
-            loadBalances(txsAndBalances.balances);
-        },
-        error: function (xhr, textStatus, error) {
-            if (xhr.status === 404) {
-                showErrorPage("Token " + assetId + ' not found');
-            }
-        }
+        assetType = issuance.type;
+
+
+        getBalances(function (err, balances) {
+            if (err) throw err;
+
+            getTransactions(function (err, transactions) {
+                if (err) throw err;
+
+                getStats(function (err, stats) {
+                    if (err) throw err;
+                    loadStats(stats);
+                });
+
+                reloadTokenPageStats(assetId);
+                loadTransactions(transactions);
+                loadBalances(balances);
+            });
+        });
     });
 }
 
@@ -527,27 +542,11 @@ function reloadTokenPageStats(assetId) {
 
 function reloadAddressPage(assetId, fa) {
     address = fa;
-    $.get("/api/asset/" + assetId + "/address/" + fa + '/balance', function (data, status) {
-
-        if (status != 'success') {
-            console.log(status);
-            console.error(data);
-            return;
-        }
-
-        let balance = JSON.parse(data);
-
-        $.get("/api/asset/" + assetId + "/address/" + fa, function (data, status) {
-
-            if (status != 'success') {
-                console.log(status);
-                console.error(data);
-                return;
-            }
-
-
-            let txs = JSON.parse(data);
-            loadAddressPage(txs, balance);
+    getBalance(address, function (err, balance) {
+        if (err) throw  err;
+        getTransactionsOfAddress(function (err, transactions) {
+            if (err) throw  err;
+            loadAddressPage(transactions, balance);
         });
     });
 }
@@ -729,7 +728,7 @@ function showTokenPage() {
 
     document.getElementById('tokenpage').style.display = '';
 
-    reloadTokenPage(assetId);
+    reloadAssetPage(assetId);
 }
 
 function getPrefs(callback) {
@@ -742,6 +741,101 @@ function getPrefs(callback) {
         }
 
         if (callback) callback(JSON.parse(data));
+    });
+}
+
+function getIssuance(callback) {
+    $.get("/api/asset/" + assetId, function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+
+function getTransactions(callback) {
+    $.get("/api/asset/" + assetId + "/transactions", function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+function getTransaction(callback) {
+    $.get("/api/asset/" + assetId + "/transactions/" + transactionHash, function (data, status) {
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+function getTransactionsOfAddress(callback) {
+    $.get("/api/asset/" + assetId + "/address/" + address + '/transactions', function (data, status) {
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+function getBalances(callback) {
+    $.get("/api/asset/" + assetId + "/balances", function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+function getBalance(address, callback) {
+    $.get("/api/asset/" + assetId + "/address/" + address + '/balance', function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+function getToken(tokenId, callback) {
+    $.get("/api/asset/" + assetId + "/token/" + tokenId, function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
+    });
+}
+
+function getStats(callback) {
+    $.get("/api/asset/" + assetId + "/stats", function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
+        }
+
+        callback(undefined, JSON.parse(data));
     });
 }
 
@@ -761,7 +855,6 @@ function showAddressPage() {
     document.getElementById('addresspage').style.display = '';
 
     var exampleSocket = new WebSocket("ws://" + window.location.hostname + ':' + window.location.port + '/api/ws/token/' + assetId);
-
 
     exampleSocket.onmessage = function (event) {
 
@@ -828,19 +921,13 @@ function showIndividualTokenPage() {
 }
 
 function addToken(assetId, callback) {
-    $.ajax({
-        type: 'POST',
-        url: '/tokens?tokenid=' + assetId,
-        success: function (data) {
-            // your code from above
-            console.log('DATA: ' + data);
-            if (callback) callback(undefined, data);
-        },
-        error: function (xhr, textStatus, error) {
-            console.log(xhr.statusText);
-            console.log(textStatus);
-            console.log(error);
-            if (callback) callback(xhr.statusText);
+    $.post("/tokens?tokenid=" + encodeURIComponent(assetId), function (data, status) {
+
+        if (status != 'success') {
+            callback(data);
+            return;
         }
+
+        callback(undefined, JSON.parse(data));
     });
 }

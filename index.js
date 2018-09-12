@@ -1,9 +1,9 @@
 const fs = require('fs');
-const FAT0 = require('../fat/fat0/index');
-const FAT1 = require('../fat/fat1/index');
-const FATUtil = require('../fat/util');
+const {FAT0} = require('./fat-js/fat0/FAT0');
+const {FAT1} = require('./fat-js/fat1/FAT1');
+const FATUtil = require('./fat-js/util');
 const addressUtils = require('factom/src/addresses');
-
+const opn = require('opn');
 
 //need private FCT address for trading
 //need Root chain ID and SK1 for issuance/coinbase
@@ -50,8 +50,8 @@ if (!prefs.getKey('addresses')) {
 if (!prefs.getKey('tokens')) {
     prefs.setKey('tokens', [
         {
-            id: 'fat0-test12',
-            name: 'TestToken',
+            id: 'AQQW',
+            name: 'Test Token',
             symbol: 'TTK',
             type: 'FAT-0',
             icon: 'https://cmkt-image-prd.global.ssl.fastly.net/0.1.0/ps/2876528/300/200/m1/fpnw/wm0/y8prev1-.png?1498050434&s=8f7fb6c496c32a24b942c95e486e5a93'
@@ -84,7 +84,7 @@ app.param('address', function (req, res, next, address) {
 });
 
 app.use(express.static('public'));
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(3000, () => console.log('FAT Wallet UI listening on port 3000!'));
 
 
 app.get('/credentials', function (req, res) {
@@ -138,25 +138,22 @@ app.post('/tokens', async function (req, res) {
     }
 
     let fat = await getTokenCache(tokenId);
-    fat.getIssuanceEntry().then(function (issuance) {
-        console.log(issuance);
+    let issuance = fat.getIssuance();
+    // console.log(issuance);
 
-        let token = {
-            id: tokenId,
-            type: issuance.type,
-            name: issuance.name,
-            symbol: issuance.symbol,
-        };
+    let token = {
+        id: tokenId,
+        type: issuance.type,
+        name: issuance.name,
+        symbol: issuance.symbol,
+    };
 
-        tokens.push(token);
-        prefs.setKey('tokens', tokens);
-        prefs.save();
+    tokens.push(token);
+    prefs.setKey('tokens', tokens);
+    prefs.save();
 
-        res.send(JSON.stringify(token));
-    }).catch(function (err) {
-        res.status(200).end();
-        return;
-    });
+    res.send(JSON.stringify(token));
+
 });
 
 app.get('/api/asset/:id', async function (req, res) {
@@ -164,9 +161,25 @@ app.get('/api/asset/:id', async function (req, res) {
     try {
         let fat = await getTokenCache(id);
 
-        let txAndBalances = await fat.getTransactionsAndBalances();
+        let issuance = fat.getIssuance();
         // console.log(JSON.stringify(txAndBalances, undefined, 2));
-        res.send(JSON.stringify(txAndBalances));
+        res.send(JSON.stringify(issuance));
+
+    } catch (err) {
+        console.error(err);
+        res.status(404).end();
+        return;
+    }
+});
+
+app.get('/api/asset/:id/balances', async function (req, res) {
+    let id = req.params.id;
+    try {
+        let fat = await getTokenCache(id);
+
+        let balances = fat.getBalances();
+
+        res.send(JSON.stringify(balances));
 
     } catch (err) {
         console.error(err);
@@ -176,12 +189,28 @@ app.get('/api/asset/:id', async function (req, res) {
 });
 
 
+app.get('/api/asset/:id/transactions', async function (req, res) {
+    let id = req.params.id;
+    try {
+        let fat = await getTokenCache(id);
+
+        let txs = fat.getTransactions();
+        // console.log(JSON.stringify(txAndBalances, undefined, 2));
+        res.send(JSON.stringify(txs));
+
+    } catch (err) {
+        console.error(err);
+        res.status(404).end();
+        return;
+    }
+});
+
 app.get('/api/asset/:id/token/:tokenid', async function (req, res) {
     let id = req.params.id;
     let tokenId = req.params.tokenid;
     try {
         let fat = await getTokenCache(id);
-        if (fat.type !== 'FAT-1') {
+        if (!fat instanceof FAT1) {
             res.status(403).end();
             return
         }
@@ -197,12 +226,12 @@ app.get('/api/asset/:id/token/:tokenid', async function (req, res) {
     }
 });
 
-app.get('/api/asset/:id/address/:address', async function (req, res) {
+app.get('/api/asset/:id/address/:address/transactions', async function (req, res) {
     let id = req.params.id;
     let address = req.params.address;
     let fat = await getTokenCache(id);
 
-    let txs = await fat.getTransactionsOfAddress(address)
+    let txs = await fat.getTransactionsOfAddress(address);
     // console.log(JSON.stringify(txAndBalances));
     res.send(JSON.stringify(txs)).end();
 
@@ -213,7 +242,7 @@ app.get('/api/asset/:id/address/:address/balance', async function (req, res) {
     let address = req.params.address;
     let fat = await getTokenCache(id);
 
-    let balance = await fat.getBalance(address);
+    let balance = fat.getBalance(address);
     // console.log(JSON.stringify(txAndBalances));
     res.send(JSON.stringify(balance)).end();
 });
@@ -222,7 +251,7 @@ app.get('/api/asset/:id/stats', async function (req, res) {
     let id = req.params.id;
     let fat = await getTokenCache(id);
 
-    let stats = await fat.getStats()
+    let stats = fat.getStats();
         // console.log(JSON.stringify(txAndBalances));
         res.send(JSON.stringify(stats)).end();
 });
@@ -285,7 +314,7 @@ app.get('/api/asset/:id/address/:address/send', async function (req, res) {
 
     let fat = await getTokenCache(tokenId);
 
-    if (fat.type === 'FAT-0') {
+    if (fat instanceof FAT0) {
 
         //handle token amount
         let amount = req.query.amount;
@@ -297,14 +326,10 @@ app.get('/api/asset/:id/address/:address/send', async function (req, res) {
         amount = parseFloat(amount);
 
         //attempt to send the tokens
-        fat.transfer(address.fs, to, amount, prefs.getKey('es')).then(function (tx) {
-            res.send(JSON.stringify(tx));
-        }).catch(function (err) {
-            console.error(err);
-            res.status(500).send(JSON.stringify(err));
-        })
+        let tx = await fat.sendTransaction(address.fs, to, amount, prefs.getKey('es'));
+        res.send(JSON.stringify(tx));
 
-    } else if (fat.type === 'FAT-1') {
+    } else if (fat instanceof FAT1) {
 
         try {
             let tokenIds = req.query.ids;
@@ -317,15 +342,13 @@ app.get('/api/asset/:id/address/:address/send', async function (req, res) {
 
             //attempt to transfer tokens
             //attempt to send the tokens
-            fat.transfer(address.fs, to, tokenIds, prefs.getKey('es')).then(function (tx) {
-                res.send(JSON.stringify(tx));
-            }).catch(function (err) {
-                console.error(err);
-                res.status(500).send(JSON.stringify(err));
-            })
+            let tx = await fat.sendTransaction(address.fs, to, tokenIds, prefs.getKey('es'));
+            res.send(JSON.stringify(tx));
+
 
         } catch (e) {
             console.error(e);
+            res.status(500).send(JSON.stringify(e));
         }
 
     }
@@ -354,7 +377,7 @@ app.ws('/api/ws/token/:tokenid/address/:address', function (ws, req) {
 
 function dispatchTokenEvent(tokenId, event) {
     appWs.getWss('/api/ws/token/:tokenid').clients.forEach(function (client) {
-        console.log('DISPATCHING TO CLIENTS')
+        console.log('DISPATCHING TO CLIENTS');
 
         // console.log(client);
         // console.log(client.tokenid);
@@ -409,9 +432,9 @@ async function getTokenCache(tokenId) {
     }
 }
 
-function getFAT0Cache(tokenId) {
+async function getFAT0Cache(tokenId) {
     if (!FAT0tokenCaches[tokenId]) {
-        let fat = new FAT0(tokenId);
+        let fat = await new FAT0(tokenId);
         setCacheEventCallback(tokenId, fat);
         FAT0tokenCaches[tokenId] = fat;
         return fat;
@@ -419,21 +442,22 @@ function getFAT0Cache(tokenId) {
 }
 
 //Utils
-function getFAT1Cache(tokenId) {
+async function getFAT1Cache(tokenId) {
     if (!FAT1tokenCaches[tokenId]) {
-        let fat = new FAT1(tokenId);
+        let fat = await new FAT1(tokenId);
         setCacheEventCallback(tokenId, fat);
         FAT1tokenCaches[tokenId] = fat;
         return fat;
-    } else return FAT0tokenCaches[tokenId];
+    } else return FAT1tokenCaches[tokenId];
 }
 
 function setCacheEventCallback(tokenId, cache) {
 //temp since fat1 doesn't have tx events
-    if (cache.on) cache.on('transaction', function (transaction) {
+    cache.on('transactions', function (transactions) {
 
-        dispatchTokenEvent(tokenId, {event: 'TRANSACTION', transaction: transaction});
-
+        transactions.forEach(function (tx) {
+            dispatchTokenEvent(tokenId, {event: 'TRANSACTION', transaction: tx});
+        })
         /*dispatchAddressEvent(tokenId, [transaction.input.address, transaction.output.address], {
             event: 'TRANSACTION',
             transaction: transaction
@@ -444,5 +468,7 @@ function setCacheEventCallback(tokenId, cache) {
     });
 }
 
-//prime the cache
-// getFAT0Cache('fat0-test12');
+//open the browser window
+setTimeout(function () {
+    opn('http://localhost:3000');
+}, 3000);
