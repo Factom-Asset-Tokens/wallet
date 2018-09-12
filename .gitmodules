@@ -1,0 +1,3 @@
+[submodule "fat-js"]
+	path = fat-js
+	url = https://github.com/DBGrow/fat-js.git
