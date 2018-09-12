@@ -377,10 +377,6 @@ app.ws('/api/ws/token/:tokenid/address/:address', function (ws, req) {
 
 function dispatchTokenEvent(tokenId, event) {
     appWs.getWss('/api/ws/token/:tokenid').clients.forEach(function (client) {
-        console.log('DISPATCHING TO CLIENTS');
-
-        // console.log(client);
-        // console.log(client.tokenid);
         if (client.tokenid == tokenId) client.send(JSON.stringify(event));
         else console.log('failedidcheck')
     });
@@ -435,7 +431,7 @@ async function getTokenCache(tokenId) {
 async function getFAT0Cache(tokenId) {
     if (!FAT0tokenCaches[tokenId]) {
         let fat = await new FAT0(tokenId);
-        setCacheEventCallback(tokenId, fat);
+        setFATEventCallback(tokenId, fat);
         FAT0tokenCaches[tokenId] = fat;
         return fat;
     } else return FAT0tokenCaches[tokenId];
@@ -445,26 +441,22 @@ async function getFAT0Cache(tokenId) {
 async function getFAT1Cache(tokenId) {
     if (!FAT1tokenCaches[tokenId]) {
         let fat = await new FAT1(tokenId);
-        setCacheEventCallback(tokenId, fat);
+        setFATEventCallback(tokenId, fat);
         FAT1tokenCaches[tokenId] = fat;
         return fat;
     } else return FAT1tokenCaches[tokenId];
 }
 
-function setCacheEventCallback(tokenId, cache) {
-//temp since fat1 doesn't have tx events
-    cache.on('transactions', function (transactions) {
+function setFATEventCallback(tokenId, fat) {
 
+    fat.on('transactions', function (transactions) {
         transactions.forEach(function (tx) {
             dispatchTokenEvent(tokenId, {event: 'TRANSACTION', transaction: tx});
-        })
-        /*dispatchAddressEvent(tokenId, [transaction.input.address, transaction.output.address], {
-            event: 'TRANSACTION',
-            transaction: transaction
-        });*/
-
-        // if (transaction.input.address) dispatchAddressEvent(tokenId, transaction.input.address);
-        // else if (transaction.output.address) dispatchAddressEvent(tokenId, transaction.output.address)
+            dispatchAddressEvent(tokenId, [tx.input.address, tx.output.address], {
+                event: 'TRANSACTION',
+                transaction: tx
+            });
+        });
     });
 }
 
