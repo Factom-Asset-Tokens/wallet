@@ -11,10 +11,8 @@ A wallet for [Factom Asset Tokens](https://github.com/DBGrow/FAT)
 Command Line:
 
 ```
-git clone https://github.com/DBGrow/FATWallet.git
+git clone --recurse-submodules https://github.com/DBGrow/FATWallet.git
 cd FATWallet
-npm install
-cd fat-js
 npm install
 ```
 
