@@ -33,6 +33,7 @@ window.onload = function () {
     let showAddress;
     let showTransaction;
     let showAddtoken;
+    let showSettings;
     let showIndividualToken;
     if (pathArray[0] === 'token') {
 
@@ -73,7 +74,7 @@ window.onload = function () {
         } else {
             showToken = true;
         }
-    } else if (pathArray[0] === 'addtoken') showAddtoken = true;
+    } else if (pathArray[0] === 'addtoken') showAddtoken = true; else if (pathArray[0] === 'settings') showSettings = true;
 
 
     getPrefs(function (pref) {
@@ -95,11 +96,14 @@ window.onload = function () {
 
         //if the token we're displaying doesn't exist in the cache, add it
 
-        let tokenExists = prefs.tokens.find(function (token) {
+
+        if (assetId) {
+            let tokenExists = prefs.tokens.find(function (token) {
                 return token.id === assetId;
             });
-        if (!tokenExists) {
+            if (!tokenExists) {
                 //set display defaults
+
                 assetName = assetId;
                 assetName = assetName[0].toUpperCase() + assetName.slice(1);
 
@@ -135,17 +139,18 @@ window.onload = function () {
                 })
             } else {
 
-            console.log('Displaying token: ' + JSON.stringify(tokenExists, undefined, 2));
+                console.log('Displaying token: ' + JSON.stringify(tokenExists, undefined, 2));
 
-            assetType = tokenExists.type
+                assetType = tokenExists.type
+            }
         }
-
 
         //load the required page
         if (showToken) showTokenPage();
         else if (showAddress) showAddressPage();
         else if (showTransaction) showTransactionPage();
         else if (showAddtoken) showAddTokenPage();
+        else if (showSettings) showSettingsPage();
         else if (showIndividualToken) showIndividualTokenPage()
     });
 
@@ -930,4 +935,22 @@ function addToken(assetId, callback) {
 
         callback(undefined, JSON.parse(data));
     });
+}
+
+function showSettingsPage() {
+    hidePanels();
+
+    document.getElementById('individualtokeninfoname').innerText = assetName;
+    document.getElementById('individualtokeninfotokenid').innerText = individualTokenId;
+
+    if (assetIcon) document.getElementById('individualtokeninfoicon').src = assetIcon;
+
+    //set address
+    // document.getElementById('transactionid').innerText = transactionHash;
+
+    //then show panel
+    document.getElementById('settingspage').style.display = '';
+
+
+    loadIndividualTokenPage();
 }

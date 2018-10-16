@@ -35,9 +35,9 @@ var FAT1tokenCaches = {};
 const flatCache = require('flat-cache');
 // loads the cache, if one does not exists for the given
 // Id a new one will be prepared to be created
-const prefs = flatCache.load('prefs');
+const prefs = flatCache.load('.prefs', __dirname);
 
-//set up defaults in disk cache
+//set up defaults in disk cachre
 if (!prefs.getKey('addresses')) {
     prefs.setKey('addresses', [{
         fs: 'Fs1q7FHcW4Ti9tngdGAbA3CxMjhyXtNyB1BSdc8uR46jVUVCWtbJ',

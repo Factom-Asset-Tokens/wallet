@@ -10,7 +10,7 @@ A wallet for [Factom Asset Tokens](https://github.com/DBGrow/FAT)
 
 Command Line:
 
-```
+```bash
 git clone --recurse-submodules https://github.com/DBGrow/FATWallet.git
 cd FATWallet
 npm install
@@ -24,11 +24,27 @@ First, Run a Factomd node on your localhost with API port 8088 accessible (confi
 
 In the `FATWallet` directory:
 
-```
+```bash
 npm start
 ```
 
 A browser window should pop up pointing to http://localhost:3000. If not, you can use any browser to view the wallet :smile:
+
+
+
+## Building Binaries [Broken, work in progress]
+
+```bash
+npm run build
+```
+
+binaries for Windows, linux, and mac will be built in the `build` directory.
+
+On linux:
+
+```bash
+./fatwallet-linux
+```
 
 
 
@@ -39,7 +55,6 @@ Follow along with the [project board](https://github.com/DBGrow/FATWallet/projec
 Things to be done ASAP:
 
 - Factoid address / Identity management UI
-- Real time transaction updates on UI (was working before update :cry:)
 - Issue token page
-- Packaging into executable ([pkg](https://github.com/zeit/pkg))
+- Fix building binaries
 - Guides & How To

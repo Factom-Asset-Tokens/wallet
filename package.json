@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "install": "cd fat-js && npm install",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "npm install && sudo pkg --out-path build package.json"
   },
   "repository": {
     "type": "git",
@@ -19,8 +20,16 @@
     "express-ws": "4.0.0",
     "factom": "0.2.5",
     "factom-identity-lib": "0.1.4",
-    "factomd-cache": "0.2.1",
+    "factomd-cache": "0.2.2",
     "flat-cache": "1.3.0",
     "opn": "5.3.0"
+  },
+  "bin": "index.js",
+  "pkg": {
+    "assets": [
+      "/**/*",
+      ".prefs"
+    ],
+    "scripts": []
   }
 }
