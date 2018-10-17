@@ -3,19 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>FAT Wallet 0.0</title>
-    <!--<link rel="icon" href="https://png.icons8.com/cotton/50/000000/cheap-2.png">-->
-    <!--<link rel="icon" href="https://png.icons8.com/cotton/50/000000/get-cash.png">-->
+
     <link rel="icon" href="https://png.icons8.com/ultraviolet/50/000000/wallet.png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="/index.js"></script>
-    <script src="/util.js"></script>
+
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
-    <link href="/index.css" rel="stylesheet">
+    <link href="index.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
+
+    <script type="module" src="js/fat/fatjs.js"></script>
+
+    <script type="module" src="index.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/elements.js"></script>
+    <script src="js/listeners.js"></script>
+    <script src="js/show.js"></script>
+
+    <!--Factom & FAT JS Libs-->
+    <!--<script src="js/factom/factom.js"></script>-->
+
 </head>
 <body style=" height: 100%; font-family: 'Roboto Slab', serif; background-color:  #f0f0f0">
 
@@ -29,7 +39,7 @@
 
                 <div id="addtokenbutton" class="tooltip" style="display: inline-block; margin-top: 16px">
 
-                    <a href="/addtoken">
+                    <a href="?path=%2Faddtoken">
                         <div style="padding: 8px; height: 72px;width: 72px; border-radius: 50%; border: 2px dashed white; cursor: pointer; text-align: center">
                             <div><i class="material-icons" style="color: white; margin-top: 10px; font-size: 32px">
                                 add
@@ -41,9 +51,9 @@
 
             <div
                     style="margin-bottom: 8px; width: 100%; text-align: center; position: absolute; bottom: 0;">
-                <i class="material-icons" style="color: #ffffff; font-size: 28px">
+                <a href="?path=/settings"><i class="material-icons" style="color: #ffffff; font-size: 28px">
                     settings
-                </i>
+                </i></a>
             </div>
 
         </div>
@@ -428,7 +438,6 @@
 
     </div>
 
-
     <!--Error Page-->
     <div id="errorpage" class="w3-display-right"
          style="display: none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
@@ -726,6 +735,7 @@
             class="tokenid" href="/">01725311737</a></span>
 </div>
     </div>
+
 </div>
 </body>
 </html>

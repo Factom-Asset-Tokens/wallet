@@ -1,5 +1,9 @@
 //UTILS
 
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+];
+
 function prettyNumber(num, opts) {
     var defaultOpts = {
         short: true,
@@ -89,8 +93,74 @@ function prettyNumber(num, opts) {
     return num;
 }
 
+function isNumberKey(evt) {
+    let charCode = (evt.which) ? evt.which : event.keyCode;
+    return !(charCode > 31 && (charCode !== 46 && (charCode < 48 || charCode > 57)));
+}
 
 //we need better validation here!
 function isValidFctPublicAddress(address) {
     return address.length == 52 && address.substring(0, 2) === 'FA';
+}
+
+let showToken;
+let showAddress;
+let showTransaction;
+let showAddtoken;
+let showSettings;
+let showIndividualToken;
+
+
+
+function parsePath(pathArray) {
+    console.log(pathArray);
+
+    if (pathArray[0] === 'token') {
+
+        assetId = pathArray[1];
+        if (!assetId) {
+            alert('Must supply an token ID');
+            return;
+        }
+
+        console.log('assetId: ' + assetId);
+
+        rootChainId = pathArray[2];
+        if (!rootChainId) {
+            alert('Must supply an issuer Root Chain ID');
+            return;
+        }
+
+        console.log('rootChainId: ' + rootChainId);
+        //if the token we're looking at isn't in the tokens list then
+
+        if (pathArray[3]) {
+
+            if (pathArray[3] === 'address') {
+                address = pathArray[4];
+                if (!address) alert('Must supply an address');
+
+                console.log('address: ' + pathArray[4]);
+
+                showAddress = true;
+            } else if (pathArray[3] === 'transactions') {
+                transactionHash = pathArray[4];
+                if (!transactionHash) alert('Must supply an transaction entryhash');
+
+                console.log('txhash: ' + pathArray[4]);
+
+                showTransaction = true;
+            } else if (pathArray[3] === 'token') {
+                individualTokenId = pathArray[4];
+                if (!individualTokenId) alert('Must supply a tokenid');
+
+                console.log('individual tokenid: ' + pathArray[4]);
+
+                showIndividualToken = true;
+            }
+        } else {
+            showToken = true;
+        }
+    } else if (pathArray[0] === 'addtoken') showAddtoken = true; else if (pathArray[0] === 'settings') showSettings = true;
+
 }
