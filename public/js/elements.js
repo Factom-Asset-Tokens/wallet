@@ -58,21 +58,21 @@ function getTokenIconElement(token) {
     tokenIconTemplate.getElementsByClassName('name')[0].innerText = token.name ? token.name : token.id;
 
     if (token.icon) tokenIconTemplate.getElementsByClassName('image')[0].src = token.icon;
-    else tokenIconTemplate.getElementsByClassName('image')[0].src = 'https://explorer.factom.com/favicon.png'
+    else tokenIconTemplate.getElementsByClassName('image')[0].src = 'https://explorer.factom.com/favicon.png';
 
-    tokenIconTemplate.getElementsByClassName('tokenlink')[0].href = '/token/' + token.id;
+    tokenIconTemplate.getElementsByClassName('tokenlink')[0].href = '?path=/token/' + token.id + '/' + token.rootChainId;
 
     tokenIconTemplate.className = 'tooltip';
-    if (token.id === assetId) {
-        asset = token;
+    if (token.id === window.assetId) {
+        window.asset = token;
 
-        if (token.name) assetName = token.name;
-        else assetName = token.id;
+        if (token.name) window.assetName = token.name;
+        else window.assetName = token.id;
 
-        if (token.symbol) assetSymbol = ' ' + token.symbol.toUpperCase();
+        if (token.symbol) window.assetSymbol = ' ' + token.symbol.toUpperCase();
         else token.symbol = '';
 
-        if (token.icon) assetIcon = token.icon;
+        if (token.icon) window.assetIcon = token.icon;
 
         //show selector wedge
         tokenIconTemplate.className = 'tooltip a';
