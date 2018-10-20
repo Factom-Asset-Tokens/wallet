@@ -113,5 +113,43 @@ function initListeners(){
     document.getElementById('fileSelect').onclick = function () {
         document.getElementById('fileElem').click();
     };
+
+    //
+    //Settings Page
+
+    document.getElementById('settingssavefatdinfo').onclick = function () {
+        let host = document.getElementById('settingsdaemonhost').value;
+        let port = document.getElementById('settingsdaemonport').value;
+
+        //host & port validation
+
+        window.prefs.fatd.host = host;
+        window.prefs.fatd.port = port;
+        localStorage.setItem('prefs', JSON.stringify(window.prefs));
+        location.reload(true);
+    };
+
+    document.getElementById('addfaaddress').onclick = function () {
+        let name = document.getElementById('addfaaddressname').value;
+        let fs = document.getElementById('addfaaddressaddress').value;
+
+        //check if fs exists
+
+        //if it does convert to public
+
+        //if not generate new address
+
+        //check name, if doesn't exist then default?
+
+        //add to prefs
+        window.prefs.factoidAddresses.push({
+            name: name,
+            fa: fs,
+            fs: fs
+        });
+
+        localStorage.setItem('prefs', JSON.stringify(window.prefs));
+        location.reload(true);
+    }
 }
 

@@ -95,7 +95,7 @@ function getFAT0TransactionElement(assetSymbol, tx) {
     const totalAmount = tx.inputs.reduce(function (sum, input) {
         return sum + input.amount
     }, 0);
-    txTemplate.getElementsByClassName('amount')[0].innerText = totalAmount + assetSymbol;
+    txTemplate.getElementsByClassName('amount')[0].innerText = totalAmount + ' ' + assetSymbol;
 
     console.log('AAA');
     return txTemplate.cloneNode(true);
@@ -112,4 +112,19 @@ function getFAT0InputElement(symbol, input) {
     inputTemplate.getElementsByClassName('inputamount')[0].innerText = input.amount + ' ' + symbol;
 
     return inputTemplate.cloneNode(true);
+}
+
+function getSettingsAddressElement(address) {
+    let addressTemplate = document.getElementById('settingsaddresstemplate').cloneNode(true);
+    addressTemplate.getElementsByClassName('addressname')[0].innerText = address.name;
+    addressTemplate.getElementsByClassName('address')[0].innerText = address.fa;
+    addressTemplate.getElementsByClassName('close')[0].onclick = function () {
+        for (let i = 0; i < window.prefs.factoidAddresses.length; i++) {
+            let addr = window.prefs.factoidAddresses[i];
+            if (addr.fa === address.fa) window.prefs.factoidAddresses.splice(i, 1)
+        }
+        localStorage.setItem('prefs', JSON.stringify(window.prefs));
+        location.reload(true);
+    };
+    return addressTemplate;
 }

@@ -5,14 +5,14 @@ let prefsTemplate = {
     factoidAddresses: [
         {
             name: 'Test Address',
-            fa: 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC',
+            fa: 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC', //FAT Coinbase Address
             fs: 'Fs1KWJrpLdfucvmYwN2nWrwepLn8ercpMbzXshd1g8zyhKXLVLWj'
         }
     ],
 
     entryCreditAddresses: [
         {
-            name: 'Courtesy Address',
+            name: 'Courtesy Address', //courtesy EC address eventually
             ec: '',
             es: ''
         }
@@ -33,8 +33,8 @@ let prefsTemplate = {
 
     featuredTokens: [
         {
-            tokenId: 'mytoken',
-            rootChainId: ''
+            tokenId: 'testtoken',
+            rootChainId: '888888b2e7c7c63655fa85e0b0c43b4b036a6bede51d38964426f122f61c5584'
         }
     ]
 };
@@ -51,7 +51,6 @@ window.onload = function () {
     let pathArray = urlParams.get('path').split('/').slice(1);
     parsePath(pathArray);
 
-
     //1. Handle wallet config / config file
     if (!localStorage.getItem('prefs')) {
         //if we can't find prefs via WebStorage prompt user to upload if they have it, and continue with defaults for now
@@ -60,6 +59,8 @@ window.onload = function () {
     } else {
         window.prefs = JSON.parse(localStorage.getItem('prefs')); //otherwise load from storage
     }
+
+    console.log(JSON.stringify(window.prefs, undefined, 2));
 
     //setup RPC from prefs
     window.RPC = new RPCBuilder()

@@ -105,12 +105,15 @@ async function showAddressPage() {
         document.getElementById('addresssendtokenamount').placeholder = 'Amount';
     }
 
+    const ownedAddress = window.prefs.factoidAddresses.find(function (address) {
+        return address.fa === window.address && address.fs !== undefined
+    });
+
     //check if the user owns this address
-    if (window.prefs.factoidAddresses.find(function (address) {
-        return address.fa === address
-    })) { //show send token panel if so
+    if (ownedAddress !== undefined) { //show send token panel if owned
         document.getElementById('addresssendtokens').style.display = '';
     } else {
+        console.log('FABFOU')
         document.getElementById('addresssendtokens').style.display = 'none';
     }
     document.getElementById('addresstransactions').style.display = '';
@@ -228,11 +231,19 @@ async function showIndividualTokenPage() {
 
 }
 
-
 //Utility Pages
 
 function showSettingsPage() {
     document.getElementById('settingspage').style.display = '';
+
+    //load daemon info
+    document.getElementById('settingsdaemonhost').value = window.prefs.fatd.host;
+    document.getElementById('settingsdaemonport').value = window.prefs.fatd.port;
+
+    //load addresses
+    prefs.factoidAddresses.forEach(function (address) {
+        document.getElementById('settingsaddresses').appendChild(getSettingsAddressElement(address));
+    });
 }
 
 function showErrorPage(message) {
