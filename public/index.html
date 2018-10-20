@@ -283,10 +283,23 @@
         <div
                 style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
 
-            <div style="font-size: 22px">Amount</div>
-            <div id="transactionamount"
-                 style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 48px;">
-                -
+            <div style="font-size: 22px; padding-bottom: 12px">Inputs</div>
+            <div id="transactioninputs"
+                 style="text-align: left; font-family: 'Inconsolata', monospace; font-size: 48px;">
+
+
+            </div>
+
+        </div>
+
+        <div
+                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
+
+            <div style="font-size: 22px; padding-bottom: 12px">Outputs</div>
+            <div id="transactionoutputs"
+                 style="text-align: left; font-family: 'Inconsolata', monospace; font-size: 48px;">
+
+
             </div>
 
         </div>
@@ -297,27 +310,6 @@
             <div style="font-size: 22px">Token IDs</div>
             <div id="transactiontokenids"
                  style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 28px; margin-top: 16px; margin-bottom: 16px;">
-            </div>
-
-        </div>
-
-        <div
-                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
-
-            <div style="font-size: 22px">From</div>
-            <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px; margin-top: 16px">
-                <a id="transactionfromlink" href="/"><span
-                        id="transactionfrom">-</span></a>
-            </div>
-
-        </div>
-
-        <div
-                style="width: calc(100% - 64px); background-color: white; margin: 32px auto; padding: 32px">
-
-            <div style="font-size: 22px">To</div>
-            <div style="text-align: center; font-family: 'Inconsolata', monospace; font-size: 26px; margin-top: 16px">
-                <a id="transactiontolink"><span id="transactionto">-</span></a>
             </div>
 
         </div>
@@ -497,22 +489,13 @@
          style="display:none; width: calc(100% - 100px); height: 100%; max-height: 100%; overflow-y: auto; margin-left: 300px; background-color: #f0f0f0">
 
         <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto;padding: 32px;">
-            <div style="font-size: 22px">General Settings</div>
+            <div style="font-size: 22px">FAT Daemon Settings</div>
             <div style="color:dimgray">
                 <div style="margin-top: 16px;">
-                    <span>Factomd Host</span><input style="float: right; margin-left: 16px; width: 64px;"
-                                                    placeholder="8088"><input
-                        style="float: right;" placeholder="localhost">
-                </div>
-                <div style="margin-top: 16px;">
-                    <span>Walletd Host</span><input style="float: right; margin-left: 16px; width: 64px;"
-                                                    placeholder="8089"><input
-                        style="float: right" placeholder="localhost">
-                </div>
-                <div style="margin-top: 16px;">
-                    <span>Entry Credit Address</span><input
-                        style="float: right; width: 280px"
-                        placeholder="EC3k4L7La1g7CY5zVLer21H3JFkXgCBCBx8eSM2q9hLbevbuoL6a">
+                    <span>FAT Daemon Host</span><input type="number"
+                                                       style="float: right; margin-left: 16px; width: 64px;"
+                                                       placeholder="Port"><input
+                        style="float: right;" placeholder="Host">
                 </div>
             </div>
         </div>
@@ -528,9 +511,11 @@
 
             </div>
             <div style="margin-top: 16px">
-                <input placeholder="Address Name" style="width: 250px"> <input placeholder="Private Factoid Address"
-                                                                               style="margin-left:16px;width: calc(100% - 335px)"><span
-                    style="margin-left:16px;padding: 4px 8px; background-color: green; color: white; ">Add</span>
+                <input type="url" placeholder="Address Name" style="width: 250px"> <input type="url"
+                                                                                          placeholder="Private Factoid Address"
+                                                                                          style="margin-left:16px;width: calc(100% - 335px)"><span
+                    id="addFAAddress"
+                    style="margin-left:16px;padding: 4px 8px; background-color: green; color: white;cursor: pointer ">Add</span>
             </div>
         </div>
 
@@ -542,6 +527,42 @@
                    style="margin-left: 12px; float: right; color: dimgray; cursor: pointer; vertical-align: middle ">close</i>
                 <span style="float: right; color: dimgray; vertical-align: middle; font-size: 16px;">888888b2e7c7c63655fa85e0b0c43b4b036a6bede51d38964426f122f61c5584</span>
 
+            </div>
+
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto;padding: 32px;">
+            <div style="font-size: 22px">Entry Credit Addresses</div>
+            <div style="margin-top: 16px;">
+                <span style="vertical-align: middle">EC Address 1</span>
+                <i class="material-icons"
+                   style="margin-left: 12px; float: right; color: dimgray; cursor: pointer; vertical-align: middle ">close</i>
+
+                <span style="float: right; color: dimgray; vertical-align: middle; font-size: 16px;">Es3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH</span>
+
+            </div>
+            <div style="margin-top: 16px">
+                <input type="url" placeholder="Address Name" style="width: 250px"> <input type="url"
+                                                                                          placeholder="Private Entry Credit Address"
+                                                                                          style="margin-left:16px;width: calc(100% - 335px)"><span
+                    id="addECAddress"
+                    style="margin-left:16px;padding: 4px 8px; background-color: green; color: white; cursor: pointer ">Add</span>
+            </div>
+        </div>
+
+        <div style="width: calc(100% - 64px); background-color: white; height: auto; margin: 32px auto;padding: 32px;">
+            <div style="font-size: 22px">Wallet Configuration</div>
+            <div style="margin-top: 16px;">
+                <span style="vertical-align: middle; text-decoration: underline; cursor: pointer"
+                      onclick="downloadObjectAsJson(window.prefs,'fatwallet')">Download</span>
+                <br>
+                <br>
+                <span style="vertical-align: middle; text-decoration: underline; cursor: pointer"
+                      id="fileSelect">Upload</span>
+                <br>
+                <br>
+                <span style="vertical-align: middle; text-decoration: underline; cursor: pointer"
+                      id="reset" onclick="localStorage.removeItem('prefs'); window.location.href = '/';">Reset</span>
             </div>
         </div>
     </div>
@@ -697,7 +718,7 @@
         <span class="w3-display-left timestamp" style="display:none; margin-left: 16px; ">2018-07-26 12:12</span>
         <span class="w3-display-left" style="margin-left: 16px; "><a class="addresses"
                                                                      href="./"></a></span>
-        <span class="w3-display-right amount" style="margin-right: 16px;">13.1224 YTN</span>
+        <span class="w3-display-right amount" style="margin-right: 16px;"></span>
     </div>
 
     <div id="fat0address" class="w3-display-container"
@@ -733,9 +754,18 @@
     </div>
     <span id="tokenid" style="padding: 12px 16px; border-radius: 3px; background-color: #f0f0f0;"><a
             class="tokenid" href="/">01725311737</a></span>
+
+    <div id="inputtemplate" style="font-size: 18px">
+        <a class="inputaddress">FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH</a>
+        <span class="inputamount" style="float: right;">12</span>
+    </div>
 </div>
     </div>
 
 </div>
+
+<input type="file" id="fileElem" multiple accept="application/json" style="display:none"
+       onchange="prefsUpload(this.files)">
+
 </body>
 </html>

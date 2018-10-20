@@ -14,9 +14,9 @@ async function showTokenPage() {
     let stats = await window.TokenRPC.getStats();
     let issuanceDate = new Date(stats.issuanceTimestamp * 1000);
     document.getElementById('tokenfirstissued').innerText = monthNames[issuanceDate.getMonth()] + ' ' + issuanceDate.getDate() + ', ' + issuanceDate.getFullYear();
-    document.getElementById('tokentype').innerText = assetType;
+    document.getElementById('tokentype').innerText = issuance.type;
     document.getElementById('tokencirculatingsupply').innerText = prettyNumber(stats.circulatingSupply);
-    document.getElementById('tokentransactioncount').innerText = prettyNumber(stats.transactionCount);
+    document.getElementById('tokentransactioncount').innerText = prettyNumber(stats.transactions);
     document.getElementById('statsprogress').style.display = 'none';
     document.getElementById('tokenstats').style.display = '';
 
@@ -26,7 +26,7 @@ async function showTokenPage() {
     document.getElementById('balances').innerHTML = '';
 
     let fat0AddressTemplate = document.getElementById('fat0address');
-    window.prefs.factoidAddresses.forEach(function (address) {
+    window.prefs.factoidAddresses.forEach(async function (address) {
 
         let addressTemplate = fat0AddressTemplate.cloneNode(true);
 
@@ -39,15 +39,17 @@ async function showTokenPage() {
             addressTemplate.getElementsByClassName('name')[0].innerText = address.fa;
         }
 
+        let balance = await window.TokenRPC.getBalance(address.fa);
+
         // console.log(balances['FA3aECpw3gEZ7CMQvRNxEtKBGKAos3922oqYLcHQ9NqXHudC6YBM']);
         if (issuance.type === 'FAT-1') {
-            addressTemplate.getElementsByClassName('amount')[0].innerText = ((balances[address.fa] ? prettyNumber(balances[address.fa].length) : 0)) + assetSymbol;
+            addressTemplate.getElementsByClassName('amount')[0].innerText = ((balances[address.fa] ? prettyNumber(balances[address.fa].length) : 0)) + ' ' + issuance.symbol;
         } else if (issuance.type === 'FAT-0') {
-            addressTemplate.getElementsByClassName('amount')[0].innerText = ((balances[address.fa] ? prettyNumber(balances[address.fa]) : 0)) + assetSymbol;
+            addressTemplate.getElementsByClassName('amount')[0].innerText = balance + ' ' + issuance.symbol;
         }
-        addressTemplate.getElementsByClassName('addresslink')[0].href = '/token/' + assetId + '/address/' + address.fa;
+        addressTemplate.getElementsByClassName('addresslink')[0].href = '?path=/token/' + window.assetId + '/' + window.rootChainId + '/address/' + address.fa;
 
-        if (prefs.addresses.indexOf(address) === 0) addressTemplate.style.marginBottom = '0px';
+        if (prefs.factoidAddresses.indexOf(address) === 0) addressTemplate.style.marginBottom = '0px';
 
         document.getElementById('balances').appendChild(addressTemplate);
     });
@@ -61,7 +63,7 @@ async function showTokenPage() {
     document.getElementById('transactions').innerHTML = '';
     for (var i = transactions.length - 1; i >= 0; i--) {
         let tx = transactions[i];
-        let template = getTransactionElement(tx);
+        let template = getFAT0TransactionElement(issuance.symbol, tx);
         if (i === 0) template.style.marginBottom = '0px';
 
         document.getElementById('transactions').appendChild(template);
@@ -97,7 +99,7 @@ async function showAddressPage() {
             document.getElementById('fat1tokens').appendChild(template)
         });
     } else if (issuance.type === 'FAT-0') {
-        document.getElementById('addresspagebalance').innerText = balance + '' + issuance.symbol;
+        document.getElementById('addresspagebalance').innerText = balance + ' ' + issuance.symbol;
         document.getElementById('addresssendtokenamount').disabled = false;
         document.getElementById('fat1tokens').style.display = 'none';
         document.getElementById('addresssendtokenamount').placeholder = 'Amount';
@@ -117,7 +119,7 @@ async function showAddressPage() {
     document.getElementById('addresstransactions').innerHTML = '';
     for (var i = addressTransactions.length - 1; i >= 0; i--) {
         let tx = addressTransactions[i];
-        let template = getAddressTransactionElement(tx, address);
+        let template = getAddressTransactionElement(issuance.type, issuance.symbol, tx, address);
         if (i === 0) template.style.marginBottom = '0px';
         document.getElementById('addresstransactions').appendChild(template);
     }
@@ -147,10 +149,19 @@ async function showTransactionPage() {
     let transaction = await window.TokenRPC.getTransaction(window.transactionHash);
     // console.log(JSON.stringify(tx));
 
-    document.getElementById('transactionid').innerText = transaction.entryHash;
+    document.getElementById('transactionid').innerText = transaction.id;
 
     if (issuance.type === 'FAT-0') {
-        document.getElementById('transactionamount').innerText = transaction.input.amount + issuance.symbol;
+        transaction.inputs.forEach(input => {
+            let template = getFAT0InputElement(issuance.symbol, input);
+            document.getElementById('transactioninputs').appendChild(template);
+        });
+
+        transaction.outputs.forEach(input => {
+            let template = getFAT0InputElement(issuance.symbol, input);
+            document.getElementById('transactionoutputs').appendChild(template);
+        });
+
         document.getElementById('transactiontokenspanel').style.display = 'none';
     } else if (issuance.type === 'FAT-1') {
         document.getElementById('transactionamount').innerText = transaction.tokenIds.length + issuance.symbol;
@@ -165,29 +176,17 @@ async function showTransactionPage() {
     } else {
         throw new Error('no asset type!');
     }
-    //handle coinbase too
-
-    document.getElementById('transactionfrom').innerText = transaction.input.address;
-    document.getElementById('transactionfromlink').href = '?path=/token/' + window.assetId + '/address/' + transaction.input.address;
-
-    document.getElementById('transactionto').innerText = transaction.output.address;
-    document.getElementById('transactiontolink').href = '?path=/token/' + window.assetId + '/address/' + transaction.output.address;
 
     let issuanceDate = new Date(transaction.timestamp * 1000);
-    /*document.getElementById('transactiontimestamp').innerText =
-        issuanceDate.toTimeString()*/
 
     document.getElementById('transactiontimestamp').innerText =
         monthNames[issuanceDate.getMonth()] + ' ' + issuanceDate.getDate() + ', ' + issuanceDate.getFullYear() + ' ' + (issuanceDate.getHours() < 10 ? '0' + issuanceDate.getHours() : issuanceDate.getHours()) + ':' + (issuanceDate.getMinutes() < 10 ? '0' + issuanceDate.getMinutes() : issuanceDate.getMinutes());
 
+    //handle coinbase too
     if (transaction.input.address === 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC') document.getElementById('transactioncoinbase').innerText = 'Yes';
     else document.getElementById('transactioncoinbase').innerText = 'No';
 
-    /*
-    document.getElementById('transactiontimestamp').innerText =
-                issuanceDate.getMonth() + '/' + issuanceDate.getUTCDay() + '/' + (('' + issuanceDate.getFullYear()).slice(2)) + ' ' + issuanceDate.getHours() + ':' + issuanceDate.getMinutes();
-    */
-
+    //pending/confirmed?
 }
 
 async function showIndividualTokenPage() {
@@ -215,7 +214,7 @@ async function showIndividualTokenPage() {
 
     console.log('TXS: ' + token.transactions.length);
     token.transactions.forEach(function (tx) {
-        let template = getTransactionElement(tx);
+        let template = getFAT0TransactionElement(issuance.symbol, tx);
         document.getElementById('individualtokeninfotransactions').insertBefore(template, document.getElementById('individualtokeninfotransactions').firstChild);
     });
 

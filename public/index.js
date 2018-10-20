@@ -4,9 +4,9 @@ const RPCBuilder = fatjs.RPCBuilder;
 let prefsTemplate = {
     factoidAddresses: [
         {
-            name: '',
-            fa: '',
-            fs: ''
+            name: 'Test Address',
+            fa: 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC',
+            fs: 'Fs1KWJrpLdfucvmYwN2nWrwepLn8ercpMbzXshd1g8zyhKXLVLWj'
         }
     ],
 
@@ -20,6 +20,7 @@ let prefsTemplate = {
 
     identities: [
         {
+            name: 'Test Identity',
             rootChainId: '',
             sk1: '',
         }
@@ -50,11 +51,12 @@ window.onload = function () {
     let pathArray = urlParams.get('path').split('/').slice(1);
     parsePath(pathArray);
 
+
     //1. Handle wallet config / config file
     if (!localStorage.getItem('prefs')) {
         //if we can't find prefs via WebStorage prompt user to upload if they have it, and continue with defaults for now
         window.prefs = prefsTemplate; //set defaults
-        localStorage.setItem('prefs', JSON.stringify(prefs));
+        localStorage.setItem('prefs', JSON.stringify(prefsTemplate));
     } else {
         window.prefs = JSON.parse(localStorage.getItem('prefs')); //otherwise load from storage
     }
@@ -124,7 +126,7 @@ function parsePath(pathArray) {
         window.assetId = pathArray[1];
 
 
-        console.log('assetId: ' + assetId);
+        console.log('assetId: ' + window.assetId);
 
         if (!pathArray[2]) {
             showErrorPage('No Issuer Root Chain ID Supplied');
@@ -133,7 +135,7 @@ function parsePath(pathArray) {
         //check if valid root chain ID
         window.rootChainId = pathArray[2];
 
-        console.log('rootChainId: ' + rootChainId);
+        console.log('rootChainId: ' + window.rootChainId);
         //if the token we're looking at isn't in the tokens list then
 
         if (pathArray[3]) {

@@ -107,5 +107,11 @@ function initListeners(){
 //    setup event layout close button
     document.getElementById('eventlayoutclose').onclick = function () {
         document.getElementById('eventlayout').style.display = 'none'
-    }
+    };
+
+    //setup prefs JSON file upload
+    document.getElementById('fileSelect').onclick = function () {
+        document.getElementById('fileElem').click();
+    };
 }
+

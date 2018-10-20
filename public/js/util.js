@@ -100,3 +100,52 @@ function isNumberKey(evt) {
 function isValidFctPublicAddress(address) {
     return address.length == 52 && address.substring(0, 2) === 'FA';
 }
+
+function downloadObjectAsJson(exportObj, exportName) {
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+    var downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", exportName + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+}
+
+function prefsUpload(files) {
+    // var fileList = this.files;
+    /* now you can work with the file list */
+
+    let reader = new FileReader();
+    reader.onload = function (event) {
+        let prefs;
+        try {
+            prefs = JSON.parse(event.target.result);
+        } catch (e) {
+            console.error(e);
+            showErrorPage("Invalid Preferences JSON");
+            return;
+        }
+
+        //evaluate prefs validity:
+
+        if (prefs.factoidAddresses && !prefs.factoidAddresses.every(address => {
+            return true;
+        })) throw new Error("Invalid Factoid Address");
+
+        if (prefs.identities && !prefs.identities.every(identity => {
+            return true;
+        })) throw new Error("Invalid Identity");
+
+        if (prefs.entryCreditAddresses && !prefs.entryCreditAddresses.every(address => {
+            return true;
+        })) throw new Error("Invalid Entry Credit Address");
+
+        if (prefs.fatd) {
+
+        }
+
+        window.prefs = prefs;
+        //cache in localStorage
+    };
+    reader.readAsText(files[0].slice(0));
+}

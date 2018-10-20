@@ -1,21 +1,25 @@
-function getAddressTransactionElement(tx, address) {
+function getAddressTransactionElement(assetType, assetSymbol, tx, address) {
     let txTemplate = document.getElementById('fat0tx').cloneNode(true);
 
     // document.getElementById('timestamp').innerText = '123';
     // document.getElementById('addresses').innerText = tx.input.address + ' ➡  ' + tx.output.address;
-    txTemplate.getElementsByClassName('addresses')[0].innerText = tx.entryHash.slice(0, 32) + '...';
-    txTemplate.getElementsByClassName('addresses')[0].href = '/token/' + assetId + '/transactions/' + tx.entryHash;
+    txTemplate.getElementsByClassName('addresses')[0].innerText = tx.id.slice(0, 32) + '...';
+    txTemplate.getElementsByClassName('addresses')[0].href = '?path=/token/' + window.assetId + '/' + window.rootChainId + '/transactions/' + tx.id;
 
     let sign = '';
 
-    if (tx.input.address === address) sign = '-';
+    if (tx.inputs.find(input => input.address === address) && !tx.outputs.find(input => input.address === address)) sign = '-';
     // else if (tx.input.address === address)
 
     // console.log('AT: ' + assetType)
     if (assetType === 'FAT-1') {
         txTemplate.getElementsByClassName('amount')[0].innerText = tx.tokenIds.length + assetSymbol;
     } else if (assetType === 'FAT-0') {
-        txTemplate.getElementsByClassName('amount')[0].innerText = sign + tx.input.amount + assetSymbol;
+        const totalAmount = tx.inputs.reduce(function (sum, input) {
+            return sum + input.amount
+        }, 0);
+
+        txTemplate.getElementsByClassName('amount')[0].innerText = sign + totalAmount + ' ' + assetSymbol;
     }
 
     return txTemplate.cloneNode(true);
@@ -81,19 +85,31 @@ function getTokenIconElement(token) {
     return tokenIconTemplate;
 }
 
-function getTransactionElement(tx) {
+function getFAT0TransactionElement(assetSymbol, tx) {
     let txTemplate = document.getElementById('fat0tx').cloneNode(true);
     // console.log(JSON.stringify(tx, undefined, 2));
     // document.getElementById('timestamp').innerText = '123';
     // document.getElementById('addresses').innerText = tx.input.address + ' ➡  ' + tx.output.address;
-    txTemplate.getElementsByClassName('addresses')[0].innerText = tx.entryHash.slice(0, 32) + '...';
-    txTemplate.getElementsByClassName('addresses')[0].href = '/token/' + assetId + '/transactions/' + tx.entryHash;
+    txTemplate.getElementsByClassName('addresses')[0].innerText = tx.id.slice(0, 32) + '...';
+    txTemplate.getElementsByClassName('addresses')[0].href = '?path=/token/' + window.assetId + '/' + window.rootChainId + '/transactions/' + tx.id;
+    const totalAmount = tx.inputs.reduce(function (sum, input) {
+        return sum + input.amount
+    }, 0);
+    txTemplate.getElementsByClassName('amount')[0].innerText = totalAmount + assetSymbol;
 
-    if (assetType === 'FAT-1') {
-        txTemplate.getElementsByClassName('amount')[0].innerText = tx.tokenIds.length + assetSymbol;
-    } else if (assetType === 'FAT-0') {
-        txTemplate.getElementsByClassName('amount')[0].innerText = tx.input.amount + assetSymbol;
-    }
-
+    console.log('AAA');
     return txTemplate.cloneNode(true);
+
+}
+
+function getFAT0InputElement(symbol, input) {
+    let inputTemplate = document.getElementById('inputtemplate').cloneNode(true);
+    // console.log(JSON.stringify(tx, undefined, 2));
+    // document.getElementById('timestamp').innerText = '123';
+    // document.getElementById('addresses').innerText = tx.input.address + ' ➡  ' + tx.output.address;
+    inputTemplate.getElementsByClassName('inputaddress')[0].innerText = input.address;
+    inputTemplate.getElementsByClassName('inputaddress')[0].href = '?path=/token/' + window.assetId + '/' + window.rootChainId + '/address/' + input.address;
+    inputTemplate.getElementsByClassName('inputamount')[0].innerText = input.amount + ' ' + symbol;
+
+    return inputTemplate.cloneNode(true);
 }
