@@ -1,56 +1,32 @@
-# FATWallet
+# FAT Wallet
 
-A wallet for [Factom Asset Tokens](https://github.com/DBGrow/FAT)
+A wallet for [Factom Asset Tokens](https://github.com/Factom-Asset-Tokens/FAT)
 
 ![](assets/wallet.png)
 
-
-
 ## Installation
 
-Command Line:
 
 ```bash
-git clone --recurse-submodules https://github.com/DBGrow/FATWallet.git
-cd FATWallet
+git clone https://github.com/Factom-Asset-Tokens/wallet.git
+cd wallet
 npm install
 ```
 
-
-
 ## Running
 
-First, Run a Factomd node on your localhost with API port 8088 accessible (configurable host coming in the near future!).
-
-In the `FATWallet` directory:
+In the `wallet` directory:
 
 ```bash
 npm start
 ```
 
-A browser window should pop up pointing to http://localhost:3000. If not, you can use any browser to view the wallet :smile:
-
-
-
-## Building Binaries [Broken, work in progress]
-
-```bash
-npm run build
-```
-
-binaries for Windows, linux, and mac will be built in the `build` directory.
-
-On linux:
-
-```bash
-./fatwallet-linux
-```
-
+You'll also need a [fat daemon](https://github.com/Factom-Asset-Tokens/fatd) running for the wallet to connect to. 
 
 
 ## State Of Development
 
-Follow along with the [project board](https://github.com/DBGrow/FATWallet/projects/1) to stay up to date!
+Follow along with the [project board](https://github.com/Factom-Asset-Tokens/wallet/projects/1) to stay up to date!
 
 Things to be done ASAP:
 
