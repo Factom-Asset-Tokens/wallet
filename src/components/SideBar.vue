@@ -2,8 +2,8 @@
   <div id="sidebar">
 
     <router-link class="tracked-token tooltip" v-for="token in trackedTokens" v-bind:key="token.chainId" :to="`/token/${token.chainId}`">
-      <img class="token-icon" :src="token.iconSrc">
-      <span class="tooltiptext">{{token.displayName}}</span>
+      <img class="token-icon" :src="getTokenIcon(token)">
+      <span class="tooltiptext">{{getTokenTooltip(token)}}</span>
       <i v-show="$route.path === `/token/${token.chainId}`" class="material-icons select-arrow">arrow_right</i>
     </router-link>
 
@@ -24,6 +24,16 @@ export default {
   computed: {
     trackedTokens() {
       return Object.values(this.$store.state.trackedTokens);
+    }
+  },
+  methods: {
+    getTokenIcon(token) {
+      return token.metadata && token.metadata.iconSrc ? token.metadata.iconSrc : 'https://png.icons8.com/dotty/40/000000/help.png';
+    },
+    getTokenTooltip(token) {
+      const erf = token.issuance && token.issuance.name ? token.issuance.name : `${token.tokenId} by ${token.issuer}`;
+      console.log(erf)
+      return erf
     }
   }
 };
@@ -106,56 +116,55 @@ a {
 }
 
 .tooltip {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 /* Tooltip text */
 .tooltip .tooltiptext {
-    visibility: hidden;
-    min-width: 130px;
-    max-lines: 1;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    /*border-radius: 6px;*/
+  visibility: hidden;
+  min-width: 130px;
+  max-lines: 1;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  /*border-radius: 6px;*/
 
-    /* Position the tooltip text - see examples below! */
-    position: absolute;
-    z-index: 1000;
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1000;
 
-    top: 30%;
-    left: 110%;
+  top: 30%;
+  left: 110%;
 }
 
 .tooltip .tooltiptext::after {
-    content: " ";
-    position: absolute;
-    top: 50%;
-    right: 100%; /* To the left of the tooltip */
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent black transparent transparent;
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 100%; /* To the left of the tooltip */
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent black transparent transparent;
 }
 
 .a::after {
-    content: " ";
-    position: absolute;
-    top: 50%;
-    right: 104%; /* To the left of the tooltip */
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 104%; /* To the left of the tooltip */
 
-
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent transparent white;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent white;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
-    visibility: visible;
+  visibility: visible;
 }
 
 .settings-icon {

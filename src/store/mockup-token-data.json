@@ -1,0 +1,33 @@
+{
+    "f76248f405935e79c7b8a14a68f42fc32b7e5d76240767544494dbe7cb2b90aa": {
+        "tokenId": "coffee-coin",
+        "issuer": "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66",
+        "chainId": "f76248f405935e79c7b8a14a68f42fc32b7e5d76240767544494dbe7cb2b90aa",
+        "metadata": {
+            "iconSrc": "https://png.icons8.com/color/80/5ECCDD/java-coffee-bean-logo.png"
+        },
+        "issuance": {
+            "name": "Coffee Coin",
+            "supply": 100000000,
+            "symbol": "COF"
+        }
+    },
+    "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66": {
+        "tokenId": "science-coin",
+        "issuer": "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66",
+        "chainId": "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66",
+        "metadata": {
+            "iconSrc": "https://png.icons8.com/dusk/50/000000/physics.png"
+        },
+        "issuance": {
+            "name": "Science Coin",
+            "supply": 10000000000,
+            "symbol": "SCI"
+        }
+    },
+    "b1171e7f27bed0409ab901f463417b2f9a950d898ebe529756e4303a04288773": {
+        "tokenId": "not-yet-issued-coin",
+        "issuer": "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66",
+        "chainId": "b1171e7f27bed0409ab901f463417b2f9a950d898ebe529756e4303a04288773"
+    }
+}
