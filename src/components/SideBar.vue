@@ -1,6 +1,12 @@
 <template>
   <div id="sidebar">
 
+      <router-link id="add-token-link" to="/">
+        <div style="padding: 8px; height: 72px;width: 72px; border-radius: 50%; border: 2px dashed white; cursor: pointer; text-align: center">
+         <div><i class="material-icons" style="color: white; margin-top: 10px; font-size: 32px">add</i></div>
+        </div>
+      </router-link>
+
     <router-link id="settings-link" to="/settings">
       <i class="material-icons" style="color: #ffffff; font-size: 28px">settings</i>         
     </router-link>
