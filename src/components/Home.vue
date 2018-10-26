@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div>
       Fatd endpoint configured: {{fatdEndPoint}}
   </div>
 </template>
@@ -8,7 +8,7 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "HelloWorld",
+  name: "Home",
   computed: mapGetters(["fatdEndPoint"])
 };
 </script>
