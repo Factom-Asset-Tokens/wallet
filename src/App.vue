@@ -1,22 +1,26 @@
 <template>
   <div id="app">
+    <SideBar></SideBar>
     <router-view/>
   </div>
 </template>
 
 <script>
+import SideBar from "./components/SideBar";
+
 export default {
-  name: 'App'
-}
+  name: "App",
+  components: {
+    SideBar
+  }
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Roboto Slab", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  padding-left: 100px;
 }
 </style>
