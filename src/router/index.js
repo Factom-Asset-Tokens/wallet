@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from '@/components/Home';
+import AddToken from '@/components/AddToken';
 import Settings from '@/components/Settings';
 import Token from '@/components/Token';
 
@@ -8,10 +8,11 @@ Vue.use(Router);
 
 export default new Router({
   routes: [
+    { path: '/', redirect: '/add-token' },
     {
-      path: '/',
-      name: 'Home',
-      component: Home
+      path: '/add-token',
+      name: 'AddToken',
+      component: AddToken
     },
     {
       path: '/settings',

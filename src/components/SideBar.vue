@@ -7,9 +7,9 @@
       <i v-show="$route.path === `/token/${token.chainId}`" class="material-icons select-arrow">arrow_right</i>
     </router-link>
 
-    <router-link class="token-add" to="/">
+    <router-link class="token-add" to="/add-token">
       <i class="material-icons token-add-icon">add</i>
-      <i v-show="$route.path === '/'" class="material-icons select-arrow">arrow_right</i>
+      <i v-show="$route.path === '/add-token'" class="material-icons select-arrow">arrow_right</i>
     </router-link>
 
     <router-link id="settings-link" to="/settings">
@@ -54,6 +54,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 1000;
 }
 
 a {
