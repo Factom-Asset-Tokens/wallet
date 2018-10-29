@@ -16,11 +16,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: "Roboto Slab", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-left: 100px;
 }
+
 </style>

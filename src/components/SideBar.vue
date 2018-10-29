@@ -31,9 +31,7 @@ export default {
       return token.metadata && token.metadata.iconSrc ? token.metadata.iconSrc : 'https://png.icons8.com/dotty/40/000000/help.png';
     },
     getTokenTooltip(token) {
-      const erf = token.issuance && token.issuance.name ? token.issuance.name : `${token.tokenId} by ${token.issuer}`;
-      console.log(erf)
-      return erf
+      return token.issuance && token.issuance.name ? token.issuance.name : `${token.tokenId} by ${token.issuer}`;
     }
   }
 };

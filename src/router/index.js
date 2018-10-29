@@ -3,16 +3,22 @@ import Router from 'vue-router';
 import AddToken from '@/components/AddToken';
 import Settings from '@/components/Settings';
 import Token from '@/components/Token';
+import IssueToken from '@/components/IssueToken';
 
 Vue.use(Router);
 
 export default new Router({
   routes: [
-    { path: '/', redirect: '/add-token' },
+    { path: '/', redirect: { name: 'AddToken' } },
     {
       path: '/add-token',
       name: 'AddToken',
       component: AddToken
+    },
+    {
+      path: '/issue',
+      name: 'IssueToken',
+      component: IssueToken
     },
     {
       path: '/settings',

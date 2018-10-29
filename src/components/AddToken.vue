@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="home-actions" class="ui placeholder segment">
+    <div id="add-actions" class="ui placeholder segment">
       <div class="ui two column stackable grid">
         <div class="column">
           <div class="ui form">
@@ -14,10 +14,12 @@
           </div>
         </div>
         <div class="middle aligned column">
+          <router-link to="/issue">
           <div class="ui big blue button">
             <i class="fas fa-coins"></i>
             Issue a new token
           </div>
+          </router-link>
         </div>
       </div>
       <div class="ui vertical divider">
@@ -29,12 +31,12 @@
 
 <script>
 export default {
-  name: "Home"
+  name: "AddToken"
 };
 </script>
 
 <style scoped>
-#home-actions {
+#add-actions {
   margin: 24px;
 }
 </style>
