@@ -29,5 +29,4 @@ node_modules
 
 \.idea/
 .prefs
-build
 dist/
