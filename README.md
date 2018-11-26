@@ -21,7 +21,7 @@ In the `wallet` directory:
 npm start
 ```
 
-You'll also need a [fat daemon](https://github.com/Factom-Asset-Tokens/fatd) running for the wallet to connect to. 
+You'll also need a [fat daemon](https://github.com/Factom-Asset-Tokens/fatd) and a factom-walletd running for the wallet to connect to. 
 
 
 ## State Of Development
