@@ -1,9 +1,35 @@
 <template>
   <div id="settings">
+
       <div class="setting-group">
-          <div class="setting-group-title">FAT Daemon</div>
-          <div class="setting">Host: <input v-model="fatdHost" type="text"/></div>
-          <div class="setting">Port: <input v-model="fatdPort" type="number"/></div>
+          <h2 class="setting-group-title">FAT Daemon</h2>
+          <v-form>
+            <v-container>
+              <v-layout row wrap>
+                <v-flex xs12 sm10>
+                  <v-text-field label="Host" v-model="fatdHost"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm2>
+                  <v-text-field label="Port" type="number" v-model="fatdPort"></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-form>
+      </div>
+      <div class="setting-group">
+          <h2 class="setting-group-title">Wallet Daemon</h2>
+          <v-form>
+            <v-container>
+              <v-layout row wrap>
+                <v-flex xs12 sm10>
+                  <v-text-field label="Host" v-model="walletdHost"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm2>
+                  <v-text-field label="Port" type="number" v-model="walletdPort"></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-form>
       </div>
   </div>
 </template>
@@ -26,6 +52,22 @@ export default {
       },
       set(value) {
         this.$store.commit("updateFatdPort", value);
+      }
+    },
+    walletdHost: {
+      get() {
+        return this.$store.state.settings.walletd.host;
+      },
+      set(value) {
+        this.$store.commit("updateWalletdHost", value);
+      }
+    },
+    walletdPort: {
+      get() {
+        return this.$store.state.settings.walletd.port;
+      },
+      set(value) {
+        this.$store.commit("updateWalletdPort", value);
       }
     }
   }

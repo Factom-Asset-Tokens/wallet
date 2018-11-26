@@ -1,42 +1,47 @@
 <template>
-  <div>
-    <div id="add-actions" class="ui placeholder segment">
-      <div class="ui two column stackable grid">
-        <div class="column">
-          <div class="ui form">
-            <div class="field">
-              <label>Token chain ID</label>
-              <div class="ui input">
-                <input type="text" size="64">
-              </div>
-            </div>
-            <div class="ui blue submit button">Track existing token</div>
-          </div>
-        </div>
-        <div class="middle aligned column">
-          <router-link to="/issue">
-          <div class="ui big blue button">
-            <i class="fas fa-coins"></i>
-            Issue a new token
-          </div>
-          </router-link>
-        </div>
-      </div>
-      <div class="ui vertical divider">
-        Or
-      </div>
-    </div>
-  </div>
+  <v-form ref="form" v-model="valid" lazy-validation>
+    <h1>Track an existing token</h1>
+    <v-text-field class="global-token-id"
+      v-model="tokenChainId"
+      :rules="tokenChainIdRules"
+      label="Token chain ID"
+      required
+    ></v-text-field>
+
+    <v-btn :disabled="!valid"  @click="submit">
+      track
+    </v-btn>
+    <v-btn @click="clear">clear</v-btn>
+  </v-form>
 </template>
 
 <script>
 export default {
-  name: "AddToken"
+  name: "AddToken",
+  data: () => ({
+    valid: true,
+    tokenChainId: "",
+    tokenChainIdRules: [
+      v => !!v || "Token chain ID is required",
+      v => (v && v.length === 64) || "Token chain ID must be 64 characters"
+    ]
+  }),
+
+  methods: {
+    submit() {
+      if (this.$refs.form.validate()) {
+        // TODO
+      }
+    },
+    clear() {
+      this.$refs.form.reset();
+    }
+  }
 };
 </script>
 
 <style scoped>
-#add-actions {
-  margin: 24px;
+.global-token-id {
+  width: 600px;
 }
 </style>
