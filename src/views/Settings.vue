@@ -1,15 +1,21 @@
 <template>
   <div id="settings">
     <DaemonSettings></DaemonSettings>
+    <AddressSettings></AddressSettings>
   </div>
 </template>
 
 <script>
 import DaemonSettings from "@/components/DaemonSettings";
+import AddressSettings from "@/components/AddressSettings";
 
 export default {
   name: "Settings",
-  components: { DaemonSettings }
+  components: { DaemonSettings, AddressSettings },
+  mounted() {
+    // TODO: should be done at the startup of the whole application
+    this.$store.dispatch("initWalletd");
+  }
 };
 </script>
 

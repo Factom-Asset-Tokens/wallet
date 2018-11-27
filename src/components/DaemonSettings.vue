@@ -1,5 +1,5 @@
 <template>
-  <div id="settings">
+  <div id="daemon-settings">
     <div class="setting-group">
       <h2 class="setting-group-title">FAT Daemon
         <DaemonStatus :status="fatdHealth"></DaemonStatus>
@@ -19,7 +19,7 @@
     </div>
     <div class="setting-group">
       <h2 class="setting-group-title">Wallet Daemon
-        <DaemonStatus :status="walletdHealth"></DaemonStatus>
+        <DaemonStatus :status="walletdStatus"></DaemonStatus>
       </h2>
       <v-form>
         <v-container>
@@ -42,14 +42,14 @@ import debounce from "lodash.debounce";
 // TODO: replace by fatd-js client
 import axios from "axios";
 import DaemonStatus from "@/components/DaemonStatus.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "DaemonSettings",
   components: { DaemonStatus },
   data: function() {
     return {
-      fatdHealth: null,
-      walletdHealth: null
+      fatdHealth: null
     };
   },
   watch: {
@@ -58,17 +58,14 @@ export default {
     },
     fatdPort: function() {
       this.debouncedFatdHealthCheck();
-    },
-    walletdHost: function() {
-      this.debouncedWalletdHealthCheck();
-    },
-    walletdPort: function() {
-      this.debouncedWalletdHealthCheck();
     }
   },
   created: function() {
     this.debouncedFatdHealthCheck = debounce(this.fatdHealthCheck, 600);
-    this.debouncedWalletdHealthCheck = debounce(this.walletdHealthCheck, 600);
+    this.debouncedUpdateWalletd = debounce(
+      this.$store.dispatch.bind(this, "updateWalletd"),
+      600
+    );
   },
   methods: {
     fatdHealthCheck: function() {
@@ -87,22 +84,13 @@ export default {
         .then(function() {
           that.fatdHealth = "ok";
         })
-        .catch(function(error) {
+        .catch(function() {
           that.fatdHealth = "ko";
         });
-    },
-    walletdHealthCheck: async function() {
-      this.walletdHealth = null;
-
-      const cli = this.$store.getters.walletdCli;
-      const that = this;
-      cli
-        .call("properties")
-        .then(() => (that.walletdHealth = "ok"))
-        .catch(() => (that.walletdHealth = "ko"));
     }
   },
   computed: {
+    ...mapState(["walletdStatus"]),
     fatdHost: {
       get() {
         return this.$store.state.settings.fatd.host;
@@ -124,7 +112,10 @@ export default {
         return this.$store.state.settings.walletd.host;
       },
       set(value) {
-        this.$store.commit("updateWalletdHost", value);
+        this.debouncedUpdateWalletd({
+          host: value,
+          port: this.walletdPort
+        });
       }
     },
     walletdPort: {
@@ -132,13 +123,15 @@ export default {
         return this.$store.state.settings.walletd.port;
       },
       set(value) {
-        this.$store.commit("updateWalletdPort", value);
+        this.debouncedUpdateWalletd({
+          host: this.walletdHost,
+          port: value
+        });
       }
     }
   },
   mounted() {
     this.fatdHealthCheck();
-    this.walletdHealthCheck();
   }
 };
 </script>
