@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production';
 
+import { WalletdCli } from "factom";
 import tokens from './mockup-token-data.json';
 
 export default new Vuex.Store({
@@ -16,14 +17,14 @@ export default new Vuex.Store({
             },
             walletd: {
                 host: 'localhost',
-                port: 8088
+                port: 8089
             }
         },
         trackedTokens: tokens
     },
     getters: {
-        fatdEndPoint: state => `http://${state.settings.fatd.host}:${state.settings.fatd.port}`,
-        walletdEndPoint: state => `http://${state.settings.walletd.host}:${state.settings.walletd.port}`
+        //fatdCli: state => `http://${state.settings.fatd.host}:${state.settings.fatd.port}`,
+        walletdCli: state => new WalletdCli({host: state.settings.walletd.host, port: state.settings.walletd.port})
     },
     mutations: {
         updateFatdHost: (state, host) => state.settings.fatd.host = host,
