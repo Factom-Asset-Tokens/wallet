@@ -1,8 +1,8 @@
 <template>
   <div id="daemon-settings">
-    <div class="setting-group">
-      <v-layout row>
-        <v-flex xs12 sm6 mr-3>
+    <v-container grid-list-xl>
+      <v-layout row wrap>
+        <v-flex xs12 sm6>
           <v-card>
             <v-toolbar>
               <v-toolbar-title>Factoid addresses</v-toolbar-title>
@@ -10,8 +10,8 @@
               <v-spacer></v-spacer>
 
               <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat>Generate</v-btn>
-                <v-btn flat>Import</v-btn>
+                <v-btn flat :disabled="!walletdOk" @click="generateAddress('factoid')">Generate</v-btn>
+                <v-btn flat :disabled="!walletdOk">Import</v-btn>
               </v-toolbar-items>
             </v-toolbar>
 
@@ -27,7 +27,7 @@
             </v-list>
           </v-card>
         </v-flex>
-        <v-flex xs12 sm6 ml-3>
+        <v-flex xs12 sm6>
           <v-card>
             <v-toolbar>
               <v-toolbar-title>Entry Credit addresses</v-toolbar-title>
@@ -35,8 +35,8 @@
               <v-spacer></v-spacer>
 
               <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat>Generate</v-btn>
-                <v-btn flat>Import</v-btn>
+                <v-btn flat :disabled="!walletdOk" @click="generateAddress('ec')">Generate</v-btn>
+                <v-btn flat :disabled="!walletdOk">Import</v-btn>
               </v-toolbar-items>
             </v-toolbar>
 
@@ -53,7 +53,11 @@
           </v-card>
         </v-flex>
       </v-layout>
-    </div>
+    </v-container>
+    <v-snackbar v-model="snackError" color="error" :timeout="5000">
+      {{ snackErrorMessage }}
+      <v-btn dark flat @click="snackError = false">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -62,11 +66,32 @@ import { mapState } from "vuex";
 
 export default {
   name: "AddressSettings",
+  data: function() {
+    return {
+      snackError: false,
+      snackErrorMessage: ""
+    };
+  },
   computed: {
     ...mapState({
       ecAddresses: state => state.walletd.ecAddresses,
       fctAddresses: state => state.walletd.fctAddresses
-    })
+    }),
+    walletdOk() {
+      return this.$store.state.walletd.status === "ok";
+    }
+  },
+  methods: {
+    async generateAddress(type) {
+      const cli = this.$store.getters["walletd/cli"];
+      try {
+        await cli.call(`generate-${type}-address`);
+        this.$store.dispatch("walletd/fetchData");
+      } catch (e) {
+        this.snackErrorMessage = e.message;
+        this.snackError = true;
+      }
+    }
   }
 };
 </script>
