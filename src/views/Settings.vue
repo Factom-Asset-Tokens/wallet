@@ -13,8 +13,8 @@ export default {
   name: "Settings",
   components: { DaemonSettings, AddressSettings },
   mounted() {
-    // TODO: should be done at the startup of the whole application
-    this.$store.dispatch("initWalletd");
+    // TODO: should be done once at the startup of the whole application
+    this.$store.dispatch("walletd/init");
   }
 };
 </script>

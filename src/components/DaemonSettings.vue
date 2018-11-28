@@ -63,7 +63,7 @@ export default {
   created: function() {
     this.debouncedFatdHealthCheck = debounce(this.fatdHealthCheck, 600);
     this.debouncedUpdateWalletd = debounce(
-      this.$store.dispatch.bind(this, "updateWalletd"),
+      this.$store.dispatch.bind(this, "walletd/update"),
       600
     );
   },
@@ -90,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["walletdStatus"]),
+    ...mapState({ walletdStatus: state => state.walletd.status }),
     fatdHost: {
       get() {
         return this.$store.state.settings.fatd.host;
@@ -109,7 +109,7 @@ export default {
     },
     walletdHost: {
       get() {
-        return this.$store.state.settings.walletd.host;
+        return this.$store.state.walletd.config.host;
       },
       set(value) {
         this.debouncedUpdateWalletd({
@@ -120,7 +120,7 @@ export default {
     },
     walletdPort: {
       get() {
-        return this.$store.state.settings.walletd.port;
+        return this.$store.state.walletd.config.port;
       },
       set(value) {
         this.debouncedUpdateWalletd({

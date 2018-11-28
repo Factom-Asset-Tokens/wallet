@@ -63,7 +63,10 @@ import { mapState } from "vuex";
 export default {
   name: "AddressSettings",
   computed: {
-    ...mapState(["ecAddresses", "fctAddresses"])
+    ...mapState({
+      ecAddresses: state => state.walletd.ecAddresses,
+      fctAddresses: state => state.walletd.fctAddresses
+    })
   }
 };
 </script>
