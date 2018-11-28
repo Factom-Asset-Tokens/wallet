@@ -2,7 +2,7 @@
   <div id="daemon-settings">
     <div class="setting-group">
       <h2 class="setting-group-title">FAT Daemon
-        <DaemonStatus :status="fatdHealth"></DaemonStatus>
+        <DaemonStatus :status="fatdStatus"></DaemonStatus>
       </h2>
       <v-form>
         <v-container>
@@ -39,8 +39,6 @@
 
 <script>
 import debounce from "lodash.debounce";
-// TODO: replace by fatd-js client
-import axios from "axios";
 import DaemonStatus from "@/components/DaemonStatus.vue";
 import { mapState } from "vuex";
 
@@ -48,63 +46,37 @@ export default {
   name: "DaemonSettings",
   components: { DaemonStatus },
   data: function() {
-    return {
-      fatdHealth: null
-    };
-  },
-  watch: {
-    fatdHost: function() {
-      this.debouncedFatdHealthCheck();
-    },
-    fatdPort: function() {
-      this.debouncedFatdHealthCheck();
-    }
+    return {};
   },
   created: function() {
-    this.debouncedFatdHealthCheck = debounce(this.fatdHealthCheck, 600);
+    this.debouncedUpdateFatd = debounce(
+      this.$store.dispatch.bind(this, "fatd/update"),
+      600
+    );
     this.debouncedUpdateWalletd = debounce(
       this.$store.dispatch.bind(this, "walletd/update"),
       600
     );
   },
-  methods: {
-    fatdHealthCheck: function() {
-      this.fatdHealth = null;
-      const that = this;
-      axios
-        .post(`http://${this.fatdHost}:${this.fatdPort}/v0`, {
-          jsonrpc: "2.0",
-          method: "get-stats",
-          params: {
-            "chain-id":
-              "8eaed885426782315ac89e8c3688a539af6d2c1d5ee27372802e931877b8d325"
-          },
-          id: "5"
-        })
-        .then(function() {
-          that.fatdHealth = "ok";
-        })
-        .catch(function() {
-          that.fatdHealth = "ko";
-        });
-    }
-  },
   computed: {
-    ...mapState({ walletdStatus: state => state.walletd.status }),
+    ...mapState({
+      walletdStatus: state => state.walletd.status,
+      fatdStatus: state => state.fatd.status
+    }),
     fatdHost: {
       get() {
-        return this.$store.state.settings.fatd.host;
+        return this.$store.state.fatd.config.host;
       },
       set(value) {
-        this.$store.commit("updateFatdHost", value);
+        this.debouncedUpdateFatd({ host: value, port: this.fatdPort });
       }
     },
     fatdPort: {
       get() {
-        return this.$store.state.settings.fatd.port;
+        return this.$store.state.fatd.config.port;
       },
       set(value) {
-        this.$store.commit("updateFatdPort", value);
+        this.debouncedUpdateFatd({ host: this.fatdHost, port: value });
       }
     },
     walletdHost: {
@@ -112,10 +84,7 @@ export default {
         return this.$store.state.walletd.config.host;
       },
       set(value) {
-        this.debouncedUpdateWalletd({
-          host: value,
-          port: this.walletdPort
-        });
+        this.debouncedUpdateWalletd({ host: value, port: this.walletdPort });
       }
     },
     walletdPort: {
@@ -123,15 +92,9 @@ export default {
         return this.$store.state.walletd.config.port;
       },
       set(value) {
-        this.debouncedUpdateWalletd({
-          host: this.walletdHost,
-          port: value
-        });
+        this.debouncedUpdateWalletd({ host: this.walletdHost, port: value });
       }
     }
-  },
-  mounted() {
-    this.fatdHealthCheck();
   }
 };
 </script>

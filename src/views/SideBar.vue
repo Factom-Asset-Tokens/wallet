@@ -23,7 +23,7 @@ export default {
   name: "SideBar",
   computed: {
     trackedTokens() {
-      return Object.values(this.$store.state.trackedTokens);
+      return Object.values(this.$store.state.tokens.tracked);
     }
   },
   methods: {

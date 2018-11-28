@@ -13,12 +13,9 @@ export default {
     },
     getters: {
         cli: state => new WalletdCli({
-            host: state.config.host, port: state.config.port, retry: {
-                retries: 2,
-                factor: 2,
-                minTimeout: 500,
-                maxTimeout: 2000
-            }
+            host: state.config.host,
+            port: state.config.port,
+            retry: { retries: 0 }
         })
     },
     mutations: {
@@ -35,7 +32,7 @@ export default {
         async init({ state, dispatch }) {
             await dispatch('checkStatus');
             if (state.status === "ok") {
-                await dispatch('refreshData');
+                await dispatch('fetchData');
             }
         },
         checkStatus({ commit, getters }) {
@@ -45,7 +42,7 @@ export default {
                 .then(() => commit('updateStatus', "ok"))
                 .catch(() => commit('updateStatus', "ko"));
         },
-        async refreshData({ commit, getters }) {
+        async fetchData({ commit, getters }) {
             const cli = getters.cli;
             const data = await cli.call('all-addresses');
             const ec = [], fct = [];
