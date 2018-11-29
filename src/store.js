@@ -15,5 +15,8 @@ export default new Vuex.Store({
         fatd,
         tokens
     },
+    getters: {
+        daemonsOk: state => state.fatd.status === 'ok' && state.walletd.status === 'ok'
+    },
     strict: debug
 });

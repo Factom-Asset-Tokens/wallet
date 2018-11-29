@@ -9,7 +9,8 @@
         "issuance": {
             "name": "Coffee Coin",
             "supply": 100000000,
-            "symbol": "COF"
+            "symbol": "COF",
+            "description": "This is a token for coffee lovers"
         }
     },
     "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66": {
