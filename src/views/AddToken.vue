@@ -46,6 +46,11 @@ export default {
     clear() {
       this.$refs.form.reset();
     }
+  },
+  mounted() {
+    // TODO: should be done once at the startup of the whole application
+    this.$store.dispatch("walletd/init");
+    this.$store.dispatch("fatd/init");
   }
 };
 </script>
