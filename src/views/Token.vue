@@ -1,17 +1,37 @@
 <template>
   <v-container grid-list-xl>
-    <TokenHeader :token="token"></TokenHeader>
-    <AddressesBalances :token="token"></AddressesBalances>
+    <v-layout row wrap>
+      <TokenHeader :token="token"></TokenHeader>
+    </v-layout>
+    <template v-if="token.issuance">
+      <v-layout row wrap>
+        <AddressesBalances :type="token.issuance.type" :balances="balances"></AddressesBalances>
+      </v-layout>
+      <v-layout row wrap>
+        <CreateTransaction :type="token.issuance.type" :balances="balances" :symbol="token.issuance.symbol"></CreateTransaction>
+      </v-layout>
+    </template>
+    <v-layout v-else row>
+      <v-flex xs12 sm8 offset-sm2>
+        <v-alert :value="true" type="info">This token has not yet been issued.</v-alert>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
 <script>
 import TokenHeader from "@/components/TokenHeader";
 import AddressesBalances from "@/components/AddressesBalances";
+import CreateTransaction from "@/components/CreateTransaction";
 
 export default {
   name: "Token",
-  components: { TokenHeader, AddressesBalances },
+  components: { TokenHeader, AddressesBalances, CreateTransaction },
+  data() {
+    return {
+      balances: []
+    };
+  },
   computed: {
     chainId() {
       return this.$route.params.chainid;
@@ -19,6 +39,23 @@ export default {
     token() {
       return this.$store.state.tokens.tracked[this.chainId];
     }
+  },
+  methods: {
+    fetchBalances() {
+      //const cli = this.$store.getters["fatd/cli"];
+      this.balances = this.$store.state.walletd.fctAddresses.map(address => ({
+        address,
+        balance: (Math.random() * 100).toFixed(10)
+      }));
+    }
+  },
+  watch: {
+    token() {
+      this.fetchBalances();
+    }
+  },
+  mounted() {
+    this.fetchBalances();
   }
 };
 </script>

@@ -7,6 +7,7 @@
             "iconSrc": "https://png.icons8.com/color/80/5ECCDD/java-coffee-bean-logo.png"
         },
         "issuance": {
+            "type": 0,
             "name": "Coffee Coin",
             "supply": 100000000,
             "symbol": "COF",
@@ -21,6 +22,7 @@
             "iconSrc": "https://png.icons8.com/dusk/50/000000/physics.png"
         },
         "issuance": {
+            "type": 1,
             "name": "Science Coin",
             "supply": 10000000000,
             "symbol": "SCI"

@@ -1,33 +1,31 @@
 <template>
-  <v-layout row>
-    <v-flex xs12 sm8 offset-sm2>
-      <v-card>
-        <v-card-text>
-          <v-layout align-center justify-center row fill-height>
-            <v-avatar :size="64" color="grey lighten-4">
-              <img :src="icon" alt="Token icon">
-            </v-avatar>
+  <v-flex xs12 sm8 offset-sm2>
+    <v-card>
+      <v-card-text>
+        <v-layout align-center justify-center row fill-height>
+          <v-avatar :size="64" color="grey lighten-4">
+            <img :src="icon" alt="Token icon">
+          </v-avatar>
 
-            <h1>
-              {{name}}
-              <template v-if="symbol">({{symbol}})</template>
-            </h1>
-          </v-layout>
-        </v-card-text>
+          <h1>
+            {{name}}
+            <template v-if="symbol">({{symbol}})</template>
+          </h1>
+        </v-layout>
+      </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn icon @click="showDetails = !showDetails">
-            <v-icon>{{ showDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-          </v-btn>
-        </v-card-actions>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="showDetails = !showDetails">
+          <v-icon>{{ showDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+        </v-btn>
+      </v-card-actions>
 
-        <v-slide-y-transition>
-          <v-card-text v-show="showDetails">{{description}}</v-card-text>
-        </v-slide-y-transition>
-      </v-card>
-    </v-flex>
-  </v-layout>
+      <v-slide-y-transition>
+        <v-card-text v-show="showDetails">{{description}}</v-card-text>
+      </v-slide-y-transition>
+    </v-card>
+  </v-flex>
 </template>
 
 <script>

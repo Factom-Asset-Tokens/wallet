@@ -9,7 +9,7 @@
 
               <v-spacer></v-spacer>
 
-              <v-toolbar-items class="hidden-sm-and-down">
+              <v-toolbar-items>
                 <v-btn flat :disabled="!walletdOk" @click="generateAddress('factoid')">Generate</v-btn>
                 <v-btn flat :disabled="!walletdOk">Import</v-btn>
               </v-toolbar-items>
