@@ -8,7 +8,11 @@
         <AddressesBalances :type="token.issuance.type" :balances="balances"></AddressesBalances>
       </v-layout>
       <v-layout row wrap>
-        <CreateTransaction :type="token.issuance.type" :balances="balances" :symbol="token.issuance.symbol"></CreateTransaction>
+        <CreateTransaction
+          :type="token.issuance.type"
+          :balances="balances"
+          :symbol="token.issuance.symbol"
+        ></CreateTransaction>
       </v-layout>
     </template>
     <v-layout v-else row>
@@ -43,10 +47,7 @@ export default {
   methods: {
     fetchBalances() {
       //const cli = this.$store.getters["fatd/cli"];
-      this.balances = this.$store.state.walletd.fctAddresses.map(address => ({
-        address,
-        balance: (Math.random() * 100).toFixed(10)
-      }));
+      this.balances = this.$store.getters.fctAddressesWithNames.map(address => Object.assign(address, {balance: (Math.random() * 100).toFixed(10)}));
     }
   },
   watch: {
