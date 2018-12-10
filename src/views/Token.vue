@@ -1,13 +1,13 @@
 <template>
-  <v-container grid-list-xl>
-    <v-layout row wrap>
+  <v-container>
+    <v-layout row wrap class="section-margin-bottom">
       <TokenHeader :token="token"></TokenHeader>
     </v-layout>
     <template v-if="token.issuance">
-      <v-layout row wrap>
+      <v-layout row wrap class="section-margin-bottom">
         <AddressesBalances :type="token.issuance.type" :balances="balances"></AddressesBalances>
       </v-layout>
-      <v-layout row wrap>
+      <v-layout row wrap class="section-margin-bottom">
         <CreateTransaction
           :type="token.issuance.type"
           :balances="balances"
@@ -47,7 +47,7 @@ export default {
   methods: {
     fetchBalances() {
       //const cli = this.$store.getters["fatd/cli"];
-      this.balances = this.$store.getters.fctAddressesWithNames.map(address => Object.assign(address, {balance: (Math.random() * 100).toFixed(10)}));
+      this.balances = this.$store.getters.fctAddressesWithNames.map(address => Object.assign(address, {balance: parseFloat((Math.random() * 100).toFixed(10))}));
     }
   },
   watch: {
@@ -62,4 +62,7 @@ export default {
 </script>
 
 <style scoped>
+.section-margin-bottom {
+  margin-bottom: 48px;
+}
 </style>

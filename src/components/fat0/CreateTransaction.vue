@@ -1,164 +1,47 @@
 <template>
   <v-flex>
-    <h1>Send tokens</h1>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <v-toolbar>
-          <v-toolbar-title>Inputs</v-toolbar-title>
+    <h1>Transaction -
+      <a @click="toggleMode">{{mode | capitalize}}</a>
+    </h1>
 
-          <v-spacer></v-spacer>
-          <div class="totalAmount">{{totalInputs}} {{symbol}}</div>
-          <v-toolbar-items>
-            <v-btn flat @click="add('inputs')">
-              <v-icon>add_circle_outline</v-icon>
-            </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-
-        <v-list two-line>
-          <template v-for="(input, index) in inputs">
-            <v-list-tile :key="input.address">
-              <v-select
-                class="solo-padding"
-                :items="availableAddresses(input)"
-                label="Address"
-                solo
-                v-model="input.address"
-                dense
-              ></v-select>
-              <v-spacer></v-spacer>
-              <v-text-field
-                v-if="input.address"
-                v-model.number="input.amount"
-                :error-messages="validateInputAmount(input)"
-                type="number"
-                min="0"
-                label="Amount"
-                required
-              ></v-text-field>
-              <v-icon @click="deleteInoutput('inputs', index)">delete</v-icon>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-flex>
-      <v-flex xs12>
-        <v-toolbar>
-          <v-toolbar-title>Outputs</v-toolbar-title>
-
-          <v-spacer></v-spacer>
-          <div class="totalAmount">{{totalOutputs}} {{symbol}}</div>
-          <v-toolbar-items>
-            <v-btn flat @click="add('outputs')">
-              <v-icon>add_circle_outline</v-icon>
-            </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-
-        <v-list two-line>
-          <template v-for="(output, index) in outputs">
-            <v-list-tile :key="index">
-              <v-text-field
-                class="solo-padding"
-                label="Address"
-                v-model="output.address"
-                :rules="[validateOutputAddress]"
-                size="50"
-                solo
-                required
-              ></v-text-field>
-              <v-spacer></v-spacer>
-              <v-text-field
-                v-model.number="output.amount"
-                type="number"
-                min="0"
-                label="Amount"
-                required
-              ></v-text-field>
-              <v-icon @click="deleteInoutput('outputs', index)">delete</v-icon>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-flex>
-    </v-layout>
-    <v-layout row>
-      <v-spacer></v-spacer>
-      <v-btn>Send</v-btn>
-    </v-layout>
+    <CreateAdvancedTransaction v-show="mode==='advanced'" :balances="balances" :symbol="symbol"></CreateAdvancedTransaction>
+    <CreateSimpleTransaction v-show="mode==='simple'" :balances="balances" :symbol="symbol"></CreateSimpleTransaction>
   </v-flex>
 </template>
 
 <script>
-const { isValidFctPublicAddress } = require("factom");
+import CreateAdvancedTransaction from "@/components/fat0/CreateAdvancedTransaction.vue";
+import CreateSimpleTransaction from "@/components/fat0/CreateSimpleTransaction.vue";
 
 export default {
+  components: { CreateAdvancedTransaction, CreateSimpleTransaction },
   data() {
     return {
-      inputs: [{ address: "", amount: 0, errorMessages: [] }],
-      outputs: [{ address: "", amount: 0, errorMessages: [] }]
+      mode: "simple"
     };
   },
   props: ["balances", "symbol"],
-  computed: {
-    addresseBalanceMap() {
-      return this.balances.reduce((acc, val) => {
-        acc[val.address] = val.balance;
-        return acc;
-      }, {});
-    },
-    totalInputs() {
-      return this.inputs
-        .map(o => o.amount)
-        .filter(a => typeof a === "number")
-        .reduce((a, b) => a + b, 0);
-    },
-    totalOutputs() {
-      return this.outputs
-        .map(o => o.amount)
-        .filter(a => typeof a === "number")
-        .reduce((a, b) => a + b, 0);
+  methods: {
+    toggleMode() {
+      if (this.mode === "advanced") {
+        this.mode = "simple";
+      } else {
+        this.mode = "advanced";
+      }
     }
   },
-  methods: {
-    add: function(type) {
-      this[type].push({ address: "", amount: 0, errorMessages: [] });
-    },
-    availableAddresses(input) {
-      const that = this;
-      const alreadySelected = new Set(this.inputs.map(input => input.address));
-      return this.balances
-        .filter(
-          b => !alreadySelected.has(b.address) || b.address === input.address
-        )
-        .map(b => ({
-          value: b.address,
-          text: `${b.name || b.address} (${b.balance} ${that.symbol})`
-        }));
-    },
-    validateInputAmount(input) {
-      const result = [];
-      if (typeof input.amount !== "number" || input.amount < 0) {
-        result.push("Amount must be a positive number");
-      }
-      if (input.amount > this.addresseBalanceMap[input.address]) {
-        result.push("Address doesn't hold enough funds");
-      }
-      return result;
-    },
-    validateOutputAddress(address) {
-      return isValidFctPublicAddress(address) || "Invalid public FCT address";
-    },
-    deleteInoutput(type, index) {
-      this[type] = this[type].filter((v, i) => i !== index);
+  filters: {
+    capitalize: function(value) {
+      if (!value) return "";
+      value = value.toString();
+      return value.charAt(0).toUpperCase() + value.slice(1);
     }
   }
 };
 </script>
 
 <style scoped>
-.solo-padding {
-  padding-top: 12px;
-}
-.totalAmount {
-  margin-right: 36px;
+h1 {
+  margin-bottom: 36px;
 }
 </style>
