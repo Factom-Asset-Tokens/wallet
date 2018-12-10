@@ -19,7 +19,7 @@
               <v-list-tile :key="input.address">
                 <v-select
                   class="solo-padding"
-                  :items="availableAddresses"
+                  :items="availableAddresses(input)"
                   label="Address"
                   solo
                   v-model="input.address"
@@ -29,11 +29,13 @@
                 <v-text-field
                   v-if="input.address"
                   v-model.number="input.amount"
+                  :error-messages="validateInputAmount(input)"
                   type="number"
                   min="0"
                   label="Amount"
                   required
                 ></v-text-field>
+                <v-icon @click="deleteInoutput('inputs', index)">delete</v-icon>
               </v-list-tile>
               <v-divider :key="index" v-if="index !== inputs.length - 1"></v-divider>
             </template>
@@ -54,11 +56,12 @@
 
           <v-list two-line>
             <template v-for="(output, index) in outputs">
-              <v-list-tile :key="output.address">
+              <v-list-tile :key="index">
                 <v-text-field
                   class="solo-padding"
                   label="Address"
                   v-model="output.address"
+                  :rules="[validateOutputAddress]"
                   size="50"
                   solo
                   required
@@ -71,6 +74,7 @@
                   label="Amount"
                   required
                 ></v-text-field>
+                <v-icon @click="deleteInoutput('outputs', index)">delete</v-icon>
               </v-list-tile>
               <v-divider :key="index" v-if="index !== outputs.length - 1"></v-divider>
             </template>
@@ -86,21 +90,22 @@
 </template>
 
 <script>
+const { isValidFctPublicAddress } = require("factom");
+
 export default {
   data() {
     return {
-      inputs: [{ address: null, amount: 0 }],
-      outputs: [{ address: null, amount: 0 }]
+      inputs: [{ address: "", amount: 0, errorMessages: [] }],
+      outputs: [{ address: "", amount: 0, errorMessages: [] }]
     };
   },
   props: ["balances", "symbol"],
   computed: {
-    availableAddresses() {
-      const that = this;
-      return this.balances.map(b => ({
-        value: b.address,
-        text: `${b.address} - ${b.balance} ${that.symbol}`
-      }));
+    addresseBalanceMap() {
+      return this.balances.reduce((acc, val) => {
+        acc[val.address] = val.balance;
+        return acc;
+      }, {});
     },
     totalInputs() {
       return this.inputs
@@ -117,7 +122,35 @@ export default {
   },
   methods: {
     add: function(type) {
-      this[type].push({ address: null, amount: 0 });
+      this[type].push({ address: "", amount: 0, errorMessages: [] });
+    },
+    availableAddresses(input) {
+      const that = this;
+      const alreadySelected = new Set(this.inputs.map(input => input.address));
+      return this.balances
+        .filter(
+          b => !alreadySelected.has(b.address) || b.address === input.address
+        )
+        .map(b => ({
+          value: b.address,
+          text: `${b.address} - ${b.balance} ${that.symbol}`
+        }));
+    },
+    validateInputAmount(input) {
+      const result = [];
+      if (typeof input.amount !== "number" || input.amount < 0) {
+        result.push("Amount must be a positive number");
+      }
+      if (input.amount > this.addresseBalanceMap[input.address]) {
+        result.push("Address doesn't hold enough funds");
+      }
+      return result;
+    },
+    validateOutputAddress(address) {
+      return isValidFctPublicAddress(address) || "Invalid public FCT address";
+    },
+    deleteInoutput(type, index) {
+      this[type] = this[type].filter((v, i) => i !== index);
     }
   }
 };
