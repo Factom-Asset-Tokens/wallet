@@ -14,9 +14,9 @@
           </v-toolbar-items>
         </v-toolbar>
       </v-flex>
-      <v-flex xs12 v-for="(input, index) in inputs" :key="index">
+      <v-flex xs12 v-for="(input, index) in inputs" :key="'input-' + index">
         <v-layout row wrap align-center justify-center>
-          <v-flex xs8>
+          <v-flex xs12 md8 pr-4>
             <v-select
               :items="availableAddresses(input)"
               label="Address"
@@ -25,7 +25,7 @@
               dense
             ></v-select>
           </v-flex>
-          <v-flex xs3 pl-4>
+          <v-flex xs11 md3>
             <v-text-field
               v-if="input.address"
               v-model.number="input.amount"
@@ -56,9 +56,9 @@
         </v-toolbar>
       </v-flex>
 
-      <v-flex xs12 v-for="(output, index) in outputs" :key="index">
+      <v-flex xs12 v-for="(output, index) in outputs" :key="'output-' + index">
         <v-layout row wrap align-center justify-center>
-          <v-flex xs8>
+          <v-flex xs12 md8 pr-4>
             <v-text-field
               label="Address"
               v-model="output.address"
@@ -68,7 +68,7 @@
               required
             ></v-text-field>
           </v-flex>
-          <v-flex xs3 pl-4>
+          <v-flex xs11 md3>
             <v-text-field
               v-model.number="output.amount"
               type="number"

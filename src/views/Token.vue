@@ -5,7 +5,7 @@
     </v-layout>
     <template v-if="token.issuance">
       <v-layout row wrap class="section-margin-bottom">
-        <AddressesBalances :type="token.issuance.type" :balances="balances"></AddressesBalances>
+        <AddressesBalances :type="token.issuance.type" :balances="balances" :symbol="token.issuance.symbol"></AddressesBalances>
       </v-layout>
       <v-layout row wrap class="section-margin-bottom">
         <CreateTransaction

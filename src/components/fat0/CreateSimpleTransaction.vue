@@ -9,7 +9,7 @@
           solo
         ></v-text-field>
       </v-flex>
-      <v-flex xs12 md4 offset-md2>
+      <v-flex xs12 md6 offset-md2>
         <v-text-field
           placeholder="Amount"
           type="number"
@@ -20,7 +20,7 @@
           solo
         ></v-text-field>
       </v-flex>
-      <v-flex xs12 sm4 text-xs-right>
+      <v-flex xs12 md2 text-xs-right>
         <v-btn large>Send</v-btn>
       </v-flex>
     </v-layout>

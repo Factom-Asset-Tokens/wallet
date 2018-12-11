@@ -1,6 +1,7 @@
 <template>
   <v-flex>
     <h1>Balances</h1>
+    <h2>Total: {{totalBalance}} {{symbol}}</h2>
     <!-- TODO use Slot: progress-->
     <v-data-table
       :headers="[{text: 'Address', value: 'address', sortable: false},
@@ -20,12 +21,21 @@
 
 <script>
 export default {
-  props: ["balances"]
+  props: ["balances", "symbol"],
+  computed: {
+    totalBalance() {
+      return this.balances.reduce((acc, val) => acc + val.balance, 0);
+    }
+  },
 };
 </script>
 
 <style scoped>
 h1 {
+  margin-bottom: 12px;
+}
+h2 {
   margin-bottom: 36px;
+  text-align: center;
 }
 </style>

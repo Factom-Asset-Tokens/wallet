@@ -1,5 +1,5 @@
 <template>
-  <AddressesBalancesFat0 v-if="type === 0" :balances="balances"></AddressesBalancesFat0>
+  <AddressesBalancesFat0 v-if="type === 0" :balances="balances" :symbol="symbol"></AddressesBalancesFat0>
 </template>
 
 <script>
@@ -8,7 +8,7 @@ import AddressesBalancesFat0 from "@/components/fat0/AddressesBalances";
 export default {
   name: "AddressesBalances",
   components: { AddressesBalancesFat0 },
-  props: ["type", "balances"],
+  props: ["type", "balances", "symbol"],
 };
 </script>
 
