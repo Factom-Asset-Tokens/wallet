@@ -20,7 +20,8 @@ export default new Vuex.Store({
         tokens
     },
     state: {
-        addressesNames: {}
+        addressesNames: {},
+        preferredEcAddress: ''
     },
     getters: {
         daemonsOk: state => state.fatd.status === 'ok' && state.walletd.status === 'ok',
@@ -32,6 +33,9 @@ export default new Vuex.Store({
             const copy = { ...state.addressesNames };
             copy[address] = name;
             state.addressesNames = copy;
+        },
+        setPreferredEcAddress(state, ecAddress) {
+            state.preferredEcAddress = ecAddress;
         }
     },
     strict: debug

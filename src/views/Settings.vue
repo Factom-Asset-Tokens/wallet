@@ -1,8 +1,8 @@
 <template>
-  <div id="settings">
-    <DaemonSettings></DaemonSettings>
+  <v-container>
+    <DaemonSettings class="section-margin-bottom"></DaemonSettings>
     <AddressSettings></AddressSettings>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -19,6 +19,8 @@ export default {
 };
 </script>
 
-
 <style scoped>
+.section-margin-bottom {
+  margin-bottom: 48px;
+}
 </style>

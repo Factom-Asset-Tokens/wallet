@@ -1,48 +1,46 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex xs12>
-        <v-card>
-          <v-card-text>
-            <div class="setting-group">
-              <h2 class="setting-group-title">FAT Daemon
-                <DaemonStatus :status="fatdStatus"></DaemonStatus>
-              </h2>
-              <v-form>
-                <v-container>
-                  <v-layout row wrap>
-                    <v-flex xs12 sm10>
-                      <v-text-field label="Host" v-model="fatdHost"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm2>
-                      <v-text-field label="Port" type="number" v-model="fatdPort"></v-text-field>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-form>
-            </div>
-            <div class="setting-group">
-              <h2 class="setting-group-title">Wallet Daemon
-                <DaemonStatus :status="walletdStatus"></DaemonStatus>
-              </h2>
-              <v-form>
-                <v-container>
-                  <v-layout row wrap>
-                    <v-flex xs12 sm10>
-                      <v-text-field label="Host" v-model="walletdHost"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm2>
-                      <v-text-field label="Port" type="number" v-model="walletdPort"></v-text-field>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-              </v-form>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <v-layout>
+    <v-flex xs12>
+      <v-card>
+        <v-card-text>
+          <div class="setting-group">
+            <h2 class="setting-group-title">FAT Daemon
+              <DaemonStatus :status="fatdStatus"></DaemonStatus>
+            </h2>
+            <v-form>
+              <v-container>
+                <v-layout row wrap>
+                  <v-flex xs12 sm10>
+                    <v-text-field label="Host" v-model="fatdHost"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm2>
+                    <v-text-field label="Port" type="number" v-model="fatdPort"></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-form>
+          </div>
+          <div class="setting-group">
+            <h2 class="setting-group-title">Wallet Daemon
+              <DaemonStatus :status="walletdStatus"></DaemonStatus>
+            </h2>
+            <v-form>
+              <v-container>
+                <v-layout row wrap>
+                  <v-flex xs12 sm10>
+                    <v-text-field label="Host" v-model="walletdHost"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm2>
+                    <v-text-field label="Port" type="number" v-model="walletdPort"></v-text-field>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-form>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
