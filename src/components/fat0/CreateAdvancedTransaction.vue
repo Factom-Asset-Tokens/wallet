@@ -1,84 +1,87 @@
 <template>
   <div>
     <v-layout row wrap>
-      <v-flex xs12>
+      <v-flex xs12 pb-4>
         <v-toolbar>
           <v-toolbar-title>Inputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
-          <div class="totalAmount">{{totalInputs}} {{symbol}}</div>
+          <div class="total-amount">{{totalInputs}} {{symbol}}</div>
           <v-toolbar-items>
             <v-btn flat @click="add('inputs')">
               <v-icon>add_circle_outline</v-icon>
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
-
-        <v-list two-line class="list-padding-top">
-          <template v-for="(input, index) in inputs">
-            <v-list-tile :key="input.address">
-              <v-select
-                class="solo-padding"
-                :items="availableAddresses(input)"
-                label="Address"
-                solo
-                v-model="input.address"
-                dense
-              ></v-select>
-              <v-spacer></v-spacer>
-              <v-text-field
-                v-if="input.address"
-                v-model.number="input.amount"
-                :error-messages="validateInputAmount(input)"
-                type="number"
-                :suffix="symbol"
-                min="0"
-                label="Amount"
-                required
-              ></v-text-field>
-              <v-icon @click="deleteInoutput('inputs', index)">delete</v-icon>
-            </v-list-tile>
-          </template>
-        </v-list>
       </v-flex>
-      <v-flex xs12>
+      <v-flex xs12 v-for="(input, index) in inputs" :key="index">
+        <v-layout row wrap align-center justify-center>
+          <v-flex xs8>
+            <v-select
+              :items="availableAddresses(input)"
+              label="Address"
+              solo
+              v-model="input.address"
+              dense
+            ></v-select>
+          </v-flex>
+          <v-flex xs3 pl-4>
+            <v-text-field
+              v-if="input.address"
+              v-model.number="input.amount"
+              :error-messages="validateInputAmount(input)"
+              type="number"
+              :suffix="symbol"
+              min="0"
+              label="Amount"
+              required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs1 text-xs-center>
+            <v-icon @click="deleteInoutput('inputs', index)">delete</v-icon>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex xs12 pb-4>
         <v-toolbar>
           <v-toolbar-title>Outputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
-          <div class="totalAmount">{{totalOutputs}} {{symbol}}</div>
+          <div class="total-amount">{{totalOutputs}} {{symbol}}</div>
           <v-toolbar-items>
             <v-btn flat @click="add('outputs')">
               <v-icon>add_circle_outline</v-icon>
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
+      </v-flex>
 
-        <v-list two-line class="list-padding-top">
-          <template v-for="(output, index) in outputs">
-            <v-list-tile :key="index">
-              <v-text-field
-                class="solo-padding"
-                label="Address"
-                v-model="output.address"
-                :rules="[validateOutputAddress]"
-                size="50"
-                solo
-                required
-              ></v-text-field>
-              <v-spacer></v-spacer>
-              <v-text-field
-                v-model.number="output.amount"
-                type="number"
-                :suffix="symbol"
-                min="0"
-                label="Amount"
-                required
-              ></v-text-field>
-              <v-icon @click="deleteInoutput('outputs', index)">delete</v-icon>
-            </v-list-tile>
-          </template>
-        </v-list>
+      <v-flex xs12 v-for="(output, index) in outputs" :key="index">
+        <v-layout row wrap align-center justify-center>
+          <v-flex xs8>
+            <v-text-field
+              label="Address"
+              v-model="output.address"
+              :rules="[validateOutputAddress]"
+              size="50"
+              solo
+              required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs3 pl-4>
+            <v-text-field
+              v-model.number="output.amount"
+              type="number"
+              :suffix="symbol"
+              min="0"
+              label="Amount"
+              required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs1 text-xs-center>
+            <v-icon @click="deleteInoutput('outputs', index)">delete</v-icon>
+          </v-flex>
+        </v-layout>
       </v-flex>
       <v-flex xs12 text-xs-right>
         <v-btn large>Send</v-btn>
@@ -155,13 +158,7 @@ export default {
 </script>
 
 <style scoped>
-.list-padding-top {
-  padding-top: 24px;
-}
-.solo-padding {
-  padding-top: 12px;
-}
-.totalAmount {
+.total-amount {
   margin-right: 36px;
 }
 </style>
