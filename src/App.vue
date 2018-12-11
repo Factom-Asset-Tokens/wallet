@@ -1,10 +1,12 @@
 <template>
-  <div id="main-container">
-      <SideBar></SideBar>
-      <v-app>
+  <v-app>
+    <SideBar></SideBar>
+    <v-content>
+      <v-container fluid>
         <router-view id="router-view"/>
-      </v-app>
-  </div>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
@@ -19,14 +21,4 @@ export default {
 </script>
 
 <style scoped>
-#main-container {
-  font-family: "Roboto Slab", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding-left: 100px;
-}
-
-#router-view {
-  padding: 22px;
-}
 </style>

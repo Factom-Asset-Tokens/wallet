@@ -1,21 +1,36 @@
 <template>
-  <div id="sidebar">
+  <v-navigation-drawer width="100" class="grey" permanent app>
+    <v-layout align-center column fill-height>
+      <v-tooltip right v-for="token in trackedTokens" v-bind:key="token.chainId">
+        <v-btn
+          fab
+          depressed
+          large
+          slot="activator"
+          color="white"
+          exact
+          :to="`/token/${token.chainId}`"
+        >
+          <img class="token-icon" :src="getTokenIcon(token)">
+        </v-btn>
+        <span>{{getTokenTooltip(token)}}</span>
+      </v-tooltip>
 
-    <router-link class="tracked-token tooltip" v-for="token in trackedTokens" v-bind:key="token.chainId" :to="`/token/${token.chainId}`">
-      <img class="token-icon" :src="getTokenIcon(token)">
-      <span class="tooltiptext">{{getTokenTooltip(token)}}</span>
-      <i v-show="$route.path === `/token/${token.chainId}`" class="material-icons select-arrow">arrow_right</i>
-    </router-link>
+      <v-tooltip right>
+        <v-btn fab outline large slot="activator" color="white" exact to="/add-token">
+          <v-icon>add</v-icon>
+        </v-btn>
+        <span>Add token</span>
+      </v-tooltip>
 
-    <router-link class="token-add" to="/add-token">
-      <i class="material-icons token-add-icon">add</i>
-      <i v-show="$route.path === '/add-token'" class="material-icons select-arrow">arrow_right</i>
-    </router-link>
-
-    <router-link id="settings-link" to="/settings">
-      <i class="material-icons settings-icon">settings</i>         
-    </router-link>
-  </div>
+      <v-tooltip id="settings-link" right>
+        <v-btn fab flat large slot="activator" color="white" exact to="/settings">
+          <v-icon>settings</v-icon>
+        </v-btn>
+        <span>Settings</span>
+      </v-tooltip>
+    </v-layout>
+  </v-navigation-drawer>
 </template>
 
 <script>
@@ -28,10 +43,14 @@ export default {
   },
   methods: {
     getTokenIcon(token) {
-      return token.metadata && token.metadata.iconSrc ? token.metadata.iconSrc : 'https://png.icons8.com/dotty/40/000000/help.png';
+      return token.metadata && token.metadata.iconSrc
+        ? token.metadata.iconSrc
+        : "https://png.icons8.com/dotty/40/000000/help.png";
     },
     getTokenTooltip(token) {
-      return token.issuance && token.issuance.name ? `${token.issuance.name} (${token.issuance.symbol})` : `${token.tokenId} by ${token.issuer}`;
+      return token.issuance && token.issuance.name
+        ? `${token.issuance.name} (${token.issuance.symbol})`
+        : token.tokenId;
     }
   }
 };
@@ -39,135 +58,19 @@ export default {
 
 
 <style scoped>
-#sidebar {
-  position: absolute;
-  top: 50%;
-  left: 0%;
-  transform: translate(0%, -50%);
-  background-color: #959595;
-  height: 100%;
-  width: 100px;
-  padding: 9px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 1000;
-}
-
 a {
   outline: 0;
   border: none;
   outline-style: none;
 }
 
-.token-add {
-  width: 72px;
-  height: 72px;
-  border-radius: 100%;
-  border: 2px dashed white;
-  margin: 8px 0;
-  position: relative;
-}
-
-.token-add-icon {
-  position: absolute;
-  color: white;
-  font-size: 28px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.tracked-token {
-  display: block;
-  background: white;
-  border-radius: 100%;
-  position: relative;
-  width: 72px;
-  height: 72px;
-  margin: 8px 0;
-}
 .token-icon {
   width: 56px;
   height: 56px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.select-arrow {
-  color: white;
-  position: absolute;
-  left: -23px;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 #settings-link {
-  margin-bottom: 8px;
-  width: 100%;
-  text-align: center;
   position: absolute;
   bottom: 0;
-}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-  visibility: hidden;
-  min-width: 130px;
-  max-lines: 1;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  /*border-radius: 6px;*/
-
-  /* Position the tooltip text - see examples below! */
-  position: absolute;
-  z-index: 1000;
-
-  top: 30%;
-  left: 110%;
-}
-
-.tooltip .tooltiptext::after {
-  content: " ";
-  position: absolute;
-  top: 50%;
-  right: 100%; /* To the left of the tooltip */
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent black transparent transparent;
-}
-
-.a::after {
-  content: " ";
-  position: absolute;
-  top: 50%;
-  right: 104%; /* To the left of the tooltip */
-
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent transparent white;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
-
-.settings-icon {
-  color: #ffffff;
-  font-size: 32px;
 }
 </style>
