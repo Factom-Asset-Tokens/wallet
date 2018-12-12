@@ -1,7 +1,7 @@
 <template>
   <v-container>
+    <AddressSettings class="section-margin-bottom"></AddressSettings>
     <DaemonSettings class="section-margin-bottom"></DaemonSettings>
-    <AddressSettings></AddressSettings>
   </v-container>
 </template>
 

@@ -8,7 +8,7 @@
 
         <v-toolbar-items>
           <v-btn flat :disabled="!walletdOk" @click="generateAddress()">Generate</v-btn>
-          <v-btn flat :disabled="!walletdOk">Import</v-btn>
+          <v-btn flat :disabled="!walletdOk" @click.stop="$refs.addressImportDialog.show()">Import</v-btn>
         </v-toolbar-items>
 
         <v-tabs slot="extension" v-model="tab" grow>
@@ -84,14 +84,17 @@
       {{ snackSuccessMessage }}
       <v-btn dark flat @click="snackSuccess = false">Close</v-btn>
     </v-snackbar>
+    <AddressImportDialog ref="addressImportDialog"></AddressImportDialog>
   </v-layout>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
+import AddressImportDialog from "@/components/AddressImportDialog";
 
 export default {
   name: "AddressSettings",
+  components: { AddressImportDialog },
   data: function() {
     return {
       tab: null,

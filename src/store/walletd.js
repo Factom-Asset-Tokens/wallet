@@ -55,6 +55,11 @@ export default {
             });
             commit('updateEcAddresses', ec);
             commit('updateFctAddresses', fct);
+        },
+        async importAddress({ getters, dispatch }, address) {
+            const cli = getters.cli;
+            await cli.call('import-addresses', { "addresses": [{ "secret": address }] });
+            await dispatch('fetchData');
         }
     }
 }
