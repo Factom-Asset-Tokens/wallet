@@ -3,14 +3,16 @@
     <v-layout>
       <v-flex xs12 sm8 offset-sm2>
         <v-card>
+          <v-card-title>
+            <span class="headline">Track an existing token</span>
+          </v-card-title>
           <v-card-text>
-            <h1>Track an existing token</h1>
             <v-form ref="form" v-model="valid" lazy-validation>
               <v-text-field
-                class="global-token-id"
                 v-model="tokenChainId"
                 :rules="tokenChainIdRules"
                 label="Token chain ID"
+                counter="64"
                 required
               ></v-text-field>
             </v-form>
@@ -56,7 +58,4 @@ export default {
 </script>
 
 <style scoped>
-.global-token-id {
-  width: 600px;
-}
 </style>
