@@ -11,7 +11,7 @@
               <v-container>
                 <v-layout row wrap>
                   <v-flex xs12 sm10>
-                    <v-text-field label="Host" v-model="fatdHost"></v-text-field>
+                    <v-text-field label="Host" v-model.trim="fatdHost"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm2>
                     <v-text-field label="Port" type="number" v-model="fatdPort"></v-text-field>
@@ -28,7 +28,7 @@
               <v-container>
                 <v-layout row wrap>
                   <v-flex xs12 sm10>
-                    <v-text-field label="Host" v-model="walletdHost"></v-text-field>
+                    <v-text-field label="Host" v-model.trim="walletdHost"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm2>
                     <v-text-field label="Port" type="number" v-model="walletdPort"></v-text-field>

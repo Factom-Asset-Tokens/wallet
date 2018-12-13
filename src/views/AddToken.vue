@@ -9,7 +9,7 @@
           <v-card-text>
             <v-form ref="form" v-model="valid" lazy-validation>
               <v-text-field
-                v-model="tokenChainId"
+                v-model.trim="tokenChainId"
                 :rules="tokenChainIdRules"
                 label="Token chain ID"
                 counter="64"

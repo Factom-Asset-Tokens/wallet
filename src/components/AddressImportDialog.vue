@@ -6,8 +6,8 @@
       </v-card-title>
       <v-card-text>
         <v-container>
-          <v-layout wrap>
-            <v-form v-model="valid" ref="form" class="full-width">
+          <v-form v-model="valid" ref="form">
+            <v-layout wrap>
               <v-flex xs12>
                 <v-text-field
                   v-model="address"
@@ -21,8 +21,8 @@
               <v-flex xs12>
                 <v-text-field v-model.trim="name" label="Name (Optional)"></v-text-field>
               </v-flex>
-            </v-form>
-          </v-layout>
+            </v-layout>
+          </v-form>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -82,7 +82,4 @@ export default {
 
 
 <style scoped>
-.full-width {
-  width: 100%;
-}
 </style>

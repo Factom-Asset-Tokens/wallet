@@ -1,13 +1,8 @@
 <template>
-  <div>
+  <v-form v-model="valid" ref="form" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 md8 offset-md2>
-        <v-text-field
-          placeholder="Recipient address"
-          v-model="address"
-          :rules="[validateOutputAddress]"
-          solo
-        ></v-text-field>
+        <v-text-field v-model="address" counter="52" :rules="addressRules" clearable required solo></v-text-field>
       </v-flex>
       <v-flex xs12 md6 offset-md2>
         <v-text-field
@@ -16,46 +11,52 @@
           v-model.number="amount"
           min="0"
           :suffix="symbol"
-          :error-messages="validateOutputAmount(amount)"
+          :rules="amountRules"
+          required
           solo
         ></v-text-field>
       </v-flex>
       <v-flex xs12 md2 text-xs-right>
-        <v-btn large>Send</v-btn>
+        <v-btn large :disabled="!valid" @click="send">Send</v-btn>
       </v-flex>
     </v-layout>
-  </div>
+  </v-form>
 </template>
 
 <script>
-const { isValidFctPublicAddress } = require("factom");
+import { isValidFctPublicAddress } from "factom";
 
 export default {
   data() {
     return {
-      address: null,
-      amount: 0
+      address: "",
+      amount: 0,
+      valid: true,
+      addressRules: [
+        v => isValidFctPublicAddress(v) || "Invalid public FCT address"
+      ]
     };
   },
   props: ["balances", "symbol"],
   computed: {
     totalBalance() {
       return this.balances.reduce((acc, val) => acc + val.balance, 0);
+    },
+    amountRules() {
+      const totalBalance = this.totalBalance;
+      return [
+        amount =>
+          (typeof amount === "number" && amount > 0) ||
+          "Amount must be strictly positive",
+        amount => amount <= totalBalance || "Not enough funds"
+      ];
     }
   },
   methods: {
-    validateOutputAddress(address) {
-      return isValidFctPublicAddress(address) || "Invalid public FCT address";
-    },
-    validateOutputAmount(amount) {
-      const result = [];
-      if (typeof amount !== "number" || amount < 0) {
-        result.push("Amount must be a positive number");
+    send() {
+      if (this.$refs.form.validate()) {
+        // TODO
       }
-      if (amount > this.totalBalance) {
-        result.push("Not enough funds");
-      }
-      return result;
     }
   }
 };
