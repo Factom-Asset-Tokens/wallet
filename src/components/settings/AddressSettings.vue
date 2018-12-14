@@ -1,7 +1,9 @@
 <template>
   <v-layout>
     <v-flex xs12>
-      <v-toolbar tabs>
+      <v-toolbar tabs card>
+        <v-icon large>list</v-icon>
+
         <v-toolbar-title>Addresses</v-toolbar-title>
 
         <v-spacer></v-spacer>
