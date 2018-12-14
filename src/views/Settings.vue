@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import DaemonSettings from "@/components/DaemonSettings";
-import AddressSettings from "@/components/AddressSettings";
+import DaemonSettings from "@/components/settings/DaemonSettings";
+import AddressSettings from "@/components/settings/AddressSettings";
 
 export default {
   name: "Settings",

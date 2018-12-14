@@ -90,7 +90,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import AddressImportDialog from "@/components/AddressImportDialog";
+import AddressImportDialog from "@/components/settings/AddressImportDialog";
 
 export default {
   name: "AddressSettings",

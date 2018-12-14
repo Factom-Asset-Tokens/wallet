@@ -45,7 +45,7 @@
 
 <script>
 import debounce from "lodash.debounce";
-import DaemonStatus from "@/components/DaemonStatus.vue";
+import DaemonStatus from "@/components/settings/DaemonStatus.vue";
 import { mapState } from "vuex";
 
 export default {
