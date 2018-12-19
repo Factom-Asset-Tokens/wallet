@@ -14,7 +14,7 @@ import IdentitySettings from "@/components/settings/IdentitySettings";
 export default {
   name: "Settings",
   components: { DaemonSettings, AddressSettings, IdentitySettings },
-  mounted() {
+  created() {
     this.$store.dispatch("walletd/init");
     this.$store.dispatch("fatd/init");
   }

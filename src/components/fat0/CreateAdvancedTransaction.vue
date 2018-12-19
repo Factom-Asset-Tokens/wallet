@@ -70,7 +70,7 @@
       <v-layout align-center wrap>
         <v-flex xs12 sm10>
           <v-alert
-            v-if="sentOnce"
+            v-if="sendClicked"
             :value="!validTransaction"
             color="error"
             icon="warning"
@@ -101,7 +101,7 @@ export default {
   components: { TransactionInput },
   data() {
     return {
-      sentOnce: false,
+      sendClicked: false,
       validForm: true,
       validTransaction: true,
       transactionError: "",
@@ -158,7 +158,7 @@ export default {
     },
     send() {
       if (this.$refs.form.validate()) {
-        this.sentOnce = true;
+        this.sendClicked = true;
         if (this.validTransaction) {
           console.log("SEND");
         }

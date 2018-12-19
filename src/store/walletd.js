@@ -9,7 +9,7 @@ export default {
         },
         status: null,
         ecAddresses: [],
-        fctAddresses: [],
+        fctAddresses: []
     },
     getters: {
         cli: state => new WalletdCli({

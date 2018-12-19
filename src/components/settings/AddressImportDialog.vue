@@ -71,9 +71,7 @@ export default {
   },
   watch: {
     display() {
-      this.valid = true;
-      this.address = "";
-      this.name = "";
+      this.$refs.form.reset();
       this.$nextTick(this.$refs.addressInput.focus);
     }
   }
