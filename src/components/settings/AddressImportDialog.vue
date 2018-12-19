@@ -11,6 +11,9 @@
               <v-flex xs12>
                 <v-text-field
                   v-model="address"
+                  :append-icon="showAddress ? 'visibility_off' : 'visibility'"
+                  :type="showAddress ? 'text' : 'password'"
+                  @click:append="showAddress = !showAddress"
                   :rules="addressRules"
                   label="Private FCT or EC address"
                   counter="52"
@@ -42,6 +45,7 @@ export default {
     return {
       display: false,
       valid: true,
+      showAddress: false,
       address: "",
       name: "",
       addressRules: [
