@@ -11,9 +11,11 @@ export default {
     },
     getters: {
         manager: (state, getters, rootState) => new FactomIdentityManager({
-            host: rootState.walletd.config.host,
-            port: rootState.walletd.config.port,
-            retry: { retries: 0 }
+            walletd: {
+                host: rootState.walletd.config.host,
+                port: rootState.walletd.config.port,
+                retry: { retries: 0 }
+            }
         })
     },
     mutations: {

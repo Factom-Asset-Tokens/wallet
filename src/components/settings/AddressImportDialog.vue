@@ -31,7 +31,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="grey darken-1" flat @click="display = false">Close</v-btn>
-        <v-btn color="grey darken-1" flat @click="importAddress()" :disabled="!valid">Import</v-btn>
+        <v-btn color="grey darken-1" flat @click="importAddress" :disabled="!valid">Import</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

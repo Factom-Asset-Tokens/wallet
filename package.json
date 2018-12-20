@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "factom": "1.0.0-rc3",
-    "factom-identity-lib": "^0.2.0-rc2",
+    "factom-identity-lib": "^0.2.0-rc4",
     "lodash.debounce": "^4.0.8",
     "vue": "^2.5.21",
     "vue-router": "^3.0.2",

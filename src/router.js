@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import AddToken from './views/AddToken.vue'
+import Settings from './views/Settings.vue'
+import Token from './views/Token.vue'
 
 Vue.use(Router)
 
@@ -17,12 +19,12 @@ export default new Router({
     {
       path: '/settings',
       name: 'Settings',
-      component: () => import(/* webpackChunkName: "settings" */ './views/Settings.vue')
+      component: Settings
     },
     {
       path: '/token/:chainid',
       name: 'Token',
-      component: () => import(/* webpackChunkName: "token" */ './views/Token.vue')
+      component: Token
     }
   ]
 })

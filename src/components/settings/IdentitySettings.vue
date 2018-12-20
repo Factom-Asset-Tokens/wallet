@@ -9,7 +9,11 @@
           <v-spacer></v-spacer>
 
           <v-toolbar-items>
-            <v-btn flat :disabled="!walletdOk">Create</v-btn>
+            <v-btn
+              flat
+              :disabled="!walletdOk"
+              @click.stop="$refs.createIdentityDialog.show()"
+            >Create</v-btn>
             <v-btn
               flat
               :disabled="!walletdOk"
@@ -21,7 +25,7 @@
         <v-container fluid>
           <v-layout>
             <v-flex xs12>
-              <v-treeview :items="identityTreeItems" item-key="name" open-on-click>
+              <v-treeview :items="identityTreeItems" item-key="name">
                 <template slot="prepend" slot-scope="{ item, leaf }">
                   <v-icon v-if="!leaf">person</v-icon>
                   <v-icon
@@ -38,15 +42,17 @@
       </v-card>
     </v-flex>
     <IdentityImportDialog ref="identityImportDialog"></IdentityImportDialog>
+    <CreateIdentityDialog ref="createIdentityDialog"></CreateIdentityDialog>
   </v-layout>
 </template>
 
 <script>
 import IdentityImportDialog from "@/components/settings/IdentityImportDialog";
+import CreateIdentityDialog from "@/components/settings/CreateIdentityDialog";
 import { mapState } from "vuex";
 
 export default {
-  components: { IdentityImportDialog },
+  components: { IdentityImportDialog, CreateIdentityDialog },
   data: function() {
     return {};
   },
@@ -76,9 +82,6 @@ export default {
         };
       });
     }
-  },
-  created() {
-    this.$store.dispatch("identity/init");
   }
 };
 </script>
