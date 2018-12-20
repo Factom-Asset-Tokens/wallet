@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="600px">
+  <v-dialog v-model="display" lazy max-width="600px">
     <v-card>
       <v-card-title>
         <span class="headline">Import Address</span>
@@ -18,6 +18,7 @@
                   label="Private FCT or EC address"
                   counter="52"
                   ref="addressInput"
+                  autofocus
                   required
                 ></v-text-field>
               </v-flex>
@@ -75,8 +76,15 @@ export default {
   },
   watch: {
     display() {
-      this.$refs.form.reset();
-      this.$nextTick(this.$refs.addressInput.focus);
+      if (this.display) {
+        if (this.$refs.form) {
+          this.$refs.form.reset();
+        }
+
+        if (this.$refs.addressInput) {
+          this.$nextTick(this.$refs.addressInput.focus);
+        }
+      }
     }
   }
 };

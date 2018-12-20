@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="600px">
+  <v-dialog v-model="display" lazy max-width="600px">
     <v-card>
       <v-card-title>
         <span class="headline">Create Identity</span>
@@ -11,6 +11,7 @@
               <v-flex xs12>
                 <v-combobox
                   ref="tags"
+                  autofocus
                   v-model="tags"
                   label="Add multiple tags that will identify the new identity"
                   multiple
@@ -104,7 +105,9 @@ export default {
         this.tags = ["FAT"];
         this.numberOfKeys = 3;
         this.createError = "";
-        this.$nextTick(this.$refs.tags.focus);
+        if (this.$refs.tags) {
+          this.$nextTick(this.$refs.tags.focus);
+        }
       } else {
         this.$refs.form.reset();
       }

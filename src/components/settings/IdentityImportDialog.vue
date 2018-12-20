@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="800px">
+  <v-dialog v-model="display" lazy max-width="800px">
     <v-stepper v-model="step">
       <v-stepper-header>
         <v-stepper-step :complete="step > 1" step="1">Identity chain</v-stepper-step>
@@ -16,11 +16,12 @@
                   <v-layout wrap>
                     <v-flex xs12>
                       <v-text-field
+                        ref="identityChainId"
+                        autofocus
                         v-model="identityChainId"
                         label="Identity Chain Id"
                         counter="64"
                         :rules="chainIdRules"
-                        ref="identityChainId"
                         required
                       ></v-text-field>
                     </v-flex>
@@ -178,16 +179,20 @@ export default {
   },
   watch: {
     display() {
-      this.step = 1;
-      if (this.$refs.formStep1) {
-        this.$refs.formStep1.reset();
+      if (this.display) {
+        this.step = 1;
+        if (this.$refs.formStep1) {
+          this.$refs.formStep1.reset();
+        }
+        if (this.$refs.formStep2) {
+          this.$refs.formStep2.reset();
+        }
+        this.loadingError = "";
+        this.identityActivePublicKeys = [];
+        if (this.$refs.identityChainId) {
+          this.$nextTick(this.$refs.identityChainId.focus);
+        }
       }
-      if (this.$refs.formStep2) {
-        this.$refs.formStep2.reset();
-      }
-      this.loadingError = "";
-      this.identityActivePublicKeys = [];
-      this.$nextTick(this.$refs.identityChainId.focus);
     }
   }
 };
