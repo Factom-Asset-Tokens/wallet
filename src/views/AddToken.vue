@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-layout>
-      <v-flex xs12 sm8 offset-sm2>
+    <v-layout justify-center column>
+      <v-flex>
         <v-card>
           <v-card-title>
             <span class="headline">Track an existing token</span>
@@ -13,6 +13,7 @@
                 :rules="tokenChainIdRules"
                 label="Token chain ID"
                 counter="64"
+                len
                 required
               ></v-text-field>
             </v-form>
@@ -22,6 +23,13 @@
             <v-btn @click="clear">clear</v-btn>
           </v-card-actions>
         </v-card>
+      </v-flex>
+      <v-flex ma-5 pa-3>
+        <v-divider></v-divider>
+      </v-flex>
+
+      <v-flex text-xs-center>
+        <v-btn large :to="{name: 'IssueToken'}">Issue a new Token</v-btn>
       </v-flex>
     </v-layout>
   </v-container>
