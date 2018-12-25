@@ -2,7 +2,7 @@
   <v-form v-model="valid" ref="form" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 md8 offset-md2>
-        <v-text-field v-model="address" counter="52" :rules="addressRules" clearable required solo></v-text-field>
+        <v-text-field v-model="address" label="Recipient address" counter="52" :rules="addressRules" clearable required solo></v-text-field>
       </v-flex>
       <v-flex xs12 md6 offset-md2>
         <v-text-field

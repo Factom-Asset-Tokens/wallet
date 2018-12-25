@@ -5,26 +5,26 @@
     </h1>
 
     <CreateAdvancedTransaction v-show="mode==='advanced'" :balances="balances" :symbol="symbol"></CreateAdvancedTransaction>
-    <CreateSimpleTransaction v-show="mode==='simple'" :balances="balances" :symbol="symbol"></CreateSimpleTransaction>
+    <CreateBasicTransaction v-show="mode==='basic'" :balances="balances" :symbol="symbol"></CreateBasicTransaction>
   </v-flex>
 </template>
 
 <script>
 import CreateAdvancedTransaction from "@/components/fat0/CreateAdvancedTransaction.vue";
-import CreateSimpleTransaction from "@/components/fat0/CreateSimpleTransaction.vue";
+import CreateBasicTransaction from "@/components/fat0/CreateBasicTransaction.vue";
 
 export default {
-  components: { CreateAdvancedTransaction, CreateSimpleTransaction },
+  components: { CreateAdvancedTransaction, CreateBasicTransaction },
   data() {
     return {
-      mode: "simple"
+      mode: "basic"
     };
   },
   props: ["balances", "symbol"],
   methods: {
     toggleMode() {
       if (this.mode === "advanced") {
-        this.mode = "simple";
+        this.mode = "basic";
       } else {
         this.mode = "advanced";
       }
