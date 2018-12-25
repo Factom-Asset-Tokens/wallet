@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import IssuanceSteps from "@/components/IssuanceSteps";
+import IssuanceSteps from "@/components/issuance/IssuanceSteps";
 
 export default {
   components: { IssuanceSteps }

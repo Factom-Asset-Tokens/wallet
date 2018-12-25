@@ -5,7 +5,8 @@ export default {
     namespaced: true,
     state: {
         identities: {
-            '44f7e377f62fe5e760cd4e3e1f34ea26fc6b0a6628a5246ef4296f0f509f6dc1': []
+            '44f7e377f62fe5e760cd4e3e1f34ea26fc6b0a6628a5246ef4296f0f509f6dc1': [],
+            'e94783624ebe76c2321b69d063c6b80a074a55ca9b16ac27dc90bfaacd474856': []
         },
         identityKeysInWallet: new Set()
     },
