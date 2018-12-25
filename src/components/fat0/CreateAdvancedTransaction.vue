@@ -79,7 +79,7 @@
         </v-flex>
 
         <v-flex xs12 sm2 text-xs-right>
-          <v-btn large :disabled="!validForm" @click="send">Send</v-btn>
+          <v-btn large :disabled="!validForm" @click="send">Send<v-icon right>send</v-icon></v-btn>
         </v-flex>
       </v-layout>
     </v-layout>

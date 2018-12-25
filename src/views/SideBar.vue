@@ -17,10 +17,10 @@
       </v-tooltip>
 
       <v-tooltip right>
-        <v-btn fab outline large slot="activator" color="white" exact to="/add-token">
-          <v-icon>add</v-icon>
+        <v-btn fab outline large slot="activator" color="white" exact :to="{name: 'Actions'}">
+          <v-icon>more_horiz</v-icon>
         </v-btn>
-        <span>Add token</span>
+        <span>Actions</span>
       </v-tooltip>
 
       <v-tooltip id="settings-link" right>
