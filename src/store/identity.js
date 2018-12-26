@@ -25,9 +25,11 @@ export default {
         addIdentity: (state, identity) => state.identities = Object.assign(identity, state.identities)
     },
     actions: {
-        async init({ dispatch }) {
-            await dispatch("fetchIdentityKeysFromWalletd");
-            await dispatch("refreshIdentities");
+        async init({ dispatch, rootState }) {
+            if (rootState.walletd.status === "ok") {
+                await dispatch("fetchIdentityKeysFromWalletd");
+                await dispatch("refreshIdentities");
+            }
         },
         async fetchIdentityKeysFromWalletd({ commit, getters }) {
             const manager = getters.manager;

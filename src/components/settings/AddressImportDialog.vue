@@ -64,12 +64,12 @@ export default {
     importAddress() {
       if (this.$refs.form.validate()) {
         if (this.name) {
-          this.$store.commit("updateAddressNames", {
+          this.$store.commit("address/updateAddressNames", {
             address: getPublicAddress(this.address),
             name: this.name
           });
         }
-        this.$store.dispatch("walletd/importAddress", this.address);
+        this.$store.dispatch("address/importAddress", this.address);
         this.display = false;
       }
     }

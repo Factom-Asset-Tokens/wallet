@@ -15,9 +15,7 @@ export default {
   name: "Settings",
   components: { DaemonSettings, AddressSettings, IdentitySettings },
   mounted() {
-    this.$store.dispatch("walletd/init");
-    this.$store.dispatch("fatd/init");
-    this.$store.dispatch("identity/init");
+    this.$store.dispatch("init");
   }
 };
 </script>

@@ -1,16 +1,16 @@
-import { WalletdCli } from "factom";
+import { FactomdCli } from "factom";
 
 export default {
     namespaced: true,
     state: {
         config: {
             host: 'localhost',
-            port: 8089
+            port: 8088
         },
         status: null
     },
     getters: {
-        cli: state => new WalletdCli({
+        cli: state => new FactomdCli({
             host: state.config.host,
             port: state.config.port,
             retry: { retries: 0 }

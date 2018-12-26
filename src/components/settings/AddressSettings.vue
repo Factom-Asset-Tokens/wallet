@@ -91,7 +91,6 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
 import AddressImportDialog from "@/components/settings/AddressImportDialog";
 
 export default {
@@ -107,10 +106,14 @@ export default {
     };
   },
   computed: {
-    ...mapState(["preferredEcAddress"]),
-    ...mapGetters(["fctAddressesWithNames"]),
+    preferredEcAddress() {
+      return this.$store.state.address.preferredEcAddress;
+    },
+    fctAddressesWithNames() {
+      return this.$store.getters["address/fctAddressesWithNames"];
+    },
     ecAddressesWithNames() {
-      return this.$store.getters.ecAddressesWithNames.map(o =>
+      return this.$store.getters["address/ecAddressesWithNames"].map(o =>
         Object.assign(o, { preferred: o.address === this.preferredEcAddress })
       );
     },
@@ -144,10 +147,10 @@ export default {
       }
     },
     updateAddressName(address, name) {
-      this.$store.commit("updateAddressNames", { address, name });
+      this.$store.commit("address/updateAddressNames", { address, name });
     },
     setPreferredEcAddress(address) {
-      this.$store.commit("setPreferredEcAddress", address);
+      this.$store.commit("address/setPreferredEcAddress", address);
     }
   }
 };

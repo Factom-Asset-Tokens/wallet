@@ -5,7 +5,11 @@
     </v-layout>
     <template v-if="token.issuance">
       <v-layout row wrap class="section-margin-bottom">
-        <AddressesBalances :type="token.issuance.type" :balances="balances" :symbol="token.issuance.symbol"></AddressesBalances>
+        <AddressesBalances
+          :type="token.issuance.type"
+          :balances="balances"
+          :symbol="token.issuance.symbol"
+        ></AddressesBalances>
       </v-layout>
       <v-layout row wrap class="section-margin-bottom">
         <CreateTransaction
@@ -47,7 +51,12 @@ export default {
   methods: {
     fetchBalances() {
       //const cli = this.$store.getters["fatd/cli"];
-      this.balances = this.$store.getters.fctAddressesWithNames.map(address => Object.assign(address, {balance: parseFloat((Math.random() * 100).toFixed(10))}));
+      this.balances = this.$store.getters["address/fctAddressesWithNames"].map(
+        address =>
+          Object.assign(address, {
+            balance: parseFloat((Math.random() * 100).toFixed(10))
+          })
+      );
     }
   },
   watch: {

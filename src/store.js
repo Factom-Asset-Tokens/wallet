@@ -5,39 +5,31 @@ Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production';
 
+import factomd from '@/store/factomd'
 import walletd from '@/store/walletd'
 import fatd from '@/store/fatd'
 import tokens from '@/store/tokens'
+import address from '@/store/address'
 import identity from '@/store/identity'
-
-function mapNames(addresses, names) {
-    return addresses.map(address => ({ address, name: names[address] }));
-}
 
 export default new Vuex.Store({
     modules: {
+        factomd,
         walletd,
         fatd,
         tokens,
+        address,
         identity
     },
-    state: {
-        addressesNames: {},
-        preferredEcAddress: ''
-    },
     getters: {
-        daemonsOk: state => state.fatd.status === 'ok' && state.walletd.status === 'ok',
-        fctAddressesWithNames: state => mapNames(state.walletd.fctAddresses, state.addressesNames),
-        ecAddressesWithNames: state => mapNames(state.walletd.ecAddresses, state.addressesNames)
-    },
-    mutations: {
-        updateAddressNames(state, { address, name }) {
-            const copy = { ...state.addressesNames };
-            copy[address] = name;
-            state.addressesNames = copy;
-        },
-        setPreferredEcAddress(state, ecAddress) {
-            state.preferredEcAddress = ecAddress;
+        daemonsOk: state => state.fatd.status === 'ok' && state.walletd.status === 'ok'
+    }, actions: {
+        async init({ dispatch }) {
+            await Promise.all([
+                dispatch('walletd/checkStatus'),
+                dispatch('factomd/checkStatus'),
+                dispatch('fatd/checkStatus')]);
+            await Promise.all([dispatch('address/init'), dispatch('identity/init')]);
         }
     },
     strict: debug
