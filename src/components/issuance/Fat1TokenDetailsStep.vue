@@ -6,6 +6,11 @@
 
 <script>
 export default {
-  data: () => ({})
+  data: () => ({}),
+  computed: {
+    details() {
+      return {};
+    }
+  }
 };
 </script>

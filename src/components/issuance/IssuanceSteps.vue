@@ -28,7 +28,7 @@
         <v-card>
           <v-form v-model="validFormStep2" ref="formStep2" @submit="toStep3" lazy-validation>
             <v-card-text>
-              <IssuerAndNameStep></IssuerAndNameStep>
+              <IssuerAndNameStep @input="setIssuerAndName"></IssuerAndNameStep>
             </v-card-text>
             <v-card-actions>
               <v-btn @click="step = 1">Back</v-btn>
@@ -42,17 +42,32 @@
         <v-card>
           <v-form v-model="validFormStep3" ref="formStep3" @submit="toStep4" lazy-validation>
             <v-card-text>
-              <TokenDetailsStep :type="type"></TokenDetailsStep>
+              <TokenDetailsStep :type="type" ref="tokenDetails"></TokenDetailsStep>
             </v-card-text>
             <v-card-actions>
               <v-btn @click="step = 2">Back</v-btn>
-              <v-btn type="submit">Continue</v-btn>
+              <v-btn :disabled="!validFormStep3" type="submit">Continue</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
       </v-stepper-content>
 
-      <v-stepper-content step="4"></v-stepper-content>
+      <v-stepper-content step="4">
+        <v-card>
+          <v-card-text>
+            <TokenSummaryStep
+              :tokenId="tokenId"
+              :issuerId="issuerId"
+              :type="type"
+              :details="tokenDetails"
+            ></TokenSummaryStep>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="step = 3">Back</v-btn>
+            <v-btn @click="issue">Issue token</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
 </template>
@@ -61,18 +76,25 @@
 import TokenTypeStep from "./TokenTypeStep";
 import IssuerAndNameStep from "./IssuerAndNameStep";
 import TokenDetailsStep from "./TokenDetailsStep";
+import TokenSummaryStep from "./TokenSummaryStep";
 
 export default {
-  components: { TokenTypeStep, IssuerAndNameStep, TokenDetailsStep },
+  components: { TokenTypeStep, IssuerAndNameStep, TokenDetailsStep, TokenSummaryStep },
   data: () => ({
     step: 1,
     validFormStep2: true,
     validFormStep3: true,
     type: "fat0",
     tokenId: "",
-    issuerId: ""
+    issuerId: "",
+    tokenDetails: {}
   }),
   methods: {
+    setIssuerAndName(o) {
+      const { tokenId, issuerId } = o;
+      this.tokenId = tokenId;
+      this.issuerId = issuerId;
+    },
     toStep2(e) {
       e.preventDefault();
       this.step = 2;
@@ -86,8 +108,13 @@ export default {
     toStep4(e) {
       e.preventDefault();
       if (this.$refs.formStep3.validate()) {
+        this.tokenDetails = this.$refs.tokenDetails.getDetails();
         this.step = 4;
       }
+    },
+    issue() {
+      // TODO
+      console.log("issue");
     }
   }
 };

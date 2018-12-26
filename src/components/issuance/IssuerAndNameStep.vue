@@ -1,7 +1,13 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 my-3>
-      <v-text-field :rules="nameRules" label="Choose a name for your token"></v-text-field>
+      <v-text-field
+        v-model="tokenId"
+        @input="$emit('input', {tokenId, issuerId})"
+        :rules="nameRules"
+        label="Choose a name for your token"
+        solo
+      ></v-text-field>
     </v-flex>
     <v-flex xs12 my-3>
       <v-select
@@ -9,6 +15,7 @@
         no-data-text="No identity available (go to settings to create a new one)."
         :rules="identityRules"
         v-model="issuerId"
+        @input="$emit('input', {tokenId, issuerId})"
         label="Select the issuing identity"
         solo
       ></v-select>
@@ -32,7 +39,6 @@ export default {
       return [
         v => !!v || "Select an issuing identity",
         function(v) {
-          console.log("val", v);
           if (v) {
             const availableKeys = identityStore.identities[v].filter(k =>
               identityStore.identityKeysInWallet.has(k)
