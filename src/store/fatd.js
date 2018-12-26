@@ -20,9 +20,6 @@ export default {
     actions: {
         async update({ commit, dispatch }, config) {
             commit('updateConfig', config);
-            await dispatch('init');
-        },
-        async init({ dispatch }) {
             await dispatch('checkStatus');
         },
         checkStatus({ commit, getters }) {

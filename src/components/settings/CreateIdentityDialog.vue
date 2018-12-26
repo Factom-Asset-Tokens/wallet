@@ -75,11 +75,11 @@ export default {
         this.createError = "";
         try {
           const manager = this.$store.getters["identity/manager"];
-          // TODO: replace by preferred EC address
+          const ecAddress = this.$store.getters["address/payingEcAddress"];
           const created = await manager.createIdentity(
             this.tags,
             this.numberOfKeys,
-            "EC2vXWYkAPduo3oo2tPuzA44Tm7W6Cj7SeBr3fBnzswbG5rrkSTD",
+            ecAddress,
             { fromWalletSeed: true }
           );
 
@@ -87,6 +87,8 @@ export default {
           identity[created.chainId] = created.identityKeys.map(k => k.public);
           this.$store.commit("identity/addIdentity", identity);
           await this.$store.dispatch("identity/fetchIdentityKeysFromWalletd");
+          await this.$store.dispatch("address/fetchBalances");
+
           this.display = false;
         } catch (e) {
           this.createError = e.message.includes("already exists")

@@ -25,7 +25,7 @@
         <v-tab-item>
           <v-data-table
             :headers="[{text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}]"
-            :items="fctAddressesWithNames"
+            :items="fctAddresses"
             disable-initial-sort
             :rows-per-page-items="[10, 25, { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }]"
             class="elevation-1"
@@ -49,8 +49,8 @@
         </v-tab-item>
         <v-tab-item>
           <v-data-table
-            :headers="[{text: '', value: 'prefered', sortable: false}, {text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}]"
-            :items="ecAddressesWithNames"
+            :headers="[{text: '', value: 'prefered', sortable: false}, {text: 'Address', value: 'address'}, {text: 'Balance', value: 'balance'}, {text: 'Name', value: 'name'}]"
+            :items="ecAddresses"
             disable-initial-sort
             :rows-per-page-items="[10, 25, { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }]"
             class="elevation-1"
@@ -61,6 +61,7 @@
                 <v-icon v-else @click="setPreferredEcAddress(props.item.address)">star_outline</v-icon>
               </td>
               <td>{{ props.item.address }}</td>
+              <td>{{ props.item.balance }}</td>
               <td>
                 <v-edit-dialog lazy>
                   {{ props.item.name}}
@@ -109,12 +110,16 @@ export default {
     preferredEcAddress() {
       return this.$store.state.address.preferredEcAddress;
     },
-    fctAddressesWithNames() {
+    fctAddresses() {
       return this.$store.getters["address/fctAddressesWithNames"];
     },
-    ecAddressesWithNames() {
+    ecAddresses() {
+      const balances = this.$store.state.address.ecBalances;
       return this.$store.getters["address/ecAddressesWithNames"].map(o =>
-        Object.assign(o, { preferred: o.address === this.preferredEcAddress })
+        Object.assign(o, {
+          preferred: o.address === this.preferredEcAddress,
+          balance: balances[o.address]
+        })
       );
     },
     walletdOk() {
