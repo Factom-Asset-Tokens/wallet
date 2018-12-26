@@ -25,7 +25,7 @@
 
       <v-tooltip id="settings-link" right>
         <v-btn icon flat large slot="activator" color="white" exact to="/settings">
-          <v-badge v-if="settingsAlert" color="error" right overlap>
+          <v-badge v-if="daemonsKo" color="error" right overlap>
             <span slot="badge">!</span>
             <v-icon large>settings</v-icon>
           </v-badge>
@@ -38,18 +38,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "SideBar",
   computed: {
-    ...mapState({
-      walletdStatus: state => state.walletd.status,
-      fatdStatus: state => state.fatd.status
-    }),
-    settingsAlert() {
-      return this.walletdStatus === "ko" || this.fatdStatus === "ko";
-    },
+    ...mapGetters(["daemonsKo"]),
     trackedTokens() {
       return Object.values(this.$store.state.tokens.tracked);
     }

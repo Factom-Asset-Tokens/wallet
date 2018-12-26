@@ -22,7 +22,7 @@ export default new Vuex.Store({
         identity
     },
     getters: {
-        daemonsOk: state => state.fatd.status === 'ok' && state.walletd.status === 'ok'
+        daemonsKo: state => state.fatd.status === 'ko' || state.walletd.status === 'ko' || state.factomd.status === 'ko'
     }, actions: {
         async init({ dispatch }) {
             await Promise.all([

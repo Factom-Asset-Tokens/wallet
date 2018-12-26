@@ -29,7 +29,7 @@ export default {
             const cli = getters.cli;
             commit('updateStatus', "checking");
             return cli.call('properties')
-                .then(() => commit('updateStatus', "ok"))
+                .then(r => r.walletversion ? commit('updateStatus', "ok") : commit('updateStatus', "ko"))
                 .catch(() => commit('updateStatus', "ko"));
         }
     }
