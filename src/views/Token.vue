@@ -21,7 +21,7 @@
     </template>
     <v-layout v-else row>
       <v-flex xs12 sm8 offset-sm2>
-        <v-alert :value="true" type="info">This token has not yet been issued.</v-alert>
+        <v-alert value="true" type="info" outline>This token has not yet been issued.</v-alert>
       </v-flex>
     </v-layout>
   </v-container>

@@ -1,0 +1,11 @@
+{
+  "title": "Coinbase recipients schema",
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^FA[a-zA-Z1-9]{50}$": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  }
+}

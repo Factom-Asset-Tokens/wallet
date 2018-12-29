@@ -8,7 +8,7 @@
         <v-btn color="primary" large block :to="{name: 'IssueToken'}"><v-icon left>create</v-icon> Issue a new token</v-btn>
       </v-flex>
       <v-flex xs12 sm6 offset-sm3 my-4>
-        <v-btn color="primary" large block><v-icon left>send</v-icon> Create a coinbase transaction</v-btn>
+        <v-btn color="primary" large block :to="{name: 'CoinbaseTransaction'}"><v-icon left>send</v-icon> Create a coinbase transaction</v-btn>
       </v-flex>
     </v-layout>
   </v-container>

@@ -4,6 +4,7 @@ import TrackToken from './views/TrackToken.vue'
 import Settings from './views/Settings.vue'
 import Token from './views/Token.vue'
 import IssueToken from './views/IssueToken.vue'
+import CoinbaseTransaction from './views/CoinbaseTransaction.vue'
 import Actions from './views/Actions.vue'
 
 Vue.use(Router)
@@ -37,6 +38,11 @@ export default new Router({
       path: '/token/:chainid',
       name: 'Token',
       component: Token
+    },
+    {
+      path: '/coinbase-transaction',
+      name: 'CoinbaseTransaction',
+      component: CoinbaseTransaction
     }
   ]
 })
