@@ -1,5 +1,4 @@
-// TODO: replace by fatd-js client
-import axios from "axios";
+import { CLIBuilder } from "fat-js";
 
 export default {
     namespaced: true,
@@ -11,7 +10,10 @@ export default {
         status: null,
     },
     getters: {
-        cli: state => axios.create({ baseURL: `http://${state.config.host}:${state.config.port}/v0` })
+        cli: state => new CLIBuilder()
+            .host(state.config.host)
+            .port(state.config.port)
+            .build()
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
@@ -25,15 +27,7 @@ export default {
         checkStatus({ commit, getters }) {
             const cli = getters.cli;
             commit('updateStatus', "checking");
-            return cli.post('', {
-                jsonrpc: "2.0",
-                method: "get-stats",
-                params: {
-                    "chain-id":
-                        "8eaed885426782315ac89e8c3688a539af6d2c1d5ee27372802e931877b8d325"
-                },
-                id: "5"
-            })
+            return cli.getDaemonProperties()
                 .then(() => commit('updateStatus', "ok"))
                 .catch(() => commit('updateStatus', "ko"));
         }

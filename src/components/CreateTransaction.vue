@@ -1,5 +1,5 @@
 <template>
-  <CreateTransactionFat0 v-if="type === 0" :balances="balances" :symbol="symbol"></CreateTransactionFat0>
+  <CreateTransactionFat0 v-if="type === 'FAT-0'" :balances="balances" :symbol="symbol"></CreateTransactionFat0>
 </template>
 
 <script>

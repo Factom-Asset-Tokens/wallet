@@ -52,7 +52,7 @@ export default {
     getTokenIcon(token) {
       return token.metadata && token.metadata.iconSrc
         ? token.metadata.iconSrc
-        : "https://png.icons8.com/dotty/40/000000/help.png";
+        : "/img/token-no-icon.png";
     },
     getTokenTooltip(token) {
       return token.issuance && token.issuance.name

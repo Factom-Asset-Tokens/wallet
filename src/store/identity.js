@@ -5,8 +5,9 @@ export default {
     namespaced: true,
     state: {
         identities: {
-            '44f7e377f62fe5e760cd4e3e1f34ea26fc6b0a6628a5246ef4296f0f509f6dc1': [],
-            'e94783624ebe76c2321b69d063c6b80a074a55ca9b16ac27dc90bfaacd474856': []
+            '24b44809c6c81a90b58e317538730d40af59c9d6c73a0c0a15e74146fab25881': [],
+            'b64176a23701b7c07da5b05442c126cc554ed56addce475971d326f0226c25db': [],
+            '8888881570f89283f3a516b6e5ed240f43f5ad7cb05132378c4a006abe7c2b93': []
         },
         identityKeysInWallet: new Set()
     },
@@ -51,6 +52,10 @@ export default {
             await Promise.all(Object.keys(state.identities)
                 .map(chainId => manager.getActivePublicIdentityKeys(chainId)
                     .then(keys => identities[chainId] = keys)
+                    .catch(e => {
+                        console.error(e.message);
+                        identities[chainId] = []
+                    })
                 ));
 
             commit('updateIdentities', identities);

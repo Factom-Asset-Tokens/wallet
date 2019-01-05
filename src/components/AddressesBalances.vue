@@ -1,5 +1,5 @@
 <template>
-  <AddressesBalancesFat0 v-if="type === 0" :balances="balances" :symbol="symbol"></AddressesBalancesFat0>
+  <AddressesBalancesFat0 v-if="type === 'FAT-0'" :balances="balances" :symbol="symbol"></AddressesBalancesFat0>
 </template>
 
 <script>

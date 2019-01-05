@@ -1,13 +1,13 @@
 {
     "f76248f405935e79c7b8a14a68f42fc32b7e5d76240767544494dbe7cb2b90aa": {
         "tokenId": "coffee-coin",
-        "issuer": "44f7e377f62fe5e760cd4e3e1f34ea26fc6b0a6628a5246ef4296f0f509f6dc1",
+        "issuer": "24b44809c6c81a90b58e317538730d40af59c9d6c73a0c0a15e74146fab25881",
         "chainId": "f76248f405935e79c7b8a14a68f42fc32b7e5d76240767544494dbe7cb2b90aa",
         "metadata": {
             "iconSrc": "https://png.icons8.com/color/80/5ECCDD/java-coffee-bean-logo.png"
         },
         "issuance": {
-            "type": 0,
+            "type": "FAT-0",
             "name": "Coffee Coin",
             "supply": 100000000,
             "symbol": "COF",
@@ -22,15 +22,10 @@
             "iconSrc": "https://png.icons8.com/dusk/50/000000/physics.png"
         },
         "issuance": {
-            "type": 1,
+            "type": "FAT-1",
             "name": "Science Coin",
             "supply": 10000000000,
             "symbol": "SCI"
         }
-    },
-    "b1171e7f27bed0409ab901f463417b2f9a950d898ebe529756e4303a04288773": {
-        "tokenId": "not-yet-issued-coin",
-        "issuer": "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66",
-        "chainId": "b1171e7f27bed0409ab901f463417b2f9a950d898ebe529756e4303a04288773"
     }
 }

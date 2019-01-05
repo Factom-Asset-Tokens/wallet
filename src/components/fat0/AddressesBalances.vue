@@ -7,7 +7,6 @@
       :headers="[{text: 'Address', value: 'address', sortable: false},
       {text: 'Name', value: 'name', sortable: false},
        {text: 'Balance', value: 'balance', align: 'right'}]"
-      :rows-per-page-items="[10, 25, { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }]"
       :items="balances"
       disable-initial-sort
     >
@@ -25,7 +24,7 @@ export default {
   props: ["balances", "symbol"],
   computed: {
     totalBalance() {
-      return this.balances.reduce((acc, val) => acc + val.balance, 0);
+      return this.balances.reduce((acc, val) => acc + val.balance, 0).toLocaleString();
     }
   }
 };

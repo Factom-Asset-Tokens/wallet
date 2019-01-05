@@ -25,12 +25,18 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <v-snackbar v-model="snackError" color="error" :timeout="5000">
+      {{ snackErrorMessage }}
+      <v-btn dark flat @click="snackError = false">Close</v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script>
 export default {
   data: () => ({
+    snackError: false,
+    snackErrorMessage: '',
     valid: true,
     tokenChainId: "",
     tokenChainIdRules: [
@@ -40,9 +46,26 @@ export default {
   }),
 
   methods: {
-    submit() {
+    async submit() {
       if (this.$refs.form.validate()) {
-        // TODO
+        const cli = this.$store.getters["fatd/cli"];
+        const tokenCli = cli.getTokenCLI(this.tokenChainId);
+        const result = await tokenCli.getIssuance();
+
+        if (result) {
+          const token = {
+            chainId: result.chainid,
+            issuer: result.issuerid,
+            tokenId: result.tokenid,
+            issuance: result.issuance
+          }
+
+          this.$store.commit("tokens/trackToken", token);
+          this.$router.push({ path: `/token/${this.tokenChainId}` });
+        } else {
+          this.snackError = true;
+          this.snackErrorMessage = `Failed to retrieve token issuance.`;
+        }
       }
     },
     clear() {

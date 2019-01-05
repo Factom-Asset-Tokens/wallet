@@ -11,6 +11,7 @@
   "dependencies": {
     "ajv": "^6.6.2",
     "axios": "^0.18.0",
+    "bluebird": "^3.5.3",
     "factom": "1.0.0-rc4",
     "factom-identity-lib": "^0.2.0-rc4",
     "jsoneditor": "^5.26.3",

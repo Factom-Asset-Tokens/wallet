@@ -13,14 +13,7 @@
               </v-flex>
               <template v-if="tokenChainId">
                 <v-flex xs12 v-if="canEmitCoinbaseTransaction">
-                  <v-layout wrap>
-                    <v-flex xs2 my-2>Maximum supply:</v-flex>
-                    <v-flex xs10 my-2>{{maxSupplyText}}</v-flex>
-                    <v-flex xs2 my-2>Circulating supply:</v-flex>
-                    <v-flex xs10 my-2>{{circulatingSupplyText}}</v-flex>
-                    <v-flex xs2 my-2>Remaining supply:</v-flex>
-                    <v-flex xs10 my-2>{{remainingSupplyText}}</v-flex>
-                  </v-layout>
+                  <TokenSupplyDetails :chainId="token.chainId" :symbol="symbol"></TokenSupplyDetails>
                 </v-flex>
                 <v-flex xs12>
                   <v-alert :value="!canEmitCoinbaseTransaction" type="error" outline>
@@ -65,6 +58,7 @@
 </template>
 
 <script>
+import TokenSupplyDetails from "@/components/TokenSupplyDetails";
 import JsonEditor from "@/components/JsonEditor";
 import recipientsSchema from "@/json-schemas/coinbase-recipients.json";
 import { isValidFctPublicAddress } from "factom";
@@ -73,7 +67,7 @@ const ajv = new Ajv();
 const validateRecipientsJson = ajv.compile(recipientsSchema);
 
 export default {
-  components: { JsonEditor },
+  components: { JsonEditor, TokenSupplyDetails },
   data() {
     return {
       recipientsSchema,
@@ -81,7 +75,8 @@ export default {
       error: "",
       recipients: {
         FA24PAtyZWWVAPm95ZCVpwyY6RYHeCMTiZt2v4VQAY8aBXMUZyeF: 1
-      }
+      },
+      remainingSupply: -1
     };
   },
   computed: {
@@ -90,31 +85,6 @@ export default {
     },
     symbol() {
       return this.token ? this.token.issuance.symbol : undefined;
-    },
-    maxSupply() {
-      return this.token.issuance.supply;
-    },
-    maxSupplyText() {
-      return this.maxSupply
-        ? `${this.maxSupply.toLocaleString()} ${this.symbol}`
-        : "Infinite";
-    },
-    circulatingSupply() {
-      // TODO: get from fatd stats
-      return 0;
-    },
-    circulatingSupplyText() {
-      return `${this.circulatingSupply.toLocaleString()} ${this.symbol}`;
-    },
-    remainingSupply() {
-      return this.maxSupply
-        ? this.maxSupply - this.circulatingSupply
-        : undefined;
-    },
-    remainingSupplyText() {
-      return this.remainingSupply
-        ? `${this.remainingSupply.toLocaleString()} ${this.symbol}`
-        : "Infinite";
     },
     trackedTokens() {
       return Object.values(this.$store.state.tokens.tracked)
@@ -161,7 +131,7 @@ export default {
         }
 
         if (
-          this.remainingSupply === undefined ||
+          this.remainingSupply === -1 ||
           totalAmount <= this.remainingSupply
         ) {
           return true;
@@ -175,6 +145,20 @@ export default {
         }
       } else {
         this.error = "JSON content doesn't respect the expected format.";
+      }
+    }
+  },
+  watch: {
+    async tokenChainId() {
+      const cli = this.$store.getters["fatd/cli"];
+      const { burned, circulating, supply } = await cli
+        .getTokenCLI(this.tokenChainId)
+        .getStats();
+
+      if (supply === -1) {
+        this.remainingSupply = -1;
+      } else {
+        this.remainingSupply = supply - circulating - burned;
       }
     }
   }
