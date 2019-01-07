@@ -56,10 +56,8 @@ export default {
       address: "",
       amount: 0,
       valid: true,
-      sending: false,
-      transactionSentMessage: "",
       snackError: false,
-      snackErrorMessage: '',
+      snackErrorMessage: "",
       addressRules: [
         v => isValidFctPublicAddress(v) || "Invalid public FCT address"
       ]
@@ -96,21 +94,7 @@ export default {
     async send(e) {
       e.preventDefault();
       if (this.$refs.form.validate()) {
-        try {
-          this.sending = true;
-
-          const tx = await this.buildTransaction();
-          const txId = await this.sendTransaction(tx);
-
-          this.transactionSentMessage = `Transaction successfully sent. Transaction ID: ${txId}`;
-          this.$refs.form.reset();
-        } catch (e) {
-          this.snackError = true;
-          this.snackErrorMessage = e.message;
-          console.error(e);
-        } finally {
-          this.sending = false;
-        }
+        this.sendTransaction();
       }
     },
     async buildTransaction() {

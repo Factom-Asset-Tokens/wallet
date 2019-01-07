@@ -59,8 +59,9 @@ export default {
       return this.balances
         .filter(
           b =>
-            !this.alreadySelectedAddresses.has(b.address) ||
-            b.address === that.address
+            b.balance > 0 &&
+            (!this.alreadySelectedAddresses.has(b.address) ||
+              b.address === that.address)
         )
         .map(b => ({
           value: b.address,

@@ -2,8 +2,31 @@ import { tryParseApiErrorCode } from "../components/common";
 import { Entry } from "factom";
 
 export default {
+    data() {
+        return {
+            sending: false,
+            transactionSentMessage: ""
+        }
+    },
     methods: {
-        async sendTransaction(tx) {
+        async sendTransaction() {
+            try {
+                this.sending = true;
+                
+                const tx = await this.buildTransaction();
+                const txId = await this.broadcastTransaction(tx);
+
+                this.transactionSentMessage = `Transaction successfully sent. Transaction ID: ${txId}`;
+                this.$refs.form.reset();
+            } catch (e) {
+                this.snackError = true;
+                this.snackErrorMessage = e.message;
+                console.error(e);
+            } finally {
+                this.sending = false;
+            }
+        },
+        async broadcastTransaction(tx) {
             try {
                 const { entryhash } = await this.tokenCli.sendTransaction(tx);
                 return entryhash;

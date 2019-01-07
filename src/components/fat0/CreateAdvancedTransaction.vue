@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="validForm" ref="form" lazy-validation>
+  <v-form v-model="validForm" ref="form" @submit="send" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
         <v-toolbar>
@@ -79,16 +79,31 @@
         </v-flex>
 
         <v-flex xs12 sm2 text-xs-right>
-          <v-btn large :disabled="!validForm" @click="send">Send<v-icon right>send</v-icon></v-btn>
+          <v-btn large :disabled="!validForm" type="submit" :loading="sending">Send
+            <v-icon right>send</v-icon>
+          </v-btn>
+        </v-flex>
+        <v-flex xs12>
+          <v-alert :value="transactionSentMessage" type="success" outline>{{transactionSentMessage}}</v-alert>
         </v-flex>
       </v-layout>
     </v-layout>
+    <v-snackbar v-model="snackError" color="error" :timeout="5000">
+      {{ snackErrorMessage }}
+      <v-btn dark flat @click="snackError = false">Close</v-btn>
+    </v-snackbar>
   </v-form>
 </template>
 
 <script>
+import Promise from "bluebird";
 import { isValidFctPublicAddress } from "factom";
+import SendTransaction from "@/mixins/SendTransaction";
 import TransactionInput from "@/components/fat0/TransactionInput";
+import { FAT0 } from "fat-js";
+const {
+  Transaction: { TransactionBuilder }
+} = FAT0;
 
 const newInoutput = (function() {
   let i = 0;
@@ -99,6 +114,7 @@ const newInoutput = (function() {
 
 export default {
   components: { TransactionInput },
+  mixins: [SendTransaction],
   data() {
     return {
       sendClicked: false,
@@ -106,10 +122,12 @@ export default {
       validTransaction: true,
       transactionError: "",
       inputs: [],
-      outputs: []
+      outputs: [],
+      snackError: false,
+      snackErrorMessage: ""
     };
   },
-  props: ["balances", "symbol"],
+  props: ["balances", "symbol", "tokenCli"],
   created() {
     this.add("inputs");
     this.add("outputs");
@@ -156,13 +174,43 @@ export default {
     deleteInoutput(type, id) {
       this[type] = this[type].filter(v => v.id !== id);
     },
-    send() {
+    async send(e) {
+      e.preventDefault();
+      this.transactionSentMessage = "";
+
       if (this.$refs.form.validate()) {
         this.sendClicked = true;
         if (this.validTransaction) {
-          console.log("SEND");
+          this.sendClicked = false;
+          await this.sendTransaction();
+          if (this.transactionSentMessage) {
+            this.inputs = [newInoutput()];
+            this.outputs = [newInoutput()];
+          }
         }
       }
+    },
+    async buildTransaction() {
+      const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId());
+
+      // Get inputs secret keys
+      const walletd = this.$store.getters["walletd/cli"];
+      const inputsSecrets = await Promise.map(this.inputs, async function(
+        input
+      ) {
+        const { secret } = await walletd.call("address", {
+          address: input.address
+        });
+        return { secret, amount: input.amount };
+      });
+      for (const input of inputsSecrets) {
+        txBuilder.input(input.secret, input.amount);
+      }
+      for (const output of this.outputs) {
+        txBuilder.output(output.address, output.amount);
+      }
+
+      return txBuilder.build();
     }
   },
   watch: {
