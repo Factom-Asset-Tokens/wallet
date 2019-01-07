@@ -66,7 +66,7 @@ export default {
     },
     identityTreeItems() {
       const that = this;
-      return Object.keys(this.identities).map(function(chainId) {
+      return Object.keys(this.identities).sort().map(function(chainId) {
         const keys = that.identities[chainId].map(key => ({
           name: key,
           available: that.identityKeysInWallet.has(key)
