@@ -25,7 +25,7 @@
 
       <v-slide-y-transition>
         <v-card-text v-show="showDetails">
-          <div>{{description}}</div>
+          <div>Chain ID: {{token.chainId}}</div>
 
           <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
         </v-card-text>

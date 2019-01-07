@@ -35,6 +35,7 @@
 
 <script>
 const HEX_REGEXP = /^[0-9a-fA-F]+$/;
+import { tryParseApiErrorCode } from "../components/common";
 
 export default {
   data: () => ({
@@ -70,7 +71,7 @@ export default {
           this.$store.commit("tokens/trackToken", token);
           this.$router.push({ path: `/token/${this.tokenChainId}` });
         } catch (e) {
-          const code = JSON.parse(e.message).code;
+          const code = tryParseApiErrorCode(e);
           if (code === -32800) {
             this.snackErrorMessage = "Token not found.";
           } else {

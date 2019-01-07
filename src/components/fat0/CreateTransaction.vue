@@ -1,11 +1,22 @@
 <template>
   <v-flex>
-    <h1>Transaction -
+    <h1>
+      Transaction -
       <a @click="toggleMode">{{mode | capitalize}}</a>
     </h1>
 
-    <CreateAdvancedTransaction v-show="mode==='advanced'" :balances="balances" :symbol="symbol"></CreateAdvancedTransaction>
-    <CreateBasicTransaction v-show="mode==='basic'" :balances="balances" :symbol="symbol"></CreateBasicTransaction>
+    <CreateAdvancedTransaction
+      v-show="mode==='advanced'"
+      :balances="balances"
+      :symbol="symbol"
+      :tokenCli="tokenCli"
+    ></CreateAdvancedTransaction>
+    <CreateBasicTransaction
+      v-show="mode==='basic'"
+      :balances="balances"
+      :symbol="symbol"
+      :tokenCli="tokenCli"
+    ></CreateBasicTransaction>
   </v-flex>
 </template>
 
@@ -20,7 +31,7 @@ export default {
       mode: "basic"
     };
   },
-  props: ["balances", "symbol"],
+  props: ["balances", "symbol", "tokenCli"],
   methods: {
     toggleMode() {
       if (this.mode === "advanced") {

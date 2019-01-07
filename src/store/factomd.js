@@ -1,4 +1,4 @@
-import { FactomdCli } from "factom";
+import { FactomCli } from "factom";
 
 export default {
     namespaced: true,
@@ -10,10 +10,17 @@ export default {
         status: null
     },
     getters: {
-        cli: state => new FactomdCli({
-            host: state.config.host,
-            port: state.config.port,
-            retry: { retries: 0 }
+        cli: (state, getters, rootState) => new FactomCli({
+            factomd: {
+                host: state.config.host,
+                port: state.config.port,
+                retry: { retries: 0 }
+            },
+            walletd: {
+                host: rootState.walletd.config.host,
+                port: rootState.walletd.config.port,
+                retry: { retries: 0 }
+            }
         })
     },
     mutations: {
@@ -28,7 +35,7 @@ export default {
         checkStatus({ commit, getters }) {
             const cli = getters.cli;
             commit('updateStatus', "checking");
-            return cli.call('properties')
+            return cli.factomdApi('properties')
                 .then(r => r.factomdversion ? commit('updateStatus', "ok") : commit('updateStatus', "ko"))
                 .catch(() => commit('updateStatus', "ko"));
         }

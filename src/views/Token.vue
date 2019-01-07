@@ -17,6 +17,7 @@
           :type="token.issuance.type"
           :balances="balances"
           :symbol="token.issuance.symbol"
+          :tokenCli="tokenCli"
         ></CreateTransaction>
       </v-layout>
     </template>
@@ -39,14 +40,15 @@ export default {
   components: { TokenHeader, AddressesBalances, CreateTransaction },
   data() {
     return {
-      balances: []
+      balances: [],
+      intervalId: 0
     };
   },
   computed: {
     chainId() {
       return this.$route.params.chainid;
     },
-    fatdCli() {
+    tokenCli() {
       const cli = this.$store.getters["fatd/cli"];
       return cli.getTokenCLI(this.chainId);
     },
@@ -56,11 +58,11 @@ export default {
   },
   methods: {
     async fetchBalances() {
-      const fatdCli = this.fatdCli;
+      const tokenCli = this.tokenCli;
       const addresses = this.$store.getters["address/fctAddressesWithNames"];
 
       this.balances = await Promise.map(addresses, async function(address) {
-        const balance = await fatdCli.getBalance(address.address);
+        const balance = await tokenCli.getBalance(address.address);
         return Object.assign({ balance }, address);
       });
     }
@@ -71,8 +73,15 @@ export default {
       this.fetchBalances();
     }
   },
-  mounted() {
+  created() {
     this.fetchBalances();
+    const that = this;
+    this.intervalId = setInterval(function() {
+      that.fetchBalances();
+    }, 5000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   }
 };
 </script>

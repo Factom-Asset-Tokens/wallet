@@ -59,7 +59,7 @@ export default {
         },
         async fetchBalances({ state, commit, rootGetters }) {
             const cli = rootGetters['factomd/cli'];
-            const { balances } = await cli.call('multiple-ec-balances', { addresses: state.ecAddresses });
+            const { balances } = await cli.factomdApi('multiple-ec-balances', { addresses: state.ecAddresses });
             const ecBalances = {};
             for (let i = 0; i < state.ecAddresses.length; ++i) {
                 ecBalances[state.ecAddresses[i]] = balances[i].ack;

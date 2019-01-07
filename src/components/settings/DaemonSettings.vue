@@ -13,7 +13,7 @@
                   <v-text-field label="Host" v-model.trim="factomdHost"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm2>
-                  <v-text-field label="Port" type="number" v-model="factomdPort"></v-text-field>
+                  <v-text-field label="Port" type="number" v-model.number="factomdPort"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -28,7 +28,7 @@
                   <v-text-field label="Host" v-model.trim="fatdHost"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm2>
-                  <v-text-field label="Port" type="number" v-model="fatdPort"></v-text-field>
+                  <v-text-field label="Port" type="number" v-model.number="fatdPort"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -43,7 +43,7 @@
                   <v-text-field label="Host" v-model.trim="walletdHost"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm2>
-                  <v-text-field label="Port" type="number" v-model="walletdPort"></v-text-field>
+                  <v-text-field label="Port" type="number" v-model.number="walletdPort"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
