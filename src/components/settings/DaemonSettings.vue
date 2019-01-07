@@ -1,18 +1,18 @@
 <template>
-  <v-layout>
-    <v-flex xs12>
-      <v-card>
-        <v-card-text>
+  <v-sheet elevation="1">
+    <v-container>
+      <v-layout>
+        <v-flex xs12>
           <div>
             <h2>Factom Daemon
               <DaemonStatus :status="factomdStatus"></DaemonStatus>
             </h2>
             <v-container>
               <v-layout row wrap>
-                <v-flex xs12 sm10>
+                <v-flex xs12 sm9>
                   <v-text-field label="Host" v-model.trim="factomdHost"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm2>
+                <v-flex xs12 sm2 offset-sm1>
                   <v-text-field label="Port" type="number" v-model.number="factomdPort"></v-text-field>
                 </v-flex>
               </v-layout>
@@ -24,10 +24,10 @@
             </h2>
             <v-container>
               <v-layout row wrap>
-                <v-flex xs12 sm10>
+                <v-flex xs12 sm9>
                   <v-text-field label="Host" v-model.trim="fatdHost"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm2>
+                <v-flex xs12 sm2 offset-sm1>
                   <v-text-field label="Port" type="number" v-model.number="fatdPort"></v-text-field>
                 </v-flex>
               </v-layout>
@@ -39,19 +39,19 @@
             </h2>
             <v-container>
               <v-layout row wrap>
-                <v-flex xs12 sm10>
+                <v-flex xs12 sm9>
                   <v-text-field label="Host" v-model.trim="walletdHost"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm2>
+                <v-flex xs12 sm2 offset-sm1>
                   <v-text-field label="Port" type="number" v-model.number="walletdPort"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
           </div>
-        </v-card-text>
-      </v-card>
-    </v-flex>
-  </v-layout>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </v-sheet>
 </template>
 
 <script>
