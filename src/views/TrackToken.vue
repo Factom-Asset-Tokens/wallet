@@ -68,7 +68,7 @@ export default {
             issuance: result.issuance
           };
 
-          this.$store.commit("tokens/trackToken", token);
+          this.$store.commit("tokens/track", token);
           this.$router.push({ path: `/token/${this.tokenChainId}` });
         } catch (e) {
           const code = tryParseApiErrorCode(e);

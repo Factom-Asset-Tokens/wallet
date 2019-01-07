@@ -24,11 +24,15 @@
       </v-card-actions>
 
       <v-slide-y-transition>
-        <v-card-text v-show="showDetails">
-          <div>Chain ID: {{token.chainId}}</div>
-
-          <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
-        </v-card-text>
+        <v-container v-show="showDetails">
+          <v-layout wrap>
+            <v-flex xs12 my-2>Chain ID: {{token.chainId}}</v-flex>
+            <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
+            <v-flex xs12 text-xs-right>
+              <v-btn color="primary" @click="untrack">untrack</v-btn>
+            </v-flex>
+          </v-layout>
+        </v-container>
       </v-slide-y-transition>
     </v-card>
   </v-flex>
@@ -62,6 +66,12 @@ export default {
     },
     description() {
       return this.token.issuance.description;
+    }
+  },
+  methods: {
+    untrack() {
+      this.$store.commit("tokens/untrack", this.token.chainId);
+      this.$router.push({ name: "Actions" });
     }
   }
 };

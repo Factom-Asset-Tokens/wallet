@@ -6,12 +6,12 @@ export default {
         tracked: tokens,
     },
     mutations: {
-        trackToken(state, token) {
+        track(state, token) {
             const copy = { ...state.tracked };
             copy[token.chainId] = token;
             state.tracked = copy;
         },
-        untrackToken(state, tokenChainId) {
+        untrack(state, tokenChainId) {
             const copy = { ...state.tracked };
             delete copy[tokenChainId];
             state.tracked = copy;
