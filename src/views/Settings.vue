@@ -2,7 +2,7 @@
   <v-container>
     <AddressSettings class="section-margin-bottom"></AddressSettings>
     <IdentitySettings class="section-margin-bottom"></IdentitySettings>
-    <DaemonSettings class="section-margin-bottom"></DaemonSettings>
+    <DaemonSettings></DaemonSettings>
   </v-container>
 </template>
 

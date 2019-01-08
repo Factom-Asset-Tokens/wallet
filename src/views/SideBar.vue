@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer width="120" class="primary" permanent app>
     <v-layout align-center column fill-height>
-      <v-tooltip right v-for="token in trackedTokens" v-bind:key="token.chainId">
+      <v-tooltip class="token-margin" right v-for="token in trackedTokens" v-bind:key="token.chainId">
         <v-btn
           fab
           depressed
@@ -16,7 +16,7 @@
         <span>{{getTokenTooltip(token)}}</span>
       </v-tooltip>
 
-      <v-tooltip right>
+      <v-tooltip class="token-margin" right>
         <v-btn fab outline large slot="activator" color="white" exact :to="{name: 'Actions'}">
           <v-icon>more_horiz</v-icon>
         </v-btn>
@@ -68,6 +68,10 @@ a {
   outline: 0;
   border: none;
   outline-style: none;
+}
+
+.token-margin {
+  margin-top: 8px;
 }
 
 .token-icon {

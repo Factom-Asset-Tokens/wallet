@@ -27,7 +27,11 @@
         <v-sheet>
           <v-container v-show="showDetails">
             <v-layout wrap>
-              <v-flex xs12 my-2>Chain ID: {{token.chainId}}</v-flex>
+              <v-flex xs2 my-2>Chain ID:</v-flex>
+              <v-flex xs10 my-2>{{token.chainId}}</v-flex>
+              <v-flex xs2 my-2>Issuer:</v-flex>
+              <v-flex xs10 my-2>{{token.issuer}}</v-flex>
+
               <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
               <v-flex xs12 text-xs-right>
                 <v-btn color="primary" @click="untrack">untrack</v-btn>
