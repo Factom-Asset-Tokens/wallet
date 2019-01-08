@@ -1,6 +1,6 @@
 <template>
-  <v-flex xs12 sm8 offset-sm2>
-    <v-card>
+  <v-flex xs12 md8 offset-md2>
+    <v-card color="primary">
       <v-card-text>
         <v-layout align-center justify-center wrap>
           <v-flex xs12 text-xs-center mb-4>
@@ -9,7 +9,7 @@
             </v-avatar>
           </v-flex>
 
-          <v-flex class="display-1" xs12 text-xs-center>
+          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center>
             {{name}}
             <template v-if="symbol">({{symbol}})</template>
           </v-flex>
@@ -24,15 +24,17 @@
       </v-card-actions>
 
       <v-slide-y-transition>
-        <v-container v-show="showDetails">
-          <v-layout wrap>
-            <v-flex xs12 my-2>Chain ID: {{token.chainId}}</v-flex>
-            <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
-            <v-flex xs12 text-xs-right>
-              <v-btn color="primary" @click="untrack">untrack</v-btn>
-            </v-flex>
-          </v-layout>
-        </v-container>
+        <v-sheet>
+          <v-container v-show="showDetails">
+            <v-layout wrap>
+              <v-flex xs12 my-2>Chain ID: {{token.chainId}}</v-flex>
+              <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
+              <v-flex xs12 text-xs-right>
+                <v-btn color="primary" @click="untrack">untrack</v-btn>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-sheet>
       </v-slide-y-transition>
     </v-card>
   </v-flex>

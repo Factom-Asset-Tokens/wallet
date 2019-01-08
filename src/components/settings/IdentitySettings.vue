@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex xs12>
       <v-card>
-        <v-toolbar card>
+        <v-toolbar card color="primary">
           <v-icon large>fingerprint</v-icon>
           <v-toolbar-title>Digital Identities</v-toolbar-title>
 

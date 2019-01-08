@@ -39,8 +39,7 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
-                  color="grey darken-1"
-                  flat
+                  color="primary"
                   :loading="loadingActiveKeys"
                   :disabled="!validStep1 || loadingActiveKeys"
                   type="submit"
@@ -87,8 +86,8 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="grey darken-1" flat @click="backStep()">Back</v-btn>
-                <v-btn color="grey darken-1" flat :disabled="!validStep2" type="submit">Import</v-btn>
+                <v-btn color="primary" flat outline @click="backStep()">Back</v-btn>
+                <v-btn color="primary" :disabled="!validStep2" type="submit">Import</v-btn>
               </v-card-actions>
             </v-form>
           </v-card>

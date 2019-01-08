@@ -18,7 +18,7 @@
               <TokenTypeStep v-model="type"></TokenTypeStep>
             </v-card-text>
             <v-card-actions>
-              <v-btn type="submit">Continue</v-btn>
+              <v-btn type="submit" color="primary">Continue</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -31,8 +31,8 @@
               <IssuerAndNameStep @input="setIssuerAndName"></IssuerAndNameStep>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="step = 1">Back</v-btn>
-              <v-btn :disabled="!validFormStep2" type="submit">Continue</v-btn>
+              <v-btn @click="step = 1" color="primary" flat outline>Back</v-btn>
+              <v-btn :disabled="!validFormStep2" type="submit" color="primary">Continue</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -45,8 +45,8 @@
               <TokenDetailsStep :type="type" ref="tokenDetails"></TokenDetailsStep>
             </v-card-text>
             <v-card-actions>
-              <v-btn @click="step = 2">Back</v-btn>
-              <v-btn :disabled="!validFormStep3" type="submit">Continue</v-btn>
+              <v-btn @click="step = 2" color="primary" flat outline>Back</v-btn>
+              <v-btn :disabled="!validFormStep3" type="submit" color="primary">Continue</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -63,8 +63,8 @@
             ></TokenSummaryStep>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click="step = 3">Back</v-btn>
-            <v-btn @click="issue">Issue token</v-btn>
+            <v-btn @click="step = 3" color="primary" flat outline>Back</v-btn>
+            <v-btn @click="issue" color="primary">Issue token</v-btn>
           </v-card-actions>
         </v-card>
       </v-stepper-content>

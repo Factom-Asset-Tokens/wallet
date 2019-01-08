@@ -1,10 +1,10 @@
 div.jsoneditor,
 div.jsoneditor-menu {
-    border-color: #BDBDBD;
+    border-color: #8CA1CD;
 }
 
 div.jsoneditor-menu {
-    background-color: #BDBDBD;
+    background-color: #8CA1CD;
 }
 
 div.jsoneditor-contextmenu ul li button.jsoneditor-selected, 
@@ -12,5 +12,5 @@ div.jsoneditor-contextmenu ul li button.jsoneditor-selected:focus,
 div.jsoneditor-contextmenu ul li button.jsoneditor-selected:hover
  {
     color: #fff;
-    background-color: #2196F3;
+    background-color: #EEB71C;
 }

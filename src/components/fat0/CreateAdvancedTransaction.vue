@@ -2,7 +2,7 @@
   <v-form v-model="validForm" ref="form" @submit="send" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
-        <v-toolbar>
+        <v-toolbar color="grey lighten-4" class="elevation-1">
           <v-toolbar-title>Inputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -25,7 +25,7 @@
         ></TransactionInput>
       </v-flex>
       <v-flex xs12 pb-4>
-        <v-toolbar>
+        <v-toolbar class="elevation-1">
           <v-toolbar-title>Outputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
@@ -79,7 +79,7 @@
         </v-flex>
 
         <v-flex xs12 sm2 text-xs-right>
-          <v-btn large :disabled="!validForm" type="submit" :loading="sending">Send
+          <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending">Send
             <v-icon right>send</v-icon>
           </v-btn>
         </v-flex>

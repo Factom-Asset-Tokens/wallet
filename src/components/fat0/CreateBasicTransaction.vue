@@ -25,7 +25,7 @@
         ></v-text-field>
       </v-flex>
       <v-flex xs12 md2 text-xs-right>
-        <v-btn large :disabled="!valid" type="submit" :loading="sending">Send
+        <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">Send
           <v-icon right>send</v-icon>
         </v-btn>
       </v-flex>

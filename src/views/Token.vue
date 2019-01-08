@@ -1,18 +1,18 @@
 <template>
   <v-container>
     <template v-if="token">
-      <v-layout row wrap class="section-margin-bottom">
+      <v-layout row wrap mb-4>
         <TokenHeader :token="token"></TokenHeader>
       </v-layout>
 
-      <v-layout row wrap class="section-margin-bottom">
+      <v-layout row wrap mb-4>
         <AddressesBalances
           :type="token.issuance.type"
           :balances="balances"
           :symbol="token.issuance.symbol"
         ></AddressesBalances>
       </v-layout>
-      <v-layout row wrap class="section-margin-bottom">
+      <v-layout row wrap>
         <CreateTransaction
           :type="token.issuance.type"
           :balances="balances"
@@ -87,7 +87,5 @@ export default {
 </script>
 
 <style scoped>
-.section-margin-bottom {
-  margin-bottom: 48px;
-}
+
 </style>

@@ -19,8 +19,8 @@
               ></v-text-field>
             </v-card-text>
             <v-card-actions>
-              <v-btn :disabled="!valid" type="submit">track</v-btn>
-              <v-btn @click="clear">clear</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn :disabled="!valid" type="submit" color="primary">track</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>

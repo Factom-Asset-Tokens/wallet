@@ -38,10 +38,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey darken-1" flat @click="display = false">Close</v-btn>
+        <v-btn color="primary" flat outline @click="display = false">Close</v-btn>
         <v-btn
-          color="grey darken-1"
-          flat
+          color="primary"
           @click="create"
           :disabled="!valid || createLoading"
           :loading="createLoading"

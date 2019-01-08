@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex xs12>
-      <v-toolbar tabs card>
+      <v-toolbar tabs card color="primary">
         <v-icon large>list</v-icon>
 
         <v-toolbar-title>Addresses</v-toolbar-title>
@@ -13,7 +13,7 @@
           <v-btn flat :disabled="!walletdOk" @click.stop="$refs.addressImportDialog.show()">Import</v-btn>
         </v-toolbar-items>
 
-        <v-tabs slot="extension" v-model="tab" grow>
+        <v-tabs slot="extension" v-model="tab" grow color="primary">
           <v-tabs-slider></v-tabs-slider>
 
           <v-tab>Factoid</v-tab>
