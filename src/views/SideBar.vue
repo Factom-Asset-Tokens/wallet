@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer width="100" class="primary" permanent app>
+  <v-navigation-drawer width="120" class="primary" permanent app>
     <v-layout align-center column fill-height>
       <v-tooltip right v-for="token in trackedTokens" v-bind:key="token.chainId">
         <v-btn
