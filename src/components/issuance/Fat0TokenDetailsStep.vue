@@ -61,7 +61,7 @@ export default {
     setInfiniteSupply(v) {
       this.infiniteSupply = v;
       if (v) {
-        this.$refs.supplyInput.reset();
+        this.supply = 0;
       }
     }
   }

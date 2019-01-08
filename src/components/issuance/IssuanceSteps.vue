@@ -56,6 +56,7 @@
         <v-card>
           <v-card-text>
             <TokenSummaryStep
+              :render="step === 4"
               :tokenId="tokenId"
               :issuerId="issuerId"
               :type="type"

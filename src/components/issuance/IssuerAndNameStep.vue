@@ -31,7 +31,7 @@ export default {
   }),
   computed: {
     identities() {
-      return Object.keys(this.$store.state.identity.identities);
+      return Object.keys(this.$store.state.identity.identities).sort();
     },
     identityRules() {
       const identityStore = this.$store.state.identity;
