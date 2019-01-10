@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <AddressSettings class="section-margin-bottom"></AddressSettings>
     <IdentitySettings class="section-margin-bottom"></IdentitySettings>
     <DaemonSettings></DaemonSettings>
   </v-container>
@@ -8,12 +7,11 @@
 
 <script>
 import DaemonSettings from "@/components/settings/DaemonSettings";
-import AddressSettings from "@/components/settings/AddressSettings";
 import IdentitySettings from "@/components/settings/IdentitySettings";
 
 export default {
   name: "Settings",
-  components: { DaemonSettings, AddressSettings, IdentitySettings },
+  components: { DaemonSettings, IdentitySettings },
   mounted() {
     this.$store.dispatch("init");
   }

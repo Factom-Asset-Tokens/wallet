@@ -8,6 +8,7 @@ export default {
         ecAddresses: [],
         ecBalances: {},
         fctAddresses: [],
+        fctBalances: {},
         addressesNames: {},
         preferredEcAddress: ''
     },
@@ -25,6 +26,8 @@ export default {
         updateEcAddresses: (state, addresses) => state.ecAddresses = addresses,
         updateEcBalances: (state, balances) => state.ecBalances = balances,
         updateFctAddresses: (state, addresses) => state.fctAddresses = addresses,
+        updateFctBalances: (state, balances) => state.fctBalances = balances,
+
         updateAddressNames(state, { address, name }) {
             const copy = { ...state.addressesNames };
             copy[address] = name;
@@ -57,7 +60,19 @@ export default {
             commit('updateEcAddresses', ec);
             commit('updateFctAddresses', fct);
         },
-        async fetchBalances({ state, commit, rootGetters }) {
+        async fetchBalances({ dispatch }) {
+            await Promise.all([dispatch('fetchFctBalances'), dispatch('fetchEcBalances')]);
+        },
+        async fetchFctBalances({ state, commit, rootGetters }) {
+            const cli = rootGetters['factomd/cli'];
+            const { balances } = await cli.factomdApi('multiple-fct-balances', { addresses: state.fctAddresses });
+            const fctBalances = {};
+            for (let i = 0; i < state.fctAddresses.length; ++i) {
+                fctBalances[state.fctAddresses[i]] = balances[i].ack;
+            }
+            commit('updateFctBalances', fctBalances);
+        },
+        async fetchEcBalances({ state, commit, rootGetters }) {
             const cli = rootGetters['factomd/cli'];
             const { balances } = await cli.factomdApi('multiple-ec-balances', { addresses: state.ecAddresses });
             const ecBalances = {};

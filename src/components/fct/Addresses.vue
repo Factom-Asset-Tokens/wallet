@@ -24,10 +24,10 @@
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-data-table
-            :headers="[{text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}]"
+            :headers="[{text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}, , {text: 'Balance', value: 'balance'}]"
             :items="fctAddresses"
             disable-initial-sort
-            :rows-per-page-items="[10, 25, { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }]"
+            :loading="loading"
             class="elevation-1"
           >
             <template slot="items" slot-scope="props">
@@ -44,15 +44,15 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
+              <td>{{ (props.item.balance / 100000000).toLocaleString(undefined, {maximumFractionDigits:8}) }}</td>
             </template>
           </v-data-table>
         </v-tab-item>
         <v-tab-item>
           <v-data-table
-            :headers="[{text: '', value: 'prefered', sortable: false}, {text: 'Address', value: 'address'}, {text: 'Balance', value: 'balance'}, {text: 'Name', value: 'name'}]"
+            :headers="[{text: '', value: 'prefered', sortable: false}, {text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}, {text: 'Balance', value: 'balance'}]"
             :items="ecAddresses"
             disable-initial-sort
-            :rows-per-page-items="[10, 25, { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 }]"
             class="elevation-1"
           >
             <template slot="items" slot-scope="props">
@@ -61,7 +61,6 @@
                 <v-icon v-else @click="setPreferredEcAddress(props.item.address)">star_outline</v-icon>
               </td>
               <td>{{ props.item.address }}</td>
-              <td>{{ props.item.balance }}</td>
               <td>
                 <v-edit-dialog lazy>
                   {{ props.item.name}}
@@ -74,6 +73,7 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
+              <td>{{ props.item.balance.toLocaleString() }}</td>
             </template>
           </v-data-table>
         </v-tab-item>
@@ -92,10 +92,9 @@
 </template>
 
 <script>
-import AddressImportDialog from "@/components/settings/AddressImportDialog";
+import AddressImportDialog from "@/components/fct/AddressImportDialog";
 
 export default {
-  name: "AddressSettings",
   components: { AddressImportDialog },
   data: function() {
     return {
@@ -103,23 +102,47 @@ export default {
       snackError: false,
       snackErrorMessage: "",
       snackSuccess: false,
-      snackSuccessMessage: ""
+      snackSuccessMessage: "",
+      loading: false
     };
+  },
+  async mounted() {
+    this.loading = true;
+    try {
+      await Promise.all([
+        this.$store.dispatch("walletd/checkStatus"),
+        this.$store.dispatch("factomd/checkStatus")
+      ]);
+      await this.$store.dispatch("address/init");
+    } finally {
+      this.loading = false;
+    }
   },
   computed: {
     preferredEcAddress() {
       return this.$store.state.address.preferredEcAddress;
     },
     fctAddresses() {
-      return this.$store.getters["address/fctAddressesWithNames"];
+      const balances = this.$store.state.address.fctBalances;
+      return this.$store.getters["address/fctAddressesWithNames"].map(o =>
+        Object.assign(
+          {
+            balance: balances[o.address] || 0
+          },
+          o
+        )
+      );
     },
     ecAddresses() {
       const balances = this.$store.state.address.ecBalances;
       return this.$store.getters["address/ecAddressesWithNames"].map(o =>
-        Object.assign(o, {
-          preferred: o.address === this.preferredEcAddress,
-          balance: balances[o.address]
-        })
+        Object.assign(
+          {
+            preferred: o.address === this.preferredEcAddress,
+            balance: balances[o.address] || 0
+          },
+          o
+        )
       );
     },
     walletdOk() {
@@ -141,7 +164,7 @@ export default {
       const cli = this.$store.getters["walletd/cli"];
       try {
         await cli.call(`generate-${this.selectedAddressType}-address`);
-        this.$store.dispatch("walletd/fetchData");
+        this.$store.dispatch("address/init");
         this.snackSuccessMessage = `New ${
           this.selectedAddressType
         } address generated`;

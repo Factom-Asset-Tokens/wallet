@@ -164,7 +164,7 @@ export default {
         .reduce((a, b) => a + b, 0);
     },
     validTransactionProperties() {
-      return this.totalInputs, this.totalOutputs, this.outputAddressesCounter;
+      return [this.totalInputs, this.totalOutputs, this.outputAddressesCounter];
     }
   },
   methods: {

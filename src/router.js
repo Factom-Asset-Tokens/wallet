@@ -6,6 +6,7 @@ import Token from './views/Token.vue'
 import IssueToken from './views/IssueToken.vue'
 import CoinbaseTransaction from './views/CoinbaseTransaction.vue'
 import Actions from './views/Actions.vue'
+import Factoid from './views/Factoid.vue'
 
 Vue.use(Router)
 
@@ -18,6 +19,11 @@ export default new Router({
       path: '/actions',
       name: 'Actions',
       component: Actions
+    },
+    {
+      path: '/fct',
+      name: 'Factoid',
+      component: Factoid
     },
     {
       path: '/track-token',

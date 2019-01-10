@@ -1,7 +1,27 @@
 <template>
   <v-navigation-drawer width="120" class="primary" permanent app>
     <v-layout align-center column fill-height>
-      <v-tooltip class="token-margin" right v-for="token in trackedTokens" v-bind:key="token.chainId">
+      <v-tooltip class="token-margin" right>
+        <v-btn
+          fab
+          depressed
+          large
+          slot="activator"
+          color="white"
+          exact
+          :to="`/fct`"
+        >
+          <img class="token-icon" src="/img/fct.png">
+        </v-btn>
+        <span>Factoid (FCT)</span>
+      </v-tooltip>
+
+      <v-tooltip
+        class="token-margin"
+        right
+        v-for="token in trackedTokens"
+        v-bind:key="token.chainId"
+      >
         <v-btn
           fab
           depressed
