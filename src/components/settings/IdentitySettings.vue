@@ -4,7 +4,11 @@
       <v-card>
         <v-toolbar card color="primary">
           <v-icon large>fingerprint</v-icon>
-          <v-toolbar-title>Digital Identities</v-toolbar-title>
+          <v-toolbar-title>Digital Identities
+            <v-btn flat icon color="grey darken-3" @click="identityInfoDialog = true">
+              <v-icon>help_outline</v-icon>
+            </v-btn>
+          </v-toolbar-title>
 
           <v-spacer></v-spacer>
 
@@ -43,6 +47,19 @@
     </v-flex>
     <IdentityImportDialog ref="identityImportDialog"></IdentityImportDialog>
     <CreateIdentityDialog ref="createIdentityDialog"></CreateIdentityDialog>
+    <v-dialog v-model="identityInfoDialog" max-width="800px">
+      <v-card>
+        <v-card-title class="headline primary white--text" primary-title>What are digital identities?</v-card-title>
+        <v-card-text>
+          <!-- TODO -->
+          Explain what are digital identities. How they are used in FAT.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="identityInfoDialog = false">Got it</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -54,7 +71,9 @@ import { mapState } from "vuex";
 export default {
   components: { IdentityImportDialog, CreateIdentityDialog },
   data: function() {
-    return {};
+    return {
+      identityInfoDialog: false
+    };
   },
   computed: {
     ...mapState({
@@ -66,21 +85,23 @@ export default {
     },
     identityTreeItems() {
       const that = this;
-      return Object.keys(this.identities).sort().map(function(chainId) {
-        const keys = that.identities[chainId].map(key => ({
-          name: key,
-          available: that.identityKeysInWallet.has(key)
-        }));
-        // TODO
-        // https://github.com/vuetifyjs/vuetify/issues/5531
-        // Add available/total keys to the right + grey out unavailable keys
-        // const totalKeys = keys.length;
-        // const availableKeys = keys.filter(k => k.available).length;
-        return {
-          name: `${chainId}`,
-          children: keys
-        };
-      });
+      return Object.keys(this.identities)
+        .sort()
+        .map(function(chainId) {
+          const keys = that.identities[chainId].map(key => ({
+            name: key,
+            available: that.identityKeysInWallet.has(key)
+          }));
+          // TODO
+          // https://github.com/vuetifyjs/vuetify/issues/5531
+          // Add available/total keys to the right + grey out unavailable keys
+          // const totalKeys = keys.length;
+          // const availableKeys = keys.filter(k => k.available).length;
+          return {
+            name: `${chainId}`,
+            children: keys
+          };
+        });
     }
   }
 };
