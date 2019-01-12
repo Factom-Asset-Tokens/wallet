@@ -36,20 +36,21 @@
               <v-icon right>send</v-icon>
             </v-btn>
           </v-flex>
-          <v-flex v-if="valid && fee" xs12 md8 offset-md2>
+          <v-flex v-if="valid && outputAddress && fee" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
               An additional transaction fee of
               <strong>{{fee.toLocaleString(undefined, {maximumFractionDigits:8})}} FCT</strong> will be deducted.
             </v-alert>
           </v-flex>
           <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-            <v-alert :value="true" type="error" outline>{{errorMessage}}</v-alert>
+            <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
           </v-flex>
           <v-flex xs12>
             <v-alert
               :value="transactionSentMessage"
               type="success"
               outline
+              dismissible
             >{{transactionSentMessage}}</v-alert>
           </v-flex>
         </v-layout>
@@ -136,6 +137,7 @@ export default {
           this.$store.dispatch("address/fetchFctBalances");
           this.$store.dispatch("address/fetchEcBalances");
           this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
+          this.$refs.form.reset();
         } catch (e) {
           this.errorMessage = e.message;
         } finally {

@@ -30,10 +30,10 @@
         </v-btn>
       </v-flex>
       <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-        <v-alert :value="true" type="error" outline>{{errorMessage}}</v-alert>
+        <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
       </v-flex>
       <v-flex xs12>
-        <v-alert :value="transactionSentMessage" type="success" outline>{{transactionSentMessage}}</v-alert>
+        <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{transactionSentMessage}}</v-alert>
       </v-flex>
     </v-layout>
   </v-form>
