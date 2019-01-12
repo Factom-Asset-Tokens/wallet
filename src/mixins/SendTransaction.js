@@ -12,15 +12,16 @@ export default {
         async sendTransaction() {
             try {
                 this.sending = true;
-                
+                this.transactionSentMessage = "";
+                this.errorMessage = "";
+
                 const tx = await this.buildTransaction();
                 const txId = await this.broadcastTransaction(tx);
 
                 this.transactionSentMessage = `Transaction successfully sent. Transaction ID: ${txId}`;
                 this.$refs.form.reset();
             } catch (e) {
-                this.snackError = true;
-                this.snackErrorMessage = e.message;
+                this.errorMessage = e.message;
                 console.error(e);
             } finally {
                 this.sending = false;
@@ -42,7 +43,7 @@ export default {
                     const factomd = this.$store.getters["factomd/cli"];
                     const entry = Entry.builder(tx.getEntry()).build();
 
-                    const { entryHash } = await factomd.add(entry, payingEcAddress);
+                    const { entryHash } = await factomd.add(entry, payingEcAddress, { commitTimeout: 10 });
 
                     return entryHash;
                 } else {

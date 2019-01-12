@@ -83,15 +83,14 @@
             <v-icon right>send</v-icon>
           </v-btn>
         </v-flex>
+        <v-flex v-if="errorMessage" xs12>
+          <v-alert :value="true" type="error" outline>{{errorMessage}}</v-alert>
+        </v-flex>
         <v-flex xs12>
           <v-alert :value="transactionSentMessage" type="success" outline>{{transactionSentMessage}}</v-alert>
         </v-flex>
       </v-layout>
     </v-layout>
-    <v-snackbar v-model="snackError" color="error" :timeout="5000">
-      {{ snackErrorMessage }}
-      <v-btn dark flat @click="snackError = false">Close</v-btn>
-    </v-snackbar>
   </v-form>
 </template>
 
@@ -123,8 +122,7 @@ export default {
       transactionError: "",
       inputs: [],
       outputs: [],
-      snackError: false,
-      snackErrorMessage: ""
+      errorMessage: ""
     };
   },
   props: ["balances", "symbol", "tokenCli"],

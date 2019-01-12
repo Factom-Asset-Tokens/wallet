@@ -29,14 +29,13 @@
           <v-icon right>send</v-icon>
         </v-btn>
       </v-flex>
+      <v-flex v-if="errorMessage" xs12 md8 offset-md2>
+        <v-alert :value="true" type="error" outline>{{errorMessage}}</v-alert>
+      </v-flex>
       <v-flex xs12>
         <v-alert :value="transactionSentMessage" type="success" outline>{{transactionSentMessage}}</v-alert>
       </v-flex>
     </v-layout>
-    <v-snackbar v-model="snackError" color="error" :timeout="5000">
-      {{ snackErrorMessage }}
-      <v-btn dark flat @click="snackError = false">Close</v-btn>
-    </v-snackbar>
   </v-form>
 </template>
 
@@ -56,8 +55,7 @@ export default {
       address: "",
       amount: 0,
       valid: true,
-      snackError: false,
-      snackErrorMessage: "",
+      errorMessage: "",
       addressRules: [
         v => isValidFctPublicAddress(v) || "Invalid public FCT address"
       ]

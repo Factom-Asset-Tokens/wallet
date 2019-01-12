@@ -2,7 +2,7 @@
   <v-layout wrap>
     <v-flex text-xs-center xs12 my-4>
       <v-sheet class="white--text" color="primary" elevation="1">
-        <h1>Send Factoids</h1>
+        <h1>Convert Factoids to Entry Credits</h1>
       </v-sheet>
     </v-flex>
     <v-flex xs12>
@@ -11,7 +11,7 @@
           <v-flex xs12 md8 offset-md2>
             <v-text-field
               v-model="outputAddress"
-              label="Recipient FCT address"
+              label="Recipient EC address"
               counter="52"
               :rules="addressRules"
               clearable
@@ -25,21 +25,22 @@
               type="number"
               v-model.number="outputAmount"
               min="0"
-              suffix="FCT"
+              step="1"
+              suffix="EC"
               :rules="amountRules"
               required
               solo
             ></v-text-field>
           </v-flex>
           <v-flex xs12 md2 text-xs-right>
-            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">Send
-              <v-icon right>send</v-icon>
+            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">Convert
+              <v-icon right>transform</v-icon>
             </v-btn>
           </v-flex>
-          <v-flex v-if="valid && fee" xs12 md8 offset-md2>
+          <v-flex v-if="valid && fctCost" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
-              An additional transaction fee of
-              <strong>{{fee.toLocaleString(undefined, {maximumFractionDigits:8})}} FCT</strong> will be deducted.
+              <strong>{{fctCost}} FCT</strong>
+              will be converted to entry credits (rate: 1 FCT = {{rate.toLocaleString()}} EC).
             </v-alert>
           </v-flex>
           <v-flex v-if="errorMessage" xs12 md8 offset-md2>
@@ -59,7 +60,7 @@
 </template>
 
 <script>
-import { isValidFctPublicAddress } from "factom";
+import { isValidEcPublicAddress } from "factom";
 import {
   buildTransaction,
   getFeeAdjustedTransaction
@@ -72,49 +73,33 @@ export default {
     return {
       outputAddress: "",
       outputAmount: 0,
-      fee: 0,
+      fctCost: 0,
+      rate: 0,
       valid: true,
       errorMessage: "",
       transactionSentMessage: "",
       sending: false,
       addressRules: [
-        v => isValidFctPublicAddress(v) || "Invalid public FCT address"
+        v => isValidEcPublicAddress(v) || "Invalid public EC address"
       ]
     };
   },
   computed: {
-    factoshiOutputAmount() {
-      return this.outputAmount * FACTOSHI_MULTIPLIER;
-    },
     balances() {
       return this.$store.state.address.fctBalances;
     },
     totalBalance() {
       return Object.values(this.balances).reduce((acc, val) => acc + val, 0);
     },
-    transactionProperties() {
-      return [this.outputAmount, this.outputAddress];
-    },
     amountRules() {
-      const totalBalance = this.totalBalance;
-      const selfAddressBalance = this.balances[this.outputAddress] || 0;
       return [
         amount =>
-          (typeof amount === "number" && amount > 0) ||
-          "Amount must be strictly positive",
-        function(amount) {
-          if (selfAddressBalance) {
-            return (
-              amount * FACTOSHI_MULTIPLIER <=
-                totalBalance - selfAddressBalance || "Not enough funds"
-            );
-          } else {
-            return (
-              amount * FACTOSHI_MULTIPLIER <= totalBalance || "Not enough funds"
-            );
-          }
-        }
+          (Number.isInteger(amount) && amount > 0) ||
+          "Amount must be strictly positive integer"
       ];
+    },
+    transactionProperties() {
+      return [this.outputAmount, this.outputAddress];
     }
   },
   methods: {
@@ -129,10 +114,10 @@ export default {
             this.$store,
             this.balances,
             this.outputAddress,
-            this.factoshiOutputAmount
+            this.outputAmount
           );
           const cli = this.$store.getters["factomd/cli"];
-          const txId = await cli.sendTransaction(tx, { timeout: 1 });
+          const txId = await cli.sendTransaction(tx, { timeout: 10 });
           this.$store.dispatch("address/fetchFctBalances");
           this.$store.dispatch("address/fetchEcBalances");
           this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
@@ -147,7 +132,7 @@ export default {
   watch: {
     async transactionProperties() {
       if (
-        isValidFctPublicAddress(this.outputAddress) &&
+        isValidEcPublicAddress(this.outputAddress) &&
         typeof this.outputAmount === "number"
       ) {
         const factomd = this.$store.getters["factomd/cli"];
@@ -156,11 +141,11 @@ export default {
         const tx = getFeeAdjustedTransaction(
           this.balances,
           this.outputAddress,
-          this.factoshiOutputAmount,
+          this.outputAmount * ecRate,
           ecRate
         );
-
-        this.fee = tx.feesPaid / FACTOSHI_MULTIPLIER;
+        this.fctCost = tx.totalInputs / FACTOSHI_MULTIPLIER;
+        this.rate = FACTOSHI_MULTIPLIER / ecRate;
       }
     }
   }
