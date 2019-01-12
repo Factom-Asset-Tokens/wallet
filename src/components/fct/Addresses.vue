@@ -1,5 +1,25 @@
 <template>
-  <v-layout>
+  <v-layout wrap>
+    <v-flex xs12 mb-5>
+      <v-layout align-center wrap>
+        <v-flex xs12 md6>
+          <v-sheet class="white--text display-1 font-weight-medium" color="primary">
+            <div class="total-balance" :title="`${totalFctBalanceText.exact} FCT`">
+              <img class="balance-icon" src="/img/fct-coin.png">
+              <div>{{totalFctBalanceText.rounded}} FCT</div>
+            </div>
+          </v-sheet>
+        </v-flex>
+        <v-flex xs12 md6>
+          <v-sheet color="secondary" class="white--text display-1 font-weight-medium">
+            <div class="total-balance" :title="`${totalEcBalanceText} EC`">
+              <img class="balance-icon" src="/img/entry-credit.png">
+              <div>{{totalEcBalanceText}} EC</div>
+            </div>
+          </v-sheet>
+        </v-flex>
+      </v-layout>
+    </v-flex>
     <v-flex xs12>
       <v-toolbar tabs card color="primary">
         <v-icon large>list</v-icon>
@@ -119,6 +139,23 @@ export default {
     }
   },
   computed: {
+    totalFctBalanceText() {
+      const balances = this.$store.state.address.fctBalances;
+      const fctSum =
+        Object.values(balances).reduce((acc, val) => acc + val, 0) / 100000000;
+      return {
+        rounded: fctSum.toLocaleString(),
+        exact: fctSum.toLocaleString(undefined, {
+          maximumFractionDigits: 8
+        })
+      };
+    },
+    totalEcBalanceText() {
+      const balances = this.$store.state.address.ecBalances;
+      return Object.values(balances)
+        .reduce((acc, val) => acc + val, 0)
+        .toLocaleString();
+    },
     preferredEcAddress() {
       return this.$store.state.address.preferredEcAddress;
     },
@@ -186,4 +223,13 @@ export default {
 
 
 <style scoped>
+.balance-icon {
+  margin-right: 24px;
+}
+.total-balance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
 </style>

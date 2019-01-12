@@ -34,7 +34,7 @@
           </v-flex>
           <v-flex xs12 md2 text-xs-right>
             <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">Convert
-              <v-icon right>transform</v-icon>
+              <v-icon right>local_play</v-icon>
             </v-btn>
           </v-flex>
           <v-flex v-if="valid && fctCost" xs12 md8 offset-md2>
