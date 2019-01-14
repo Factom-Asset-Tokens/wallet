@@ -80,7 +80,7 @@
                     v-for="(privateKey, index) in addedPrivateKeys"
                     :key="index"
                     v-model="addedPrivateKeys[index]"
-                    :missingKeys="missingIdentityKeys"
+                    :validationRules="secretKeyValidationRules"
                   ></SecretKeyInput>
                 </div>
               </v-card-text>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import SecretKeyInput from "@/components/settings/SecretKeyInput";
+import SecretKeyInput from "@/components/settings/identity/SecretKeyInput";
 import { digital } from "factom-identity-lib";
 const { getPublicIdentityKey, isValidSecretIdentityKey } = digital;
 
@@ -133,6 +133,16 @@ export default {
       return new Set(
         this.identityActivePublicKeys.filter(k => !keysInWallet.has(k))
       );
+    },
+    secretKeyValidationRules() {
+      const missingKeys = this.missingIdentityKeys;
+      return [
+        v =>
+          !v ||
+          (isValidSecretIdentityKey(v) &&
+            missingKeys.has(getPublicIdentityKey(v))) ||
+          "Not a secret key missing for this identity"
+      ];
     }
   },
   methods: {

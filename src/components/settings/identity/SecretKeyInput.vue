@@ -1,5 +1,7 @@
 <template>
   <v-text-field
+    autofocus
+    ref="input"
     v-model="secretKey"
     :append-icon="show ? 'visibility_off' : 'visibility'"
     :rules="rules"
@@ -12,28 +14,25 @@
 
 <script>
 import { digital } from "factom-identity-lib";
-const { getPublicIdentityKey, isValidSecretIdentityKey } = digital;
+const { isValidSecretIdentityKey } = digital;
 
 export default {
-  props: ["missingKeys"],
+  props: ["validationRules"],
   data: () => ({
     show: false,
     secretKey: ""
   }),
   computed: {
     rules: function() {
-      const that = this;
       return [
         v =>
-          !v ||
-          isValidSecretIdentityKey(v) ||
-          "Not a valid secret identity key",
-        v =>
-          !v ||
-          (isValidSecretIdentityKey(v) &&
-            that.missingKeys.has(getPublicIdentityKey(v))) ||
-          "Not a secret key missing for this identity"
-      ];
+          !v || isValidSecretIdentityKey(v) || "Not a valid secret identity key"
+      ].concat(this.validationRules || []);
+    }
+  },
+  methods: {
+    focus() {
+      this.$refs.input.focus();
     }
   }
 };

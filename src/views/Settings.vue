@@ -7,7 +7,7 @@
 
 <script>
 import DaemonSettings from "@/components/settings/DaemonSettings";
-import IdentitySettings from "@/components/settings/IdentitySettings";
+import IdentitySettings from "@/components/settings/identity/IdentitySettings";
 
 export default {
   name: "Settings",

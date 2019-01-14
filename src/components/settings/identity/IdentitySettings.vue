@@ -37,7 +37,7 @@
                     color="green"
                     title="Secret key available in the wallet"
                   >vpn_key</v-icon>
-                  <v-icon v-else color="grey" title="Secret key NOT available in the wallet">vpn_key</v-icon>
+                  <v-icon v-else color="grey" title="Secret key NOT available in the wallet" @click.stop="$refs.keyImportDialog.show(item.name)">vpn_key</v-icon>
                 </template>
               </v-treeview>
             </v-flex>
@@ -47,6 +47,7 @@
     </v-flex>
     <IdentityImportDialog ref="identityImportDialog"></IdentityImportDialog>
     <CreateIdentityDialog ref="createIdentityDialog"></CreateIdentityDialog>
+    <KeyImportDialog ref="keyImportDialog"></KeyImportDialog>
     <v-dialog v-model="identityInfoDialog" max-width="800px">
       <v-card>
         <v-card-title class="headline primary white--text" primary-title>What are digital identities?</v-card-title>
@@ -64,12 +65,13 @@
 </template>
 
 <script>
-import IdentityImportDialog from "@/components/settings/IdentityImportDialog";
-import CreateIdentityDialog from "@/components/settings/CreateIdentityDialog";
+import IdentityImportDialog from "@/components/settings/identity/IdentityImportDialog";
+import CreateIdentityDialog from "@/components/settings/identity/CreateIdentityDialog";
+import KeyImportDialog from "@/components/settings/identity/KeyImportDialog";
 import { mapState } from "vuex";
 
 export default {
-  components: { IdentityImportDialog, CreateIdentityDialog },
+  components: { IdentityImportDialog, CreateIdentityDialog, KeyImportDialog },
   data: function() {
     return {
       identityInfoDialog: false
