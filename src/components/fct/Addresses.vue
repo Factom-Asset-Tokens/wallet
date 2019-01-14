@@ -46,6 +46,7 @@
           <v-data-table
             :headers="[{text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}, , {text: 'Balance', value: 'balance'}]"
             :items="fctAddresses"
+            item-key="address"
             disable-initial-sort
             :loading="loading"
             class="elevation-1"
@@ -72,6 +73,7 @@
           <v-data-table
             :headers="[{text: '', value: 'prefered', sortable: false}, {text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}, {text: 'Balance', value: 'balance'}]"
             :items="ecAddresses"
+            item-key="address"
             disable-initial-sort
             class="elevation-1"
           >
