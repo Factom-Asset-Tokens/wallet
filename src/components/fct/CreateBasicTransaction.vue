@@ -7,7 +7,7 @@
     </v-flex>
     <v-flex xs12>
       <v-form v-model="valid" ref="form" @submit="send" lazy-validation>
-        <v-layout row wrap>
+        <v-layout row wrap align-baseline>
           <v-flex xs12 md8 offset-md2>
             <v-text-field
               v-model="outputAddress"

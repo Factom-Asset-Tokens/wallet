@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap align-center justify-center>
+  <v-layout row wrap align-baseline justify-center>
     <v-flex xs12 md8 pr-4>
       <v-select
         :items="availableAddresses"

@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer width="120" class="primary" permanent app>
+  <v-navigation-drawer width="120" class="grad" permanent app>
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
         <v-btn
@@ -102,5 +102,9 @@ a {
 #settings-link {
   position: absolute;
   bottom: 0;
+}
+
+.grad {
+  background-image: linear-gradient(#8ca1cd, #3e557d);
 }
 </style>

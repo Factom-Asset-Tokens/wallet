@@ -79,7 +79,7 @@
           >
             <template slot="items" slot-scope="props">
               <td>
-                <v-icon v-if="props.item.preferred" color="yellow darken-3">star</v-icon>
+                <v-icon v-if="props.item.preferred" color="secondary">star</v-icon>
                 <v-icon v-else @click="setPreferredEcAddress(props.item.address)">star_outline</v-icon>
               </td>
               <td>{{ props.item.address }}</td>
