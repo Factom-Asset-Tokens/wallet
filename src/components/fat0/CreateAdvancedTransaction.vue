@@ -99,7 +99,7 @@ import Promise from "bluebird";
 import { isValidFctPublicAddress } from "factom";
 import SendTransaction from "@/mixins/SendTransaction";
 import TransactionInput from "@/components/fat0/TransactionInput";
-import { FAT0 } from "fat-js";
+import { FAT0 } from "@fat-token/fat-js";
 const {
   Transaction: { TransactionBuilder }
 } = FAT0;

@@ -1,4 +1,4 @@
-import { CLIBuilder } from "fat-js";
+import { CLIBuilder } from "@fat-token/fat-js";
 
 export default {
     namespaced: true,
