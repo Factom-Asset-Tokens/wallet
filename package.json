@@ -10,29 +10,29 @@
   },
   "dependencies": {
     "@fat-token/fat-js": "0.0.0",
-    "ajv": "^6.6.2",
+    "ajv": "^6.7.0",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",
     "factom": "1.0.0-rc4",
     "factom-identity-lib": "^0.2.0-rc4",
     "jsoneditor": "^5.27.0",
     "lodash.debounce": "^4.0.8",
-    "vue": "^2.5.21",
+    "vue": "^2.5.22",
     "vue-router": "^3.0.2",
-    "vuetify": "^1.4.0",
+    "vuetify": "^1.4.1",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.2.2",
-    "@vue/cli-plugin-eslint": "^3.2.2",
-    "@vue/cli-service": "^3.2.3",
+    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-eslint": "^3.3.0",
+    "@vue/cli-service": "^3.3.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.12.0",
     "eslint-plugin-vue": "^5.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.5.21",
+    "vue-template-compiler": "^2.5.22",
     "vuetify-loader": "^1.1.1"
   }
 }
