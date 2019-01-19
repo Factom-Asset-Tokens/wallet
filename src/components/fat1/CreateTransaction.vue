@@ -21,7 +21,7 @@
                 class="font-weight-bold subheading"
                 @click="selectToken(id)"
               >
-                <v-avatar class="secondary grey-text" @click.stop="displayInfo(id)">
+                <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
                   <v-icon>info_outline</v-icon>
                 </v-avatar>
                 {{id | displayIds}}
@@ -41,7 +41,7 @@
                   close
                   @input="unselectToken(id)"
                 >
-                  <v-avatar class="secondary grey-text" @click.stop="displayInfo(id)">
+                  <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
                     <v-icon>info_outline</v-icon>
                   </v-avatar>
                   {{id | displayIds}}
@@ -79,6 +79,7 @@
     </v-flex>
 
     <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
+    <TokenDetailsDialog ref="detailsDialog" :symbol="symbol"></TokenDetailsDialog>
   </v-layout>
 </template>
 
@@ -87,11 +88,12 @@ import flatmap from "lodash.flatmap";
 import { isValidFctPublicAddress } from "factom";
 import { displayIds, availableTokens } from "./ids-utils.js";
 import SelectIdRangeDialog from "./SelectIdRangeDialog";
+import TokenDetailsDialog from "./TokenDetailsDialog";
 import balances from "./mockup-balances.json";
 
 export default {
   props: ["symbol", "tokenCli"],
-  components: { SelectIdRangeDialog },
+  components: { SelectIdRangeDialog, TokenDetailsDialog },
   data() {
     return {
       address: "",
@@ -123,9 +125,8 @@ export default {
     unselectToken(id) {
       this.selectedTokens = this.selectedTokens.filter(e => e !== id);
     },
-    displayInfo(id) {
-      // TODO
-      console.log(id);
+    showTokenDetails(id) {
+      this.$refs.detailsDialog.show(id);
     },
     send(e) {
       e.preventDefault();

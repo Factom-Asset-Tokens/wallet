@@ -36,45 +36,28 @@
                 outline
                 color="secondary"
                 class="font-weight-bold subheading"
+                @click="showTokenDetails(id)"
               >{{id | displayIds}}</v-chip>
             </v-card-text>
           </v-card>
         </template>
       </v-data-table>
     </v-flex>
+    <TokenDetailsDialog ref="detailsDialog" :symbol="symbol"></TokenDetailsDialog>
   </v-layout>
 </template>
 
 <script>
 import { displayIds, sortIds } from "./ids-utils.js";
+import TokenDetailsDialog from "./TokenDetailsDialog";
+import balances from "./mockup-balances.json";
 
 export default {
+  components: { TokenDetailsDialog },
   props: ["symbol"],
   data() {
     return {
-      balances: [
-        {
-          address: "FA1yNbdkjy8ATB3K72TvaeNT9q7aC8pQxCzn3d8Em795XYRzFSpq",
-          name: "my address",
-          balance: 3,
-          ids: [
-            { from: 1, to: 1 },
-            { from: 5, to: 9 },
-            { from: 10, to: 10 },
-            { from: 78, to: 78 }
-          ]
-        },
-        {
-          address: "FA29jNtT88wGjs9YLQch8ur4VFaTDkuiDwWe1YmksPDJuh3tAczG",
-          balance: 2,
-          ids: [
-            { from: 11, to: 11 },
-            { from: 23, to: 55 },
-            { from: 2, to: 2 },
-            { from: 12, to: 20 }
-          ]
-        }
-      ]
+      balances
     };
   },
   computed: {
@@ -85,7 +68,10 @@ export default {
     }
   },
   methods: {
-    sortIds
+    sortIds,
+    showTokenDetails(id) {
+      this.$refs.detailsDialog.show(id);
+    }
   },
   filters: {
     displayIds

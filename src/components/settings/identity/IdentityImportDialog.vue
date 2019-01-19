@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="800px">
+  <v-dialog v-model="display" lazy max-width="800px" @keydown.esc="display = false">
     <v-stepper v-model="step">
       <v-stepper-header>
         <v-stepper-step :complete="step > 1" step="1">Identity chain</v-stepper-step>

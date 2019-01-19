@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="600px">
+  <v-dialog v-model="display" lazy max-width="600px" @keydown.esc="display = false">
     <v-card>
       <v-card-title>
         <span class="headline">Import Address</span>

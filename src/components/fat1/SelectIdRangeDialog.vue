@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="600px">
+  <v-dialog v-model="display" max-width="600px" @keydown.esc="display = false">
     <v-card>
       <v-form v-model="valid" @submit="add" ref="form">
         <v-card-title class="primary">

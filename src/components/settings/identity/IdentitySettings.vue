@@ -48,7 +48,7 @@
     <IdentityImportDialog ref="identityImportDialog"></IdentityImportDialog>
     <CreateIdentityDialog ref="createIdentityDialog"></CreateIdentityDialog>
     <KeyImportDialog ref="keyImportDialog"></KeyImportDialog>
-    <v-dialog v-model="identityInfoDialog" max-width="800px">
+    <v-dialog v-model="identityInfoDialog" lazy max-width="800px" @keydown.esc="identityInfoDialog = false">
       <v-card>
         <v-card-title class="headline primary white--text" primary-title>What are digital identities?</v-card-title>
         <v-card-text>

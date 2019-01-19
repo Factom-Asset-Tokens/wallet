@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="800px">
+  <v-dialog v-model="display" lazy max-width="800px" @keydown.esc="display = false">
     <v-form v-model="valid" lazy-validation ref="form" @submit="importKey">
       <v-card>
         <v-card-title>
