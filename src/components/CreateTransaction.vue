@@ -5,15 +5,22 @@
     :symbol="symbol"
     :tokenCli="tokenCli"
   ></CreateTransactionFat0>
+  <CreateTransactionFat1
+    v-else-if="type === 'FAT-1'"
+    :balances="balances"
+    :symbol="symbol"
+    :tokenCli="tokenCli"
+  ></CreateTransactionFat1>
 </template>
 
 <script>
 import CreateTransactionFat0 from "@/components/fat0/CreateTransaction";
+import CreateTransactionFat1 from "@/components/fat1/CreateTransaction";
 
 export default {
   name: "CreateTransaction",
-  components: { CreateTransactionFat0 },
-  props: ["type", "balances", "symbol","tokenCli"]
+  components: { CreateTransactionFat0, CreateTransactionFat1 },
+  props: ["type", "balances", "symbol", "tokenCli"]
 };
 </script>
 

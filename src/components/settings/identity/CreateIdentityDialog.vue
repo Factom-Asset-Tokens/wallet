@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="display" lazy max-width="600px">
     <v-card>
-      <v-card-title>
+      <v-card-title class="primary">
         <span class="headline">Create Identity</span>
       </v-card-title>
       <v-card-text>
