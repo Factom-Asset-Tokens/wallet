@@ -28,10 +28,11 @@
           large
           slot="activator"
           color="white"
+          class="primary--text font-weight-black title"
           exact
           :to="`/token/${token.chainId}`"
         >
-          <img class="token-icon" :src="getTokenIcon(token)">
+          {{token.issuance.symbol}}
         </v-btn>
         <span>{{getTokenTooltip(token)}}</span>
       </v-tooltip>
@@ -69,11 +70,6 @@ export default {
     }
   },
   methods: {
-    getTokenIcon(token) {
-      return token.metadata && token.metadata.iconSrc
-        ? token.metadata.iconSrc
-        : "/img/token-no-icon.png";
-    },
     getTokenTooltip(token) {
       return token.issuance && token.issuance.name
         ? `${token.issuance.name} (${token.issuance.symbol})`
