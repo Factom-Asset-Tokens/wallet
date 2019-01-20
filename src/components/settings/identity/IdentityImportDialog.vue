@@ -10,7 +10,7 @@
       <v-stepper-items>
         <v-stepper-content step="1">
           <v-card>
-            <v-form v-model="validStep1" ref="formStep1" @submit="nextStep" lazy-validation>
+            <v-form v-model="validStep1" ref="formStep1" @submit.prevent="nextStep" lazy-validation>
               <v-card-text>
                 <v-container>
                   <v-layout wrap>
@@ -51,7 +51,7 @@
 
         <v-stepper-content step="2">
           <v-card>
-            <v-form v-model="validStep2" ref="formStep2" @submit="importIdentity" lazy-validation>
+            <v-form v-model="validStep2" ref="formStep2" @submit.prevent="importIdentity" lazy-validation>
               <v-card-text>
                 <v-list subheader>
                   <v-subheader inset>Associated identity keys</v-subheader>
@@ -154,8 +154,7 @@ export default {
       this.identityActivePublicKeys = [];
       this.$refs.formStep2.reset();
     },
-    async nextStep(e) {
-      e.preventDefault();
+    async nextStep() {
       if (this.$refs.formStep1.validate()) {
         this.loadingActiveKeys = true;
         this.loadingError = "";
@@ -174,8 +173,7 @@ export default {
         }
       }
     },
-    importIdentity(e) {
-      e.preventDefault();
+    importIdentity() {
       if (this.$refs.formStep2.validate()) {
         const identity = {};
         identity[this.identityChainId] = this.identityActivePublicKeys.slice();

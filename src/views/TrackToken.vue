@@ -3,7 +3,7 @@
     <v-layout>
       <v-flex xs12 sm8 offset-sm2>
         <v-card>
-          <v-form ref="form" v-model="valid" @submit="submit" lazy-validation>
+          <v-form ref="form" v-model="valid" @submit.prevent="submit" lazy-validation>
             <v-card-title>
               <span class="headline">Track an existing token</span>
             </v-card-title>
@@ -51,8 +51,7 @@ export default {
   }),
 
   methods: {
-    async submit(e) {
-      e.preventDefault();
+    async submit() {
 
       if (this.$refs.form.validate()) {
         const cli = this.$store.getters["fatd/cli"];

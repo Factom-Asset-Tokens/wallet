@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="validForm" ref="form" @submit="send" lazy-validation>
+  <v-form v-model="validForm" ref="form" @submit.prevent="send" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
         <v-toolbar class="elevation-1">
@@ -172,8 +172,7 @@ export default {
     deleteInoutput(type, id) {
       this[type] = this[type].filter(v => v.id !== id);
     },
-    async send(e) {
-      e.preventDefault();
+    async send() {
       this.transactionSentMessage = "";
 
       if (this.$refs.form.validate()) {

@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="display" lazy max-width="800px" @keydown.esc="display = false">
-    <v-form v-model="valid" lazy-validation ref="form" @submit="importKey">
+    <v-form v-model="valid" lazy-validation ref="form" @submit.prevent="importKey">
       <v-card>
         <v-card-title>
           <span class="headline">Import Identity Key</span>
@@ -66,8 +66,7 @@ export default {
       this.display = true;
       this.publicKey = publicKey;
     },
-    importKey(e) {
-      e.preventDefault();
+    importKey() {
       if (this.$refs.form.validate()) {
         this.$store.dispatch("identity/importIdentityKeys", [this.secretKey]);
         this.display = false;

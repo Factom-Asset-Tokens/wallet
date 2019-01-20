@@ -6,7 +6,7 @@
       </v-sheet>
     </v-flex>
     <v-flex xs12>
-      <v-form v-model="valid" ref="form" @submit="send" lazy-validation>
+      <v-form v-model="valid" ref="form" @submit.prevent="send" lazy-validation>
         <v-layout row wrap align-baseline>
           <v-flex xs12 md8 offset-md2>
             <v-text-field
@@ -119,8 +119,7 @@ export default {
     }
   },
   methods: {
-    async send(e) {
-      e.preventDefault();
+    async send() {
       if (this.$refs.form.validate()) {
         try {
           this.transactionSentMessage = "";

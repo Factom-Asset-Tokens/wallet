@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid" ref="form" @submit="confirmTransaction" lazy-validation>
+  <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
     <v-layout row wrap align-baseline>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
@@ -103,8 +103,7 @@ export default {
     }
   },
   methods: {
-    async confirmTransaction(e) {
-      e.preventDefault();
+    async confirmTransaction() {
       if (this.$refs.form.validate()) {
         this.$refs.confirmTransactionDialog.show();
       }

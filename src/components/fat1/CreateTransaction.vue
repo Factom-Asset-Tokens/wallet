@@ -6,7 +6,7 @@
       </v-sheet>
     </v-flex>
     <v-flex>
-      <v-form v-model="valid" ref="form" @submit="confirmTransaction" lazy-validation>
+      <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
         <v-container fluid>
           <v-layout wrap align-baseline>
             <v-flex xs12 mt-3>
@@ -135,8 +135,7 @@ export default {
     showTokenDetails(id) {
       this.$refs.detailsDialog.show(id);
     },
-    confirmTransaction(e) {
-      e.preventDefault();
+    confirmTransaction() {
       if (this.$refs.form.validate()) {
         this.$refs.confirmTransactionDialog.show();
       }

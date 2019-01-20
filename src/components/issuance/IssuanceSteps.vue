@@ -13,7 +13,7 @@
     <v-stepper-items>
       <v-stepper-content step="1">
         <v-card>
-          <v-form @submit="toStep2">
+          <v-form @submit.prevent="toStep2">
             <v-card-text>
               <TokenTypeStep v-model="type"></TokenTypeStep>
             </v-card-text>
@@ -26,7 +26,7 @@
 
       <v-stepper-content step="2">
         <v-card>
-          <v-form v-model="validFormStep2" ref="formStep2" @submit="toStep3" lazy-validation>
+          <v-form v-model="validFormStep2" ref="formStep2" @submit.prevent="toStep3" lazy-validation>
             <v-card-text>
               <IssuerAndNameStep @input="setIssuerAndName"></IssuerAndNameStep>
             </v-card-text>
@@ -40,7 +40,7 @@
 
       <v-stepper-content step="3">
         <v-card>
-          <v-form v-model="validFormStep3" ref="formStep3" @submit="toStep4" lazy-validation>
+          <v-form v-model="validFormStep3" ref="formStep3" @submit.prevent="toStep4" lazy-validation>
             <v-card-text>
               <TokenDetailsStep :type="type" ref="tokenDetails"></TokenDetailsStep>
             </v-card-text>
@@ -96,18 +96,15 @@ export default {
       this.tokenId = tokenId;
       this.issuerId = issuerId;
     },
-    toStep2(e) {
-      e.preventDefault();
+    toStep2() {
       this.step = 2;
     },
-    toStep3(e) {
-      e.preventDefault();
+    toStep3() {
       if (this.$refs.formStep2.validate()) {
         this.step = 3;
       }
     },
-    toStep4(e) {
-      e.preventDefault();
+    toStep4() {
       if (this.$refs.formStep3.validate()) {
         this.tokenDetails = this.$refs.tokenDetails.getDetails();
         this.step = 4;

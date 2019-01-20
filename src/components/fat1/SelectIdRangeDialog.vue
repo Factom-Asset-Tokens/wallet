@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="display" max-width="600px" @keydown.esc="display = false">
     <v-card>
-      <v-form v-model="valid" @submit="add" ref="form">
+      <v-form v-model="valid" @submit.prevent="add" ref="form">
         <v-card-title class="primary">
           <span class="headline">Select ID range</span>
         </v-card-title>
@@ -81,8 +81,7 @@ export default {
       this.to = max;
       this.display = true;
     },
-    add(e) {
-      e.preventDefault();
+    add() {
       if (this.$refs.form.validate()) {
         this.$emit("add", { from: this.from, to: this.to });
         this.display = false;
