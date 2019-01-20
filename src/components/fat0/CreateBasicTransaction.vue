@@ -104,6 +104,7 @@ export default {
   },
   methods: {
     async confirmTransaction() {
+      this.transactionSentMessage = "";
       if (this.$refs.form.validate()) {
         this.$refs.confirmTransactionDialog.show();
       }

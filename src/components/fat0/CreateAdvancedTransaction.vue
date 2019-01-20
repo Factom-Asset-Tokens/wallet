@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="validForm" ref="form" @submit.prevent="send" lazy-validation>
+  <v-form v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
         <v-toolbar class="elevation-1">
@@ -87,10 +87,21 @@
           <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
         </v-flex>
         <v-flex xs12>
-          <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{transactionSentMessage}}</v-alert>
+          <v-alert
+            :value="transactionSentMessage"
+            type="success"
+            outline
+            dismissible
+          >{{transactionSentMessage}}</v-alert>
         </v-flex>
       </v-layout>
     </v-layout>
+    <ConfirmAdvancedTransactionDialog
+      ref="confirmTransactionDialog"
+      :outputs="outputs"
+      :symbol="symbol"
+      @confirmed="send"
+    ></ConfirmAdvancedTransactionDialog>
   </v-form>
 </template>
 
@@ -99,6 +110,7 @@ import Promise from "bluebird";
 import { isValidFctPublicAddress } from "factom";
 import SendTransaction from "@/mixins/SendTransaction";
 import TransactionInput from "@/components/fat0/TransactionInput";
+import ConfirmAdvancedTransactionDialog from "@/components/fat0/ConfirmAdvancedTransactionDialog";
 import { FAT0 } from "@fat-token/fat-js";
 const {
   Transaction: { TransactionBuilder }
@@ -112,7 +124,7 @@ const newInoutput = (function() {
 })();
 
 export default {
-  components: { TransactionInput },
+  components: { TransactionInput, ConfirmAdvancedTransactionDialog },
   mixins: [SendTransaction],
   data() {
     return {
@@ -172,19 +184,22 @@ export default {
     deleteInoutput(type, id) {
       this[type] = this[type].filter(v => v.id !== id);
     },
-    async send() {
+    confirmTransaction() {
       this.transactionSentMessage = "";
 
       if (this.$refs.form.validate()) {
         this.sendClicked = true;
         if (this.validTransaction) {
           this.sendClicked = false;
-          await this.sendTransaction();
-          if (this.transactionSentMessage) {
-            this.inputs = [newInoutput()];
-            this.outputs = [newInoutput()];
-          }
+          this.$refs.confirmTransactionDialog.show();
         }
+      }
+    },
+    async send() {
+      await this.sendTransaction();
+      if (this.transactionSentMessage) {
+        this.inputs = [newInoutput()];
+        this.outputs = [newInoutput()];
       }
     },
     async buildTransaction() {

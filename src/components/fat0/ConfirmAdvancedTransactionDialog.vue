@@ -7,7 +7,10 @@
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{amountText}} {{symbol}}</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{address}}</v-flex>
+          <template v-for="output in outputs">
+            <v-flex xs10 class="title secondary--text" my-2>{{output.address}}</v-flex>
+            <v-flex xs2 class="title secondary--text" text-xs-right my-2>{{output.amount}} {{symbol}}</v-flex>
+          </template>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -21,7 +24,7 @@
 
 <script>
 export default {
-  props: ["amount", "address", "symbol"],
+  props: ["outputs", "symbol"],
   data() {
     return {
       display: false
@@ -29,11 +32,13 @@ export default {
   },
   computed: {
     amountText() {
-      return typeof this.amount === "number"
-        ? this.amount.toLocaleString(undefined, {
-            maximumFractionDigits: 10
-          })
-        : "";
+      const amount = this.outputs
+        .map(o => o.amount)
+        .filter(a => typeof a === "number")
+        .reduce((a, b) => a + b, 0);
+      return amount.toLocaleString(undefined, {
+        maximumFractionDigits: 10
+      });
     }
   },
   methods: {
