@@ -18,6 +18,7 @@
         type="number"
         :suffix="symbol"
         min="0"
+        :max="balance"
         label="Amount"
         ref="amountInput"
         @input="$emit('input', {address, amount, id: value.id})"
