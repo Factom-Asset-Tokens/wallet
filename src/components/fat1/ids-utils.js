@@ -7,7 +7,7 @@ export function displayIds(value) {
 }
 
 export function sortIds(ids) {
-    return ids.slice().sort((a, b) => a.from > b.from);
+    return ids.slice().sort((a, b) => a.from - b.from);
 }
 
 export function availableTokens(allTokensList, selectedTokensList) {
