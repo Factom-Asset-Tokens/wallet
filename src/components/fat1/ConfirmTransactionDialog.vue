@@ -1,11 +1,21 @@
 <template>
-  <v-dialog v-model="display" max-width="800px" @keydown.esc="display = false" @keydown.enter="confirm">
+  <v-dialog
+    v-model="display"
+    max-width="800px"
+    @keydown.esc="display = false"
+    @keydown.enter="confirm"
+  >
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>Confirm transaction</v-card-title>
       <v-card-text>
         <v-layout wrap>
+          <v-flex
+            xs12
+            text-xs-center
+            class="subheading"
+            my-2
+          >Sending the following non-fungible tokens</v-flex>
           <v-flex xs12 text-xs-center>
-            <v-flex xs12 text-xs-center class="subheading" my-2>Sending the following non-fungible tokens</v-flex>
             <v-chip
               v-for="id in selectedTokens"
               :key="id.from || id"

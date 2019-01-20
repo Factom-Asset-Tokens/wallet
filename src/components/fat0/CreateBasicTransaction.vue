@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid" ref="form" @submit="send" lazy-validation>
+  <v-form v-model="valid" ref="form" @submit="confirmTransaction" lazy-validation>
     <v-layout row wrap align-baseline>
       <v-flex xs12 md8 offset-md2>
         <v-text-field
@@ -33,9 +33,21 @@
         <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
       </v-flex>
       <v-flex xs12>
-        <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{transactionSentMessage}}</v-alert>
+        <v-alert
+          :value="transactionSentMessage"
+          type="success"
+          outline
+          dismissible
+        >{{transactionSentMessage}}</v-alert>
       </v-flex>
     </v-layout>
+    <ConfirmBasicTransactionDialog
+      ref="confirmTransactionDialog"
+      :amount="amount"
+      :address="address"
+      :symbol="symbol"
+      @confirmed="sendTransaction"
+    ></ConfirmBasicTransactionDialog>
   </v-form>
 </template>
 
@@ -47,8 +59,10 @@ import { FAT0 } from "@fat-token/fat-js";
 const {
   Transaction: { TransactionBuilder }
 } = FAT0;
+import ConfirmBasicTransactionDialog from "./ConfirmBasicTransactionDialog";
 
 export default {
+  components: { ConfirmBasicTransactionDialog },
   mixins: [SendTransaction],
   data() {
     return {
@@ -89,10 +103,10 @@ export default {
     }
   },
   methods: {
-    async send(e) {
+    async confirmTransaction(e) {
       e.preventDefault();
       if (this.$refs.form.validate()) {
-        this.sendTransaction();
+        this.$refs.confirmTransactionDialog.show();
       }
     },
     async buildTransaction() {

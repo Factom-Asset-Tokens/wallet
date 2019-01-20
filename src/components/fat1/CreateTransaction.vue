@@ -80,12 +80,12 @@
 
     <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
     <TokenDetailsDialog ref="detailsDialog" :symbol="symbol"></TokenDetailsDialog>
-    <ConfirmTransaction
+    <ConfirmTransactionDialog
       ref="confirmTransactionDialog"
       :selectedTokens="selectedTokens"
       :address="address"
       @confirmed="send"
-    ></ConfirmTransaction>
+    ></ConfirmTransactionDialog>
   </v-layout>
 </template>
 
@@ -94,13 +94,13 @@ import flatmap from "lodash.flatmap";
 import { isValidFctPublicAddress } from "factom";
 import { displayIds, availableTokens } from "./ids-utils.js";
 import SelectIdRangeDialog from "./SelectIdRangeDialog";
-import ConfirmTransaction from "./ConfirmTransaction";
+import ConfirmTransactionDialog from "./ConfirmTransactionDialog";
 import TokenDetailsDialog from "./TokenDetailsDialog";
 import balances from "./mockup-balances.json";
 
 export default {
   props: ["symbol", "tokenCli"],
-  components: { SelectIdRangeDialog, TokenDetailsDialog, ConfirmTransaction },
+  components: { SelectIdRangeDialog, TokenDetailsDialog, ConfirmTransactionDialog },
   data() {
     return {
       address: "",
