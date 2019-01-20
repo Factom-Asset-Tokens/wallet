@@ -6,7 +6,7 @@
       </v-sheet>
     </v-flex>
     <v-flex>
-      <v-form v-model="valid" ref="form" @submit="send" lazy-validation>
+      <v-form v-model="valid" ref="form" @submit="confirmTransaction" lazy-validation>
         <v-container fluid>
           <v-layout wrap align-baseline>
             <v-flex xs12 mt-3>
@@ -80,6 +80,12 @@
 
     <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
     <TokenDetailsDialog ref="detailsDialog" :symbol="symbol"></TokenDetailsDialog>
+    <ConfirmTransaction
+      ref="confirmTransactionDialog"
+      :selectedTokens="selectedTokens"
+      :address="address"
+      @confirmed="send"
+    ></ConfirmTransaction>
   </v-layout>
 </template>
 
@@ -88,12 +94,13 @@ import flatmap from "lodash.flatmap";
 import { isValidFctPublicAddress } from "factom";
 import { displayIds, availableTokens } from "./ids-utils.js";
 import SelectIdRangeDialog from "./SelectIdRangeDialog";
+import ConfirmTransaction from "./ConfirmTransaction";
 import TokenDetailsDialog from "./TokenDetailsDialog";
 import balances from "./mockup-balances.json";
 
 export default {
   props: ["symbol", "tokenCli"],
-  components: { SelectIdRangeDialog, TokenDetailsDialog },
+  components: { SelectIdRangeDialog, TokenDetailsDialog, ConfirmTransaction },
   data() {
     return {
       address: "",
@@ -128,13 +135,17 @@ export default {
     showTokenDetails(id) {
       this.$refs.detailsDialog.show(id);
     },
-    send(e) {
+    confirmTransaction(e) {
       e.preventDefault();
       if (this.$refs.form.validate()) {
-        // TODO: send
-        this.$refs.form.reset();
-        this.selectedTokens = [];
+        this.$refs.confirmTransactionDialog.show();
       }
+    },
+    send() {
+      // TODO: send
+      console.log("SEND");
+      this.$refs.form.reset();
+      this.selectedTokens = [];
     }
   },
   filters: {
