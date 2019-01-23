@@ -6,7 +6,7 @@
       </v-sheet>
     </v-flex>
     <v-flex xs12>
-      <v-form v-model="valid" ref="form" @submit.prevent="send" lazy-validation>
+      <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
         <v-layout row wrap align-baseline>
           <v-flex xs12 md8 offset-md2>
             <v-text-field
@@ -57,6 +57,13 @@
         </v-layout>
       </v-form>
     </v-flex>
+    <ConfirmFctToEcTransactionDialog
+      ref="confirmTransactionDialog"
+      :address="outputAddress"
+      :ecAmount="outputAmount"
+      :fctCost="fctCost"
+      @confirmed="send"
+    ></ConfirmFctToEcTransactionDialog>
   </v-layout>
 </template>
 
@@ -66,10 +73,12 @@ import {
   buildTransaction,
   getFeeAdjustedTransaction
 } from "./TransactionHelper";
+import ConfirmFctToEcTransactionDialog from "./ConfirmFctToEcTransactionDialog";
 
 const FACTOSHI_MULTIPLIER = 100000000;
 
 export default {
+  components: { ConfirmFctToEcTransactionDialog },
   data() {
     return {
       outputAddress: "",
@@ -104,29 +113,32 @@ export default {
     }
   },
   methods: {
-    async send() {
+    async confirmTransaction() {
+      this.transactionSentMessage = "";
       if (this.$refs.form.validate()) {
-        try {
-          this.transactionSentMessage = "";
-          this.errorMessage = "";
-          this.sending = true;
-          const tx = await buildTransaction(
-            this.$store,
-            this.balances,
-            this.outputAddress,
-            this.outputAmount
-          );
-          const cli = this.$store.getters["factomd/cli"];
-          const txId = await cli.sendTransaction(tx, { timeout: 10 });
-          this.$store.dispatch("address/fetchFctBalances");
-          this.$store.dispatch("address/fetchEcBalances");
-          this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
-          this.$refs.form.reset();
-        } catch (e) {
-          this.errorMessage = e.message;
-        } finally {
-          this.sending = false;
-        }
+        this.$refs.confirmTransactionDialog.show();
+      }
+    },
+    async send() {
+      try {
+        this.errorMessage = "";
+        this.sending = true;
+        const tx = await buildTransaction(
+          this.$store,
+          this.balances,
+          this.outputAddress,
+          this.outputAmount
+        );
+        const cli = this.$store.getters["factomd/cli"];
+        const txId = await cli.sendTransaction(tx, { timeout: 10 });
+        this.$store.dispatch("address/fetchFctBalances");
+        this.$store.dispatch("address/fetchEcBalances");
+        this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
+        this.$refs.form.reset();
+      } catch (e) {
+        this.errorMessage = e.message;
+      } finally {
+        this.sending = false;
       }
     }
   },
