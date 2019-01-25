@@ -5,7 +5,7 @@
         <v-toolbar card color="primary">
           <v-icon large>fingerprint</v-icon>
           <v-toolbar-title>Digital Identities
-            <v-btn flat icon color="grey darken-3" @click="identityInfoDialog = true">
+            <v-btn flat icon color="white" @click="identityInfoDialog = true">
               <v-icon>help_outline</v-icon>
             </v-btn>
           </v-toolbar-title>
