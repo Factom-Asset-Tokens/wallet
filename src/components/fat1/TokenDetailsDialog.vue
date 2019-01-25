@@ -3,6 +3,7 @@
     v-model="display"
     max-width="600px"
     @keydown.esc="display = false"
+    @keydown.enter="display = false"
     @keydown.left="decrement"
     @keydown.right="increment"
   >
