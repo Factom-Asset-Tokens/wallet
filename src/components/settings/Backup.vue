@@ -3,7 +3,7 @@
     <v-container>
       <v-layout wrap>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn color="primary" large class="subheading">
+          <v-btn color="primary" large class="subheading" :loading="loadingSeed" @click="showSeed">
             <v-icon left>fa-seedling</v-icon>show recovery seed
           </v-btn>
         </v-flex>
@@ -69,19 +69,37 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <ShowSeedDialog ref="showSeedDialog"></ShowSeedDialog>
   </v-sheet>
 </template>
 
 <script>
+import ShowSeedDialog from "./ShowSeedDialog.vue";
+
 export default {
   name: "Backup",
+  components: { ShowSeedDialog },
   data: function() {
     return {
       showSeedInfo: false,
-      showBackupFileInfo: false
+      showBackupFileInfo: false,
+      loadingSeed: false
     };
   },
   methods: {
+    async showSeed() {
+      this.loadingSeed = true;
+      try {
+        const walletd = this.$store.getters["walletd/cli"];
+        const result = await walletd.call("wallet-backup");
+        const seed = result["wallet-seed"].split(" ");
+        this.$refs.showSeedDialog.show(seed);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.loadingSeed = false;
+      }
+    },
     toggleSeedInfo() {
       this.showSeedInfo = !this.showSeedInfo;
       if (this.showSeedInfo) {
