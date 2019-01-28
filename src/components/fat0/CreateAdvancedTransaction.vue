@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+  <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
         <v-toolbar class="elevation-1">

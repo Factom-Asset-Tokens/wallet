@@ -44,6 +44,8 @@ export default {
         this.mode = "basic";
       } else {
         this.mode = "advanced";
+        const vuetify = this.$vuetify;
+        this.$nextTick(() => vuetify.goTo("#advancedTxForm"));
       }
     }
   }
