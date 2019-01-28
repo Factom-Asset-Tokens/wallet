@@ -21,9 +21,28 @@ export default new Vuex.Store({
         address,
         identity
     },
+    state: {
+        snack: false,
+        snackMessage: "",
+        snackColor: ""
+    },
     getters: {
         daemonsKo: state => state.fatd.status === 'ko' || state.walletd.status === 'ko' || state.factomd.status === 'ko'
-    }, actions: {
+    },
+    mutations: {
+        updateSnack: (state, value) => state.snack = value,
+        snackError(state, message) {
+            state.snackColor = "error";
+            state.snackMessage = message;
+            state.snack = true;
+        },
+        snackSuccess(state, message) {
+            state.snackColor = "success";
+            state.snackMessage = message;
+            state.snack = true;
+        }
+    },
+    actions: {
         async init({ dispatch }) {
             await Promise.all([
                 dispatch('walletd/checkStatus'),

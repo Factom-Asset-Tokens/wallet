@@ -101,14 +101,6 @@
         </v-tab-item>
       </v-tabs-items>
     </v-flex>
-    <v-snackbar v-model="snackError" color="error" :timeout="5000">
-      {{ snackErrorMessage }}
-      <v-btn dark flat @click="snackError = false">Close</v-btn>
-    </v-snackbar>
-    <v-snackbar v-model="snackSuccess" color="success" :timeout="5000">
-      {{ snackSuccessMessage }}
-      <v-btn dark flat @click="snackSuccess = false">Close</v-btn>
-    </v-snackbar>
     <AddressImportDialog ref="addressImportDialog"></AddressImportDialog>
   </v-layout>
 </template>
@@ -121,10 +113,6 @@ export default {
   data: function() {
     return {
       tab: null,
-      snackError: false,
-      snackErrorMessage: "",
-      snackSuccess: false,
-      snackSuccessMessage: "",
       loading: false
     };
   },
@@ -203,14 +191,11 @@ export default {
       const cli = this.$store.getters["walletd/cli"];
       try {
         await cli.call(`generate-${this.selectedAddressType}-address`);
-        this.$store.dispatch("address/init");
-        this.snackSuccessMessage = `New ${
-          this.selectedAddressType
-        } address generated`;
-        this.snackSuccess = true;
+        await this.$store.dispatch("address/init");
+        const message = `New ${this.selectedAddressType} address generated`;
+        this.$store.commit("snackSuccess", message);
       } catch (e) {
-        this.snackErrorMessage = e.message;
-        this.snackError = true;
+        this.$store.commit("snackError", e.message);
       }
     },
     updateAddressName(address, name) {

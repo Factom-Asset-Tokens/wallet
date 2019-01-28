@@ -93,7 +93,7 @@ export default {
         const json = JSON.stringify(backup, null, 4);
         console.log(json);
       } catch (e) {
-        // TODO
+        this.$store.commit("snackError", e.message);
       }
     },
     async showSeed() {

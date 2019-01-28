@@ -20,16 +20,12 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn :disabled="!valid" type="submit" color="primary">track</v-btn>
+              <v-btn :disabled="!valid" type="submit" color="primary" :loading="loading">track</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
       </v-flex>
     </v-layout>
-    <v-snackbar v-model="snackError" color="error" :timeout="5000">
-      {{ snackErrorMessage }}
-      <v-btn dark flat @click="snackError = false">Close</v-btn>
-    </v-snackbar>
   </v-container>
 </template>
 
@@ -39,9 +35,8 @@ import { tryParseApiErrorCode } from "../components/common";
 
 export default {
   data: () => ({
-    snackError: false,
-    snackErrorMessage: "",
     valid: true,
+    loading: false,
     tokenChainId: "",
     tokenChainIdRules: [
       v => !!v || "Token chain ID is required",
@@ -52,8 +47,8 @@ export default {
 
   methods: {
     async submit() {
-
       if (this.$refs.form.validate()) {
+        this.loading = true;
         const cli = this.$store.getters["fatd/cli"];
         const tokenCli = cli.getTokenCLI(this.tokenChainId);
 
@@ -72,12 +67,13 @@ export default {
         } catch (e) {
           const code = tryParseApiErrorCode(e);
           if (code === -32800) {
-            this.snackErrorMessage = "Token not found.";
+            this.$store.commit("snackError", "Token not found.");
           } else {
-            this.snackErrorMessage = "Unknown error encountered.";
+            this.$store.commit("snackError", "Unknown error encountered.");
             console.error(e);
           }
-          this.snackError = true;
+        } finally {
+          this.loading = false;
         }
       }
     },
