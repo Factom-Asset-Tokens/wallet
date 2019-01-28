@@ -1,16 +1,20 @@
 <template>
   <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
     <v-layout row wrap align-baseline>
-      <v-flex xs12 md8 offset-md2>
+      <v-flex xs11 md7 offset-md2>
         <v-text-field
           v-model="address"
           label="Recipient address"
           counter="52"
           :rules="addressRules"
+          :disabled="burn"
           clearable
           required
           solo
         ></v-text-field>
+      </v-flex>
+      <v-flex xs1 md1 text-xs-center>
+        <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
       </v-flex>
       <v-flex xs12 md6 offset-md2>
         <v-text-field
@@ -48,6 +52,12 @@
       :symbol="symbol"
       @confirmed="sendTransaction"
     ></ConfirmBasicTransactionDialog>
+    <ConfirmBurnDialog
+      ref="confirmBurnDialog"
+      :amount="amount"
+      :symbol="symbol"
+      @confirmed="sendTransaction"
+    ></ConfirmBurnDialog>
   </v-form>
 </template>
 
@@ -60,23 +70,31 @@ const {
   Transaction: { TransactionBuilder }
 } = FAT0;
 import ConfirmBasicTransactionDialog from "./ConfirmBasicTransactionDialog";
+import ConfirmBurnDialog from "./ConfirmBurnDialog";
 
 export default {
-  components: { ConfirmBasicTransactionDialog },
+  components: { ConfirmBasicTransactionDialog, ConfirmBurnDialog },
   mixins: [SendTransaction],
   data() {
     return {
       address: "",
       amount: 0,
+      burn: false,
       valid: true,
       errorMessage: "",
       addressRules: [
-        v => isValidFctPublicAddress(v) || "Invalid public FCT address"
+        v =>
+          this.burn ||
+          isValidFctPublicAddress(v) ||
+          "Invalid public FCT address"
       ]
     };
   },
   props: ["balances", "symbol", "tokenCli"],
   computed: {
+    fireColor() {
+      return this.burn ? "error" : "grey";
+    },
     totalBalance() {
       return this.balances.reduce((acc, val) => acc + val.balance, 0);
     },
@@ -106,15 +124,28 @@ export default {
     async confirmTransaction() {
       this.transactionSentMessage = "";
       if (this.$refs.form.validate()) {
-        this.$refs.confirmTransactionDialog.show();
+        if (this.burn) {
+          this.$refs.confirmBurnDialog.show();
+        } else {
+          this.$refs.confirmTransactionDialog.show();
+        }
+      }
+    },
+    clickBurn() {
+      this.burn = !this.burn;
+      if (this.burn) {
+        this.address = "Burning address";
+      } else {
+        this.address = "";
       }
     },
     async buildTransaction() {
+      const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.address;
       // Greedy algorithm to select inputs
       const inputs = [];
       let amountToCover = this.amount;
       for (const b of this.balances) {
-        if (b.address !== this.address && b.balance > 0) {
+        if (b.address !== outputAddress && b.balance > 0) {
           if (amountToCover - b.balance > 0) {
             inputs.push({ address: b.address, amount: b.balance });
             amountToCover -= b.balance;
@@ -137,7 +168,7 @@ export default {
       // Build transaction object
       const txBuilder = new TransactionBuilder(
         this.tokenCli.getTokenChainId()
-      ).output(this.address, this.amount);
+      ).output(outputAddress, this.amount);
       for (const input of inputsSecrets) {
         txBuilder.input(input.secret, input.amount);
       }

@@ -91,6 +91,7 @@ export default {
       try {
         const backup = await this.$store.dispatch("backup");
         const json = JSON.stringify(backup, null, 4);
+        // TODO
         console.log(json);
       } catch (e) {
         this.$store.commit("snackError", e.message);

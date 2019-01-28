@@ -52,18 +52,23 @@
                 class="font-italic subheading"
               >Start selecting tokens from the "Available Tokens" section.</div>
             </v-flex>
-            <v-flex xs12 md10 mt-4>
+            <v-flex md9 mt-4>
               <v-text-field
                 v-model="address"
                 label="Recipient address"
                 counter="52"
                 :rules="addressRules"
+                :disabled="burn"
                 clearable
                 required
                 solo
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 md2 text-xs-right mt-4>
+            <v-flex md1 mt-4 text-xs-left>
+              <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
+            </v-flex>
+
+            <v-flex md2 text-xs-right mt-4>
               <v-btn
                 color="primary"
                 large
@@ -84,8 +89,10 @@
       ref="confirmTransactionDialog"
       :selectedTokens="selectedTokens"
       :address="address"
+      :burn="burn"
       @confirmed="send"
     ></ConfirmTransactionDialog>
+    <ConfirmBurnDialog ref="confirmBurnDialog" :selectedTokens="selectedTokens" @confirmed="send"></ConfirmBurnDialog>
   </v-layout>
 </template>
 
@@ -95,30 +102,51 @@ import { isValidFctPublicAddress } from "factom";
 import { displayIds, availableTokens } from "./ids-utils.js";
 import SelectIdRangeDialog from "./SelectIdRangeDialog";
 import ConfirmTransactionDialog from "./ConfirmTransactionDialog";
+import ConfirmBurnDialog from "./ConfirmBurnDialog";
 import TokenDetailsDialog from "./TokenDetailsDialog";
 import balances from "./mockup-balances.json";
 
 export default {
   props: ["symbol", "tokenCli"],
-  components: { SelectIdRangeDialog, TokenDetailsDialog, ConfirmTransactionDialog },
+  components: {
+    SelectIdRangeDialog,
+    TokenDetailsDialog,
+    ConfirmTransactionDialog,
+    ConfirmBurnDialog
+  },
   data() {
     return {
       address: "",
+      burn: false,
       selectedTokens: [],
       balances,
       valid: true,
       addressRules: [
-        v => isValidFctPublicAddress(v) || "Invalid public FCT address"
+        v =>
+          this.burn ||
+          isValidFctPublicAddress(v) ||
+          "Invalid public FCT address"
       ]
     };
   },
   computed: {
+    fireColor() {
+      return this.burn ? "error" : "grey";
+    },
     availableTokens() {
       const allTokens = flatmap(this.balances.map(b => b.ids));
       return availableTokens(allTokens, this.selectedTokens);
     }
   },
   methods: {
+    clickBurn() {
+      this.burn = !this.burn;
+      if (this.burn) {
+        this.address = "Burning address";
+      } else {
+        this.address = "";
+      }
+    },
     selectToken(id) {
       if (id.from === id.to) {
         this.addToken(id);
@@ -137,13 +165,18 @@ export default {
     },
     confirmTransaction() {
       if (this.$refs.form.validate()) {
-        this.$refs.confirmTransactionDialog.show();
+        if (this.burn) {
+          this.$refs.confirmBurnDialog.show();
+        } else {
+          this.$refs.confirmTransactionDialog.show();
+        }
       }
     },
     send() {
       // TODO: send
       console.log("SEND");
       this.$refs.form.reset();
+      this.burn = false;
       this.selectedTokens = [];
     }
   },

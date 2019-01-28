@@ -6,7 +6,7 @@
     @keydown.enter="confirm"
   >
     <v-card>
-      <v-card-title class="headline primary white--text" primary-title>Confirm transaction</v-card-title>
+      <v-card-title class="headline primary white--text" primary-title>Confirm burn</v-card-title>
       <v-card-text>
         <v-layout wrap>
           <v-flex
@@ -14,7 +14,7 @@
             text-xs-center
             class="subheading"
             my-2
-          >Sending the following tokens</v-flex>
+          >Burning the following tokens</v-flex>
           <v-flex xs12 text-xs-center>
             <v-chip
               v-for="id in selectedTokens"
@@ -24,14 +24,12 @@
               class="font-weight-bold subheading"
             >{{id | displayIds}}</v-chip>
           </v-flex>
-          <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{address}}</v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary" flat outline @click="display = false">Cancel</v-btn>
-        <v-btn color="primary" @click="confirm">Confirm</v-btn>
+        <v-btn color="error" @click="confirm"><v-icon left>fas fa-fire-alt</v-icon>burn</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -41,7 +39,7 @@
 import { displayIds } from "./ids-utils.js";
 
 export default {
-  props: ["selectedTokens", "address"],
+  props: ["selectedTokens"],
   data() {
     return {
       display: false
