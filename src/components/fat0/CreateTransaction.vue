@@ -2,13 +2,11 @@
   <v-layout wrap>
     <v-flex text-xs-center xs12 my-4>
       <v-sheet class="white--text" color="primary" elevation="1">
-        <h1>
-          Send transaction -
-          <a
-            @click="toggleMode"
-            class="secondary--text"
-          >{{mode | capitalize}} mode</a>
-        </h1>
+        <div class="display-1 font-weight-bold">Send transaction
+          <v-btn flat icon color="secondary" @click="toggleMode">
+            <v-icon>fas fa-cogs</v-icon>
+          </v-btn>
+        </div>
       </v-sheet>
     </v-flex>
     <v-flex xs12>
@@ -47,13 +45,6 @@ export default {
       } else {
         this.mode = "advanced";
       }
-    }
-  },
-  filters: {
-    capitalize: function(value) {
-      if (!value) return "";
-      value = value.toString();
-      return value.charAt(0).toUpperCase() + value.slice(1);
     }
   }
 };

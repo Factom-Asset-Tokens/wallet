@@ -1,7 +1,7 @@
 <template>
   <v-layout wrap>
     <v-flex text-xs-center xs12 my-4 py-2>
-      <v-sheet class="white--text" color="primary" elevation="1">
+      <v-sheet class="secondary--text" color="primary" elevation="1">
         <h1>{{totalBalance}} {{symbol}}</h1>
       </v-sheet>
     </v-flex>
