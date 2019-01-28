@@ -30,6 +30,30 @@ export default new Vuex.Store({
                 dispatch('factomd/checkStatus'),
                 dispatch('fatd/checkStatus')]);
             await Promise.all([dispatch('address/init'), dispatch('identity/init')]);
+        },
+        async backup({ state, getters }) {
+            const backup = { config: {}, address: {} };
+            // Daemon configs
+            backup.config.factomd = state.factomd.config;
+            backup.config.fatd = state.fatd.config;
+            backup.config.walletd = state.walletd.config;
+            // Tracked tokens
+            backup.trackedTokens = Object.values(state.tokens.tracked).map(t => t.chainId);
+            // Identity chains
+            backup.identities = Object.keys(state.identity.identities);
+            // Addresses
+            backup.address.preferredEcAddress = state.address.preferredEcAddress;
+            backup.address.names = state.address.names;
+
+            // Walletd backup
+            const walletd = getters['walletd/cli'];
+            const walletdBackup = await walletd.call("wallet-backup");
+            backup.walletdBackup = walletdBackup;
+
+            return backup;
+        },
+        async restore() {
+            // TODO
         }
     },
     strict: debug

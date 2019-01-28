@@ -39,7 +39,7 @@
           </v-slide-y-transition>
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn color="primary" large class="subheading">
+          <v-btn color="primary" large class="subheading" @click="saveBackupFile">
             <v-icon left>far fa-save</v-icon>save backup file
           </v-btn>
         </v-flex>
@@ -87,6 +87,15 @@ export default {
     };
   },
   methods: {
+    async saveBackupFile() {
+      try {
+        const backup = await this.$store.dispatch("backup");
+        const json = JSON.stringify(backup, null, 4);
+        console.log(json);
+      } catch (e) {
+        // TODO
+      }
+    },
     async showSeed() {
       this.loadingSeed = true;
       try {

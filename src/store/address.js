@@ -9,12 +9,12 @@ export default {
         ecBalances: {},
         fctAddresses: [],
         fctBalances: {},
-        addressesNames: {},
+        names: {},
         preferredEcAddress: ''
     },
     getters: {
-        fctAddressesWithNames: state => mapNames(state.fctAddresses, state.addressesNames),
-        ecAddressesWithNames: state => mapNames(state.ecAddresses, state.addressesNames),
+        fctAddressesWithNames: state => mapNames(state.fctAddresses, state.names),
+        ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names),
         payingEcAddress: function (state) {
             if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress]) {
                 return state.preferredEcAddress;
@@ -29,9 +29,9 @@ export default {
         updateFctBalances: (state, balances) => state.fctBalances = balances,
 
         updateAddressNames(state, { address, name }) {
-            const copy = { ...state.addressesNames };
+            const copy = { ...state.names };
             copy[address] = name;
-            state.addressesNames = copy;
+            state.names = copy;
         },
         setPreferredEcAddress(state, ecAddress) {
             state.preferredEcAddress = ecAddress;
