@@ -3,15 +3,12 @@
     <v-card color="primary">
       <v-card-text>
         <v-layout align-center justify-center wrap>
-          <v-flex xs12 text-xs-center mb-4>
-            <v-avatar :size="64" color="grey lighten-4">
-              <img :src="icon" alt="Token icon">
-            </v-avatar>
-          </v-flex>
-
-          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center>
-            {{name}}
-            <template v-if="symbol">({{symbol}})</template>
+          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center mb-3>{{name}}</v-flex>
+          <v-flex xs12 text-xs-center>
+            <div class="total-balance">
+              <img class="balance-icon" src="/img/coin-yellow.png">
+              <div class="secondary--text display-1 font-weight-bold">{{totalBalance}} {{symbol}}</div>
+            </div>
           </v-flex>
         </v-layout>
       </v-card-text>
@@ -33,7 +30,7 @@
 
             <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
             <v-flex xs12 text-xs-right>
-              <v-btn color="primary" @click="untrack">untrack</v-btn>
+              <v-btn color="primary" @click="untrack">stop tracking</v-btn>
             </v-flex>
           </v-layout>
         </v-container>
@@ -53,13 +50,8 @@ export default {
       showDetails: false
     };
   },
-  props: ["token"],
+  props: ["token", "totalBalance"],
   computed: {
-    icon() {
-      return this.token.metadata && this.token.metadata.iconSrc
-        ? this.token.metadata.iconSrc
-        : "/img/token-no-icon.png";
-    },
     name() {
       return this.token.issuance.name
         ? this.token.issuance.name
@@ -82,4 +74,13 @@ export default {
 </script>
 
 <style scoped>
+.balance-icon {
+  margin-right: 16px;
+}
+.total-balance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
 </style>

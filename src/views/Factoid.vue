@@ -35,6 +35,6 @@ export default {
 
 <style scoped>
 .section-margin-bottom {
-  margin-bottom: 48px;
+  margin-bottom: 36px;
 }
 </style>

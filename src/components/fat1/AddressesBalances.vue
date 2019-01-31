@@ -1,11 +1,5 @@
 <template>
   <v-layout wrap>
-    <v-flex text-xs-center xs12 my-4 py-2>
-      <v-sheet class="white--text" color="primary" elevation="1">
-        <h1>{{totalBalance}} {{symbol}}</h1>
-      </v-sheet>
-    </v-flex>
-
     <v-flex xs12>
       <v-data-table
         class="elevation-1"
@@ -50,23 +44,10 @@
 <script>
 import { displayIds, sortIds } from "./ids-utils.js";
 import TokenDetailsDialog from "./TokenDetailsDialog";
-import balances from "./mockup-balances.json";
 
 export default {
   components: { TokenDetailsDialog },
-  props: ["symbol"],
-  data() {
-    return {
-      balances
-    };
-  },
-  computed: {
-    totalBalance() {
-      return this.balances
-        .reduce((acc, val) => acc + val.balance, 0)
-        .toLocaleString();
-    }
-  },
+  props: ["balances", "symbol"],
   methods: {
     sortIds,
     showTokenDetails(id) {

@@ -104,10 +104,9 @@ import SelectIdRangeDialog from "./SelectIdRangeDialog";
 import ConfirmTransactionDialog from "./ConfirmTransactionDialog";
 import ConfirmBurnDialog from "./ConfirmBurnDialog";
 import TokenDetailsDialog from "./TokenDetailsDialog";
-import balances from "./mockup-balances.json";
 
 export default {
-  props: ["symbol", "tokenCli"],
+  props: ["symbol", "tokenCli", "balances"],
   components: {
     SelectIdRangeDialog,
     TokenDetailsDialog,
@@ -119,7 +118,6 @@ export default {
       address: "",
       burn: false,
       selectedTokens: [],
-      balances,
       valid: true,
       addressRules: [
         v =>

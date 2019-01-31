@@ -5,7 +5,7 @@
         <v-flex xs12 md6>
           <v-sheet class="white--text display-1 font-weight-medium" color="primary">
             <div class="total-balance" :title="`${totalFctBalanceText.exact} FCT`">
-              <img class="balance-icon" src="/img/fct-coin.png">
+              <img class="balance-icon" src="/img/coin-white.png">
               <div>{{totalFctBalanceText.rounded}} FCT</div>
             </div>
           </v-sheet>

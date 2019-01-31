@@ -9,7 +9,7 @@
         </div>
       </v-sheet>
     </v-flex>
-    <v-flex xs12>
+    <v-flex xs12 mt-2>
       <CreateAdvancedTransaction
         v-show="mode==='advanced'"
         :balances="balances"

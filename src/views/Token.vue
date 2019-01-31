@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <template v-if="token">
-      <v-layout row wrap mb-4>
-        <TokenHeader :token="token"></TokenHeader>
+      <v-layout row wrap mb-5>
+        <TokenHeader :token="token" :totalBalance="totalBalance"></TokenHeader>
       </v-layout>
 
       <v-layout row wrap mb-4>
@@ -35,6 +35,8 @@ import AddressesBalances from "@/components/AddressesBalances";
 import CreateTransaction from "@/components/CreateTransaction";
 import Promise from "bluebird";
 
+import sciBalances from "@/components/fat1/mockup-balances.json";
+
 export default {
   name: "Token",
   components: { TokenHeader, AddressesBalances, CreateTransaction },
@@ -54,10 +56,25 @@ export default {
     },
     token() {
       return this.$store.state.tokens.tracked[this.chainId];
+    },
+    totalBalance() {
+      return this.balances
+        .reduce((acc, val) => acc + val.balance, 0)
+        .toLocaleString(undefined, {
+          maximumFractionDigits: 10
+        });
     }
   },
   methods: {
     async fetchBalances() {
+      if (
+        this.chainId ===
+        "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66"
+      ) {
+        this.balances = sciBalances;
+        return;
+      }
+
       const tokenCli = this.tokenCli;
       const addresses = this.$store.getters["address/fctAddressesWithNames"];
 
@@ -87,5 +104,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
