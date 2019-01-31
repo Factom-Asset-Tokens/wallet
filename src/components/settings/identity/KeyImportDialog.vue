@@ -1,26 +1,24 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="800px" @keydown.esc="display = false">
+  <v-dialog v-model="display" lazy max-width="600px" @keydown.esc="display = false">
     <v-form v-model="valid" lazy-validation ref="form" @submit.prevent="importKey">
       <v-card>
         <v-card-title>
           <span class="headline">Import Identity Key</span>
         </v-card-title>
         <v-card-text>
-          <v-container>
-            <v-layout wrap>
-              <v-flex xs12>
-                Import the secret key matching
-                <strong class="primary--text">{{publicKey}}</strong>
-              </v-flex>
-              <v-flex xs12>
-                <SecretKeyInput
-                  ref="secretKeyInput"
-                  v-model="secretKey"
-                  :validationRules="secretKeyValidationRules"
-                ></SecretKeyInput>
-              </v-flex>
-            </v-layout>
-          </v-container>
+          <v-layout wrap>
+            <v-flex xs12 class="subheading">
+              Import the secret key matching
+              <strong class="primary--text">{{publicKey}}</strong>
+            </v-flex>
+            <v-flex xs12>
+              <SecretKeyInput
+                ref="secretKeyInput"
+                v-model="secretKey"
+                :validationRules="secretKeyValidationRules"
+              ></SecretKeyInput>
+            </v-flex>
+          </v-layout>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
