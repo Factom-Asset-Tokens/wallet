@@ -1,3 +1,7 @@
+export function standardizeId(id) {
+    return typeof id === "number" ? { from: id, to: id } : id;
+}
+
 export function displayIds(value) {
     if (value.from == value.to) {
         return value.from.toLocaleString();

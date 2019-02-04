@@ -84,7 +84,7 @@
     </v-flex>
 
     <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
-    <TokenDetailsDialog ref="detailsDialog" :symbol="symbol"></TokenDetailsDialog>
+    <TokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></TokenDetailsDialog>
     <ConfirmTransactionDialog
       ref="confirmTransactionDialog"
       :selectedTokens="selectedTokens"
@@ -132,7 +132,7 @@ export default {
       return this.burn ? "error" : "grey";
     },
     availableTokens() {
-      const allTokens = flatmap(this.balances.map(b => b.ids));
+      const allTokens = flatmap(this.balances.filter(b => b.ids).map(b => b.ids));
       return availableTokens(allTokens, this.selectedTokens);
     }
   },

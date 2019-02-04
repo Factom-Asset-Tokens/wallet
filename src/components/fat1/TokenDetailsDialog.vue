@@ -10,8 +10,7 @@
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>{{symbol}} {{title}}</v-card-title>
       <v-card-text>
-        <div v-if="id.from === id.to">Token details of #{{id.from}}...</div>
-        <TokenRangeDetails v-else ref="rangeDetails" :min="id.from" :max="id.to"></TokenRangeDetails>
+        <TokenDetails ref="rangeDetails" :tokenCli="tokenCli" :min="id.from" :max="id.to"></TokenDetails>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -22,11 +21,11 @@
 </template>
 
 <script>
-import TokenRangeDetails from "./TokenRangeDetails";
+import TokenDetails from "./TokenDetails";
 
 export default {
-  components: { TokenRangeDetails },
-  props: ["symbol"],
+  components: { TokenDetails },
+  props: ["symbol", "tokenCli"],
   data() {
     return {
       display: false,
@@ -41,7 +40,7 @@ export default {
     }
   },
   methods: {
-    show(id) {
+    async show(id) {
       if (this.$refs.rangeDetails) {
         this.$refs.rangeDetails.setId(id.from);
       }

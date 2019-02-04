@@ -2,7 +2,7 @@
     {
       "address": "FA1yNbdkjy8ATB3K72TvaeNT9q7aC8pQxCzn3d8Em795XYRzFSpq",
       "name": "my address",
-      "balance": 3,
+      "balance": 7,
       "ids": [
         { "from": 1, "to": 1 },
         { "from": 5, "to": 9 },
@@ -12,7 +12,7 @@
     },
     {
       "address": "FA29jNtT88wGjs9YLQch8ur4VFaTDkuiDwWe1YmksPDJuh3tAczG",
-      "balance": 2,
+      "balance": 42,
       "ids": [
         { "from": 11, "to": 11 },
         { "from": 23, "to": 55 },

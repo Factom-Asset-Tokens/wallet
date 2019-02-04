@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@fat-token/fat-js": "0.0.0",
+    "@fat-token/fat-js": "0.1.0-rc1",
     "ajv": "^6.7.0",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",

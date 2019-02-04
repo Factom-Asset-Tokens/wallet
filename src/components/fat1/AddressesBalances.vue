@@ -37,7 +37,7 @@
         </template>
       </v-data-table>
     </v-flex>
-    <TokenDetailsDialog ref="detailsDialog" :symbol="symbol"></TokenDetailsDialog>
+    <TokenDetailsDialog ref="detailsDialog" :symbol="symbol" :tokenCli="tokenCli"></TokenDetailsDialog>
   </v-layout>
 </template>
 
@@ -47,7 +47,7 @@ import TokenDetailsDialog from "./TokenDetailsDialog";
 
 export default {
   components: { TokenDetailsDialog },
-  props: ["balances", "symbol"],
+  props: ["balances", "symbol", "tokenCli"],
   methods: {
     sortIds,
     showTokenDetails(id) {

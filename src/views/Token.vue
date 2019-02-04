@@ -10,6 +10,7 @@
           :type="token.issuance.type"
           :balances="balances"
           :symbol="token.issuance.symbol"
+          :tokenCli="tokenCli"
         ></AddressesBalances>
       </v-layout>
       <v-layout row wrap>
@@ -34,7 +35,7 @@ import TokenHeader from "@/components/TokenHeader";
 import AddressesBalances from "@/components/AddressesBalances";
 import CreateTransaction from "@/components/CreateTransaction";
 import Promise from "bluebird";
-
+import { standardizeId } from "@/components/fat1/ids-utils.js";
 import sciBalances from "@/components/fat1/mockup-balances.json";
 
 export default {
@@ -67,6 +68,9 @@ export default {
   },
   methods: {
     async fetchBalances() {
+      if (!this.token) {
+        return;
+      }
       if (
         this.chainId ===
         "6d94c74167fc0bf28dcb2b233ad930f1686404340ddc860f0999f68ceb3c5d66"
@@ -78,9 +82,17 @@ export default {
       const tokenCli = this.tokenCli;
       const addresses = this.$store.getters["address/fctAddressesWithNames"];
 
+      const tokenType = this.token.issuance.type;
       this.balances = await Promise.map(addresses, async function(address) {
-        const balance = await tokenCli.getBalance(address.address);
-        return Object.assign({ balance }, address);
+        const result = {};
+        result.balance = await tokenCli.getBalance(address.address);
+
+        if (tokenType === "FAT-1" && result.balance > 0) {
+          const nfBalance = await tokenCli.getNFBalance(address.address);
+          result.ids = nfBalance.map(standardizeId);
+        }
+
+        return Object.assign(result, address);
       });
     }
   },
