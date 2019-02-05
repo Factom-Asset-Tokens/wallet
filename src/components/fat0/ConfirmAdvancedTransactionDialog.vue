@@ -7,10 +7,10 @@
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{amountText}} {{symbol}}</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
-          <template v-for="output in outputs">
+          <v-layout v-for="output in outputs" :key="output.address">
             <v-flex xs10 class="title secondary--text" my-2>{{output.address}}</v-flex>
             <v-flex xs2 class="title secondary--text" text-xs-right my-2>{{output.amount}} {{symbol}}</v-flex>
-          </template>
+          </v-layout>
         </v-layout>
       </v-card-text>
       <v-card-actions>
