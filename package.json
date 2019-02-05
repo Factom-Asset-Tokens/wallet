@@ -10,31 +10,31 @@
   },
   "dependencies": {
     "@fat-token/fat-js": "0.1.0-rc1",
-    "ajv": "^6.7.0",
+    "ajv": "^6.8.1",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",
     "factom": "1.0.0-rc4",
     "factom-identity-lib": "^0.2.0-rc4",
-    "jsoneditor": "^5.27.0",
+    "jsoneditor": "^5.28.2",
     "lodash.debounce": "^4.0.8",
     "lodash.flatmap": "^4.5.0",
-    "vue": "^2.5.22",
+    "vue": "^2.6.1",
     "vue-router": "^3.0.2",
-    "vuetify": "^1.4.1",
-    "vuex": "^3.0.1"
+    "vuetify": "^1.4.6",
+    "vuex": "^3.1.0"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.6.3",
-    "@vue/cli-plugin-babel": "^3.3.0",
-    "@vue/cli-plugin-eslint": "^3.3.0",
-    "@vue/cli-service": "^3.3.0",
+    "@fortawesome/fontawesome-free": "^5.7.1",
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.12.0",
+    "eslint": "^5.13.0",
     "eslint-plugin-vue": "^5.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.5.22",
-    "vuetify-loader": "^1.1.1"
+    "vue-template-compiler": "^2.6.1",
+    "vuetify-loader": "^1.2.0"
   }
 }
