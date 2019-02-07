@@ -1,17 +1,17 @@
 export function standardizeId(id) {
-    return typeof id === "number" ? { from: id, to: id } : id;
+    return typeof id === "number" ? { min: id, max: id } : id;
 }
 
 export function displayIds(value) {
-    if (value.from == value.to) {
-        return value.from.toLocaleString();
+    if (value.min === value.max) {
+        return value.min.toLocaleString();
     } else {
-        return `${value.from.toLocaleString()} to ${value.to.toLocaleString()}`;
+        return `${value.min.toLocaleString()} to ${value.max.toLocaleString()}`;
     }
 }
 
 export function sortIds(ids) {
-    return ids.slice().sort((a, b) => a.from - b.from);
+    return ids.slice().sort((a, b) => a.min - b.min);
 }
 
 export function availableTokens(allTokensList, selectedTokensList) {
@@ -50,27 +50,27 @@ export function availableTokens(allTokensList, selectedTokensList) {
 }
 
 function computeId(e) {
-    return `${e.from}-${e.to}`;
+    return `${e.min}-${e.max}`;
 }
 
 function isInRange(element, range) {
-    return range.from <= element.from && element.to <= range.to;
+    return range.min <= element.min && element.max <= range.max;
 }
 
 function rangeSubstract(range, sub) {
-    if (sub.from === range.from && sub.to === range.to) {
+    if (sub.min === range.min && sub.max === range.max) {
         return [];
-    } else if (sub.from === range.from) {
-        return [createRange(sub.to + 1, range.to)];
-    } else if (sub.to === range.to) {
-        return [createRange(range.from, sub.from - 1)];
+    } else if (sub.min === range.min) {
+        return [createRange(sub.max + 1, range.max)];
+    } else if (sub.max === range.max) {
+        return [createRange(range.min, sub.min - 1)];
     } else {
-        return [createRange(range.from, sub.from - 1), createRange(sub.to + 1, range.to)];
+        return [createRange(range.min, sub.min - 1), createRange(sub.max + 1, range.max)];
     }
 }
 
-function createRange(from, to) {
+function createRange(min, max) {
     return {
-        from, to
+        min, max
     }
 }

@@ -4,20 +4,20 @@
       "name": "my address",
       "balance": 7,
       "ids": [
-        { "from": 1, "to": 1 },
-        { "from": 5, "to": 9 },
-        { "from": 10, "to": 10 },
-        { "from": 78, "to": 78 }
+        { "min": 1, "max": 1 },
+        { "min": 5, "max": 9 },
+        { "min": 10, "max": 10 },
+        { "min": 78, "max": 78 }
       ]
     },
     {
       "address": "FA29jNtT88wGjs9YLQch8ur4VFaTDkuiDwWe1YmksPDJuh3tAczG",
       "balance": 42,
       "ids": [
-        { "from": 11, "to": 11 },
-        { "from": 23, "to": 55 },
-        { "from": 2, "to": 2 },
-        { "from": 12, "to": 20 }
+        { "min": 11, "max": 11 },
+        { "min": 23, "max": 55 },
+        { "min": 2, "max": 2 },
+        { "min": 12, "max": 20 }
       ]
     }
   ]

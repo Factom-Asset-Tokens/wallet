@@ -3,7 +3,7 @@
     <v-card>
       <v-form v-model="valid" @submit.prevent="add" ref="form">
         <v-card-title class="primary">
-          <span class="headline">Select ID range</span>
+          <span class="headline">Select ID range between {{min}} and {{max}}</span>
         </v-card-title>
         <v-card-text>
           <v-layout wrap>
@@ -83,7 +83,7 @@ export default {
     },
     add() {
       if (this.$refs.form.validate()) {
-        this.$emit("add", { from: this.from, to: this.to });
+        this.$emit("add", { min: this.from, max: this.to });
         this.display = false;
         this.$refs.form.reset();
       }

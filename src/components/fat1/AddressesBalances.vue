@@ -26,7 +26,7 @@
             <v-card-text>
               <v-chip
                 v-for="id in sortIds(props.item.ids)"
-                :key="id.from || id"
+                :key="id.min"
                 outline
                 color="secondary"
                 class="font-weight-bold subheading"

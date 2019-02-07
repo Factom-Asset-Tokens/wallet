@@ -15,7 +15,7 @@
             <v-flex xs12>
               <v-chip
                 v-for="id in availableTokens"
-                :key="id.from || id"
+                :key="id.min"
                 outline
                 color="secondary"
                 class="font-weight-bold subheading"
@@ -34,7 +34,7 @@
               <div v-if="selectedTokens.length > 0">
                 <v-chip
                   v-for="id in selectedTokens"
-                  :key="id.from || id"
+                  :key="id.min"
                   outline
                   color="secondary"
                   class="font-weight-bold subheading"
@@ -146,10 +146,10 @@ export default {
       }
     },
     selectToken(id) {
-      if (id.from === id.to) {
+      if (id.min === id.max) {
         this.addToken(id);
       } else {
-        this.$refs.rangeSelectDialog.show(id.from, id.to);
+        this.$refs.rangeSelectDialog.show(id.min, id.max);
       }
     },
     addToken(id) {

@@ -10,7 +10,7 @@
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>{{symbol}} {{title}}</v-card-title>
       <v-card-text>
-        <TokenDetails ref="rangeDetails" :tokenCli="tokenCli" :min="id.from" :max="id.to"></TokenDetails>
+        <TokenDetails ref="rangeDetails" :tokenCli="tokenCli" :min="id.min" :max="id.max"></TokenDetails>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -34,15 +34,15 @@ export default {
   },
   computed: {
     title() {
-      return this.id.from === this.id.to
-        ? `#${this.id.from}`
-        : `#${this.id.from} to #${this.id.to}`;
+      return this.id.min === this.id.max
+        ? `#${this.id.min}`
+        : `#${this.id.min} to #${this.id.max}`;
     }
   },
   methods: {
     async show(id) {
       if (this.$refs.rangeDetails) {
-        this.$refs.rangeDetails.setId(id.from);
+        this.$refs.rangeDetails.setId(id.min);
       }
       this.display = true;
       this.id = id;

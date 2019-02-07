@@ -18,7 +18,7 @@
           <v-flex xs12 text-xs-center>
             <v-chip
               v-for="id in selectedTokens"
-              :key="id.from || id"
+              :key="id.min"
               outline
               color="secondary"
               class="font-weight-bold subheading"
