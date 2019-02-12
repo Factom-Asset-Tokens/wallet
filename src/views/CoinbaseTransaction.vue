@@ -61,7 +61,7 @@
 import TokenSupplyDetails from "@/components/TokenSupplyDetails";
 import JsonEditor from "@/components/JsonEditor";
 import recipientsSchema from "@/json-schemas/coinbase-recipients.json";
-import { isValidFctPublicAddress } from "factom";
+import { isValidPublicFctAddress } from "factom";
 import Ajv from "ajv";
 const ajv = new Ajv();
 const validateRecipientsJson = ajv.compile(recipientsSchema);
@@ -122,7 +122,7 @@ export default {
       if (validateRecipientsJson(json)) {
         let totalAmount = 0;
         for (const [address, amount] of Object.entries(json)) {
-          if (isValidFctPublicAddress(address)) {
+          if (isValidPublicFctAddress(address)) {
             totalAmount += amount;
           } else {
             this.error = `${address} is not a valid public FCT address.`;

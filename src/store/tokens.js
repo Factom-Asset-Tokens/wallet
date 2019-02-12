@@ -1,9 +1,7 @@
-import tokens from '../mockup-token-data.json';
-
 export default {
     namespaced: true,
     state: {
-        tracked: tokens,
+        tracked: {},
     },
     mutations: {
         track(state, token) {

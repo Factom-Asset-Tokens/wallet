@@ -18,7 +18,7 @@
             class="text-xs-right"
           >
             <div>{{ props.item.balance }}</div>
-            <v-icon color="primary" @click="props.expanded = !props.expanded">view_list</v-icon>
+            <v-icon color="primary" @click="props.expanded = !props.expanded" :disabled="props.item.balance === 0">view_list</v-icon>
           </td>
         </template>
         <template slot="expand" slot-scope="props">

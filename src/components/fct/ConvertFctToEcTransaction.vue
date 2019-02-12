@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { isValidEcPublicAddress } from "factom";
+import { isValidPublicEcAddress } from "factom";
 import {
   buildTransaction,
   getFeeAdjustedTransaction
@@ -90,7 +90,7 @@ export default {
       transactionSentMessage: "",
       sending: false,
       addressRules: [
-        v => isValidEcPublicAddress(v) || "Invalid public EC address"
+        v => isValidPublicEcAddress(v) || "Invalid public EC address"
       ]
     };
   },
@@ -145,7 +145,7 @@ export default {
   watch: {
     async transactionProperties() {
       if (
-        isValidEcPublicAddress(this.outputAddress) &&
+        isValidPublicEcAddress(this.outputAddress) &&
         typeof this.outputAmount === "number"
       ) {
         const factomd = this.$store.getters["factomd/cli"];

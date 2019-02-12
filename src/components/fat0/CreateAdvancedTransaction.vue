@@ -1,5 +1,11 @@
 <template>
-  <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+  <v-form
+    id="advancedTxForm"
+    v-model="validForm"
+    ref="form"
+    @submit.prevent="confirmTransaction"
+    lazy-validation
+  >
     <v-layout row wrap>
       <v-flex xs12 pb-4>
         <v-toolbar class="elevation-1">
@@ -83,6 +89,8 @@
             <v-icon right>send</v-icon>
           </v-btn>
         </v-flex>
+
+        <!-- Alerts transaction success/failure-->
         <v-flex v-if="errorMessage" xs12>
           <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
         </v-flex>
@@ -96,6 +104,8 @@
         </v-flex>
       </v-layout>
     </v-layout>
+
+    <!-- Dialogs -->
     <ConfirmAdvancedTransactionDialog
       ref="confirmTransactionDialog"
       :outputs="outputs"
@@ -107,7 +117,7 @@
 
 <script>
 import Promise from "bluebird";
-import { isValidFctPublicAddress } from "factom";
+import { isValidPublicFctAddress } from "factom";
 import SendTransaction from "@/mixins/SendTransaction";
 import TransactionInput from "@/components/fat0/TransactionInput";
 import ConfirmAdvancedTransactionDialog from "@/components/fat0/ConfirmAdvancedTransactionDialog";
@@ -155,7 +165,7 @@ export default {
     outputAddressRules() {
       return [
         address =>
-          isValidFctPublicAddress(address) || "Invalid public FCT address"
+          isValidPublicFctAddress(address) || "Invalid public FCT address"
       ];
     },
     outputAmountRules() {

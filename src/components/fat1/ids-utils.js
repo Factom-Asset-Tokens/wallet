@@ -14,7 +14,7 @@ export function sortIds(ids) {
     return ids.slice().sort((a, b) => a.min - b.min);
 }
 
-export function availableTokens(allTokensList, selectedTokensList) {
+export function idsSetDiff(allTokensList, selectedTokensList) {
 
     const availableTokens = {};
     const selectedTokens = {};

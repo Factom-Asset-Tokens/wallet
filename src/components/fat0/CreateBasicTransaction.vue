@@ -33,6 +33,8 @@
           <v-icon right>send</v-icon>
         </v-btn>
       </v-flex>
+
+      <!-- Alerts transaction success/failure-->
       <v-flex v-if="errorMessage" xs12 md8 offset-md2>
         <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
       </v-flex>
@@ -45,25 +47,22 @@
         >{{transactionSentMessage}}</v-alert>
       </v-flex>
     </v-layout>
+
+    <!-- Dialogs -->
     <ConfirmBasicTransactionDialog
       ref="confirmTransactionDialog"
       :amount="amount"
       :address="address"
       :symbol="symbol"
-      @confirmed="sendTransaction"
+      @confirmed="send"
     ></ConfirmBasicTransactionDialog>
-    <ConfirmBurnDialog
-      ref="confirmBurnDialog"
-      :amount="amount"
-      :symbol="symbol"
-      @confirmed="sendTransaction"
-    ></ConfirmBurnDialog>
+    <ConfirmBurnDialog ref="confirmBurnDialog" :amount="amount" :symbol="symbol" @confirmed="send"></ConfirmBurnDialog>
   </v-form>
 </template>
 
 <script>
 import Promise from "bluebird";
-import { isValidFctPublicAddress } from "factom";
+import { isValidPublicFctAddress } from "factom";
 import SendTransaction from "@/mixins/SendTransaction";
 import { FAT0 } from "@fat-token/fat-js";
 const {
@@ -85,7 +84,7 @@ export default {
       addressRules: [
         v =>
           this.burn ||
-          isValidFctPublicAddress(v) ||
+          isValidPublicFctAddress(v) ||
           "Invalid public FCT address"
       ]
     };
@@ -140,7 +139,9 @@ export default {
       }
     },
     async buildTransaction() {
-      const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.address;
+      const outputAddress = this.burn
+        ? "FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC"
+        : this.address;
       // Greedy algorithm to select inputs
       const inputs = [];
       let amountToCover = this.amount;
@@ -174,6 +175,12 @@ export default {
       }
 
       return txBuilder.build();
+    },
+    async send() {
+      await this.sendTransaction();
+      if (this.transactionSentMessage) {
+        this.burn = false;
+      }
     }
   }
 };

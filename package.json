@@ -13,14 +13,15 @@
     "ajv": "^6.8.1",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",
-    "factom": "1.0.0-rc4",
+    "factom": "1.0.0",
     "factom-identity-lib": "^0.2.0-rc4",
     "jsoneditor": "^5.28.2",
     "lodash.debounce": "^4.0.8",
     "lodash.flatmap": "^4.5.0",
-    "vue": "^2.6.1",
+    "lodash.groupby": "^4.6.0",
+    "vue": "^2.6.4",
     "vue-router": "^3.0.2",
-    "vuetify": "^1.4.6",
+    "vuetify": "^1.5.0",
     "vuex": "^3.1.0"
   },
   "devDependencies": {
@@ -34,7 +35,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.6.1",
+    "vue-template-compiler": "^2.6.4",
     "vuetify-loader": "^1.2.0"
   }
 }
