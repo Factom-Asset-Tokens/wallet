@@ -13,12 +13,15 @@
         <template slot="items" slot-scope="props">
           <td>{{ props.item.address }}</td>
           <td>{{ props.item.name }}</td>
-          <td
-            style="display: flex; justify-content: right; align-items: center"
-            class="text-xs-right"
-          >
-            <div>{{ props.item.balance }}</div>
-            <v-icon color="primary" @click="props.expanded = !props.expanded" :disabled="props.item.balance === 0">view_list</v-icon>
+          <td>
+            <div style="display: flex; justify-content: flex-end; align-items: center">
+              <div>{{ props.item.balance }}</div>
+              <v-icon
+                color="primary"
+                @click="props.expanded = !props.expanded"
+                :disabled="props.item.balance === 0"
+              >view_list</v-icon>
+            </div>
           </td>
         </template>
         <template slot="expand" slot-scope="props">
