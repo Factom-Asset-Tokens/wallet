@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@fat-token/fat-js": "0.1.0-rc1",
-    "ajv": "^6.8.1",
+    "ajv": "^6.9.1",
     "axios": "^0.18.0",
     "bluebird": "^3.5.3",
     "factom": "1.0.0",
@@ -19,13 +19,15 @@
     "lodash.debounce": "^4.0.8",
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
-    "vue": "^2.6.4",
+    "material-design-icons-iconfont": "^4.0.4",
+    "roboto-fontface": "*",
+    "vue": "^2.6.6",
     "vue-router": "^3.0.2",
-    "vuetify": "^1.5.0",
+    "vuetify": "^1.5.1",
     "vuex": "^3.1.0"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.7.1",
+    "@fortawesome/fontawesome-free": "^5.7.2",
     "@vue/cli-plugin-babel": "^3.4.0",
     "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-service": "^3.4.0",
@@ -35,7 +37,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.6.4",
-    "vuetify-loader": "^1.2.0"
+    "vue-template-compiler": "^2.6.6",
+    "vuetify-loader": "^1.2.1"
   }
 }

@@ -2,15 +2,7 @@
   <v-navigation-drawer width="120" class="grad" permanent app>
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
-        <v-btn
-          fab
-          depressed
-          large
-          slot="activator"
-          color="white"
-          exact
-          :to="`/fct`"
-        >
+        <v-btn fab depressed large slot="activator" color="white" exact :to="`/fct`">
           <img class="token-icon" src="/img/fct.png">
         </v-btn>
         <span>Factoid (FCT)</span>
@@ -31,15 +23,13 @@
           class="primary--text font-weight-black title"
           exact
           :to="`/token/${token.chainId}`"
-        >
-          {{token.issuance.symbol}}
-        </v-btn>
+        >{{token.issuance.symbol}}</v-btn>
         <span>{{getTokenTooltip(token)}}</span>
       </v-tooltip>
 
       <v-tooltip class="token-margin" right>
         <v-btn fab outline large slot="activator" color="white" exact :to="{name: 'Actions'}">
-          <v-icon>more_horiz</v-icon>
+          <v-icon class="fab-button-icon-fix">more_horiz</v-icon>
         </v-btn>
         <span>Actions</span>
       </v-tooltip>
@@ -102,5 +92,9 @@ a {
 
 .grad {
   background-image: linear-gradient(#8ca1cd, #3e557d);
+}
+/* https://github.com/vuetifyjs/vuetify/issues/3462 */
+.fab-button-icon-fix {
+  display: inline-flex !important;
 }
 </style>
