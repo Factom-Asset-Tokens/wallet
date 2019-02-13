@@ -3,7 +3,14 @@
     <v-container>
       <v-layout wrap>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn color="primary" large class="subheading" :loading="loadingSeed" @click="showSeed">
+          <v-btn
+            color="primary"
+            large
+            class="subheading"
+            :disabled="!walletdOk"
+            :loading="loadingSeed"
+            @click="showSeed"
+          >
             <v-icon left>fa-seedling</v-icon>show recovery seed
           </v-btn>
         </v-flex>
@@ -39,7 +46,7 @@
           </v-slide-y-transition>
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn color="primary" large class="subheading" @click="saveBackupFile">
+          <v-btn color="primary" large class="subheading" :disabled="!walletdOk" @click="saveBackupFile">
             <v-icon left>far fa-save</v-icon>save backup file
           </v-btn>
         </v-flex>
@@ -85,6 +92,11 @@ export default {
       showBackupFileInfo: false,
       loadingSeed: false
     };
+  },
+  computed: {
+    walletdOk() {
+      return this.$store.state.walletd.status === "ok";
+    }
   },
   methods: {
     async saveBackupFile() {
