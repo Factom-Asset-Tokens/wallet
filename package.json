@@ -3,16 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "start": "npm run serve"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@fat-token/fat-js": "0.1.0-rc1",
+    "@fortawesome/fontawesome-free": "^5.7.2",
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.4.0",
+    "@vue/cli-service": "^3.4.0",
     "ajv": "^6.9.1",
     "axios": "^0.18.0",
+    "babel-eslint": "^10.0.1",
     "bluebird": "^3.5.3",
+    "electron": "^4.0.0",
+    "eslint": "^5.13.0",
+    "eslint-plugin-vue": "^5.1.0",
     "factom": "1.0.0",
     "factom-identity-lib": "^0.2.0-rc4",
     "jsoneditor": "^5.28.2",
@@ -21,23 +34,16 @@
     "lodash.groupby": "^4.6.0",
     "material-design-icons-iconfont": "^4.0.4",
     "roboto-fontface": "*",
-    "vue": "^2.6.6",
-    "vue-router": "^3.0.2",
-    "vuetify": "^1.5.1",
-    "vuex": "^3.1.0"
-  },
-  "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.7.2",
-    "@vue/cli-plugin-babel": "^3.4.0",
-    "@vue/cli-plugin-eslint": "^3.4.0",
-    "@vue/cli-service": "^3.4.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.13.0",
-    "eslint-plugin-vue": "^5.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "vue": "^2.6.6",
+    "vue-cli-plugin-electron-builder": "^1.0.0",
     "vue-cli-plugin-vuetify": "^0.4.6",
+    "vue-router": "^3.0.2",
     "vue-template-compiler": "^2.6.6",
-    "vuetify-loader": "^1.2.1"
-  }
+    "vuetify": "^1.5.1",
+    "vuetify-loader": "^1.2.1",
+    "vuex": "^3.1.0"
+  },
+  "main": "background.js"
 }
