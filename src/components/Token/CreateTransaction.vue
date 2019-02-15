@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import CreateTransactionFat0 from "@/components/fat0/CreateTransaction";
-import CreateTransactionFat1 from "@/components/fat1/CreateTransaction";
+import CreateTransactionFat0 from "./fat0/CreateTransaction";
+import CreateTransactionFat1 from "./fat1/CreateTransaction";
 
 export default {
   name: "CreateTransaction",

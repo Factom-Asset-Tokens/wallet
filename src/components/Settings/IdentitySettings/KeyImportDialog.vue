@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import SecretKeyInput from "@/components/settings/identity/SecretKeyInput";
+import SecretKeyInput from "./SecretKeyInput";
 import { digital } from "factom-identity-lib";
 const { getPublicIdentityKey, isValidSecretIdentityKey } = digital;
 

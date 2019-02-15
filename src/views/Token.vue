@@ -31,11 +31,11 @@
 </template>
 
 <script>
-import TokenHeader from "@/components/TokenHeader";
-import AddressesBalances from "@/components/AddressesBalances";
-import CreateTransaction from "@/components/CreateTransaction";
+import TokenHeader from "@/components/Token/TokenHeader";
+import AddressesBalances from "@/components/Token/AddressesBalances";
+import CreateTransaction from "@/components/Token/CreateTransaction";
 import Promise from "bluebird";
-import { standardizeId } from "@/components/fat1/ids-utils.js";
+import { standardizeId } from "@/components/Token/fat1/ids-utils.js";
 
 export default {
   name: "Token",

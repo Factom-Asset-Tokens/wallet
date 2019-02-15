@@ -31,7 +31,7 @@
 
 <script>
 const HEX_REGEXP = /^[0-9a-fA-F]+$/;
-import { tryParseApiErrorCode } from "../components/common";
+import { tryParseApiErrorCode } from "@/components/common";
 
 export default {
   data: () => ({

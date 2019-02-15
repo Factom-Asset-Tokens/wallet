@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import DaemonSettings from "@/components/settings/DaemonSettings";
-import IdentitySettings from "@/components/settings/identity/IdentitySettings";
-import Backup from "@/components/settings/Backup";
+import DaemonSettings from "@/components/Settings/DaemonSettings";
+import IdentitySettings from "@/components/Settings/IdentitySettings";
+import Backup from "@/components/Settings/Backup";
 
 export default {
   name: "Settings",

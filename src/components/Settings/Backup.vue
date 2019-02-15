@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import ShowSeedDialog from "./ShowSeedDialog.vue";
+import ShowSeedDialog from "./Backup/ShowSeedDialog.vue";
 
 export default {
   name: "Backup",

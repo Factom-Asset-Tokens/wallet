@@ -9,9 +9,9 @@
 </template>
 
 <script>
-import Addresses from "@/components/fct/Addresses";
-import CreateBasicTransaction from "@/components/fct/CreateBasicTransaction";
-import ConvertFctToEcTransaction from "@/components/fct/ConvertFctToEcTransaction";
+import Addresses from "@/components/Factoid/Addresses";
+import CreateBasicTransaction from "@/components/Factoid/CreateBasicTransaction";
+import ConvertFctToEcTransaction from "@/components/Factoid/ConvertFctToEcTransaction";
 
 export default {
   components: { Addresses, CreateBasicTransaction, ConvertFctToEcTransaction },

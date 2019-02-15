@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import AddressesBalancesFat0 from "@/components/fat0/AddressesBalances";
-import AddressesBalancesFat1 from "@/components/fat1/AddressesBalances";
+import AddressesBalancesFat0 from "./fat0/AddressesBalances";
+import AddressesBalancesFat1 from "./fat1/AddressesBalances";
 
 export default {
   name: "AddressesBalances",

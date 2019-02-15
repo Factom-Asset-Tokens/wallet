@@ -65,9 +65,9 @@
 </template>
 
 <script>
-import IdentityImportDialog from "@/components/settings/identity/IdentityImportDialog";
-import CreateIdentityDialog from "@/components/settings/identity/CreateIdentityDialog";
-import KeyImportDialog from "@/components/settings/identity/KeyImportDialog";
+import IdentityImportDialog from "./IdentitySettings/IdentityImportDialog";
+import CreateIdentityDialog from "./IdentitySettings/CreateIdentityDialog";
+import KeyImportDialog from "./IdentitySettings/KeyImportDialog";
 import { mapState } from "vuex";
 
 export default {

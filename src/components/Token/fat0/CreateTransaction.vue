@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import CreateAdvancedTransaction from "@/components/fat0/CreateAdvancedTransaction.vue";
-import CreateBasicTransaction from "@/components/fat0/CreateBasicTransaction.vue";
+import CreateAdvancedTransaction from "./CreateAdvancedTransaction.vue";
+import CreateBasicTransaction from "./CreateBasicTransaction.vue";
 
 export default {
   components: { CreateAdvancedTransaction, CreateBasicTransaction },

@@ -119,8 +119,8 @@
 import Promise from "bluebird";
 import { isValidPublicFctAddress } from "factom";
 import SendTransaction from "@/mixins/SendTransaction";
-import TransactionInput from "@/components/fat0/TransactionInput";
-import ConfirmAdvancedTransactionDialog from "@/components/fat0/ConfirmAdvancedTransactionDialog";
+import TransactionInput from "./TransactionInput";
+import ConfirmAdvancedTransactionDialog from "./ConfirmAdvancedTransactionDialog";
 import { FAT0 } from "@fat-token/fat-js";
 const {
   Transaction: { TransactionBuilder }

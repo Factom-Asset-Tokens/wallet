@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import AddressImportDialog from "@/components/fct/AddressImportDialog";
+import AddressImportDialog from "./AddressImportDialog";
 
 export default {
   components: { AddressImportDialog },
