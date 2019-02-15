@@ -46,7 +46,13 @@
           </v-slide-y-transition>
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn color="primary" large class="subheading" :disabled="!walletdOk" @click="saveBackupFile">
+          <v-btn
+            color="primary"
+            large
+            class="subheading"
+            :disabled="!walletdOk"
+            @click="saveBackupFile"
+          >
             <v-icon left>far fa-save</v-icon>save backup file
           </v-btn>
         </v-flex>
@@ -82,6 +88,8 @@
 
 <script>
 import ShowSeedDialog from "./Backup/ShowSeedDialog.vue";
+const { dialog } = require("electron").remote;
+const { writeFile } = require("fs");
 
 export default {
   name: "Backup",
@@ -100,13 +108,30 @@ export default {
   },
   methods: {
     async saveBackupFile() {
+      const store = this.$store;
+
       try {
-        const backup = await this.$store.dispatch("backup");
-        const json = JSON.stringify(backup, null, 4);
-        // TODO
-        console.log(json);
+        const backup = await store.dispatch("backup");
+        const data = JSON.stringify(backup, null, 4);
+
+        dialog.showSaveDialog(
+          { defaultPath: "fat-wallet.backup.json" },
+          this.writeBackupFile.bind(null, data)
+        );
       } catch (e) {
-        this.$store.commit("snackError", e.message);
+        store.commit("snackError", e.message);
+      }
+    },
+    async writeBackupFile(data, filename) {
+      const store = this.$store;
+      if (filename) {
+        writeFile(filename, data, err => {
+          if (err) {
+            store.commit("snackError", err.message);
+          } else {
+            store.commit("snackSuccess", `File saved at ${filename}`);
+          }
+        });
       }
     },
     async showSeed() {
