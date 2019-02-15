@@ -6,7 +6,7 @@
           <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center mb-3>{{name}}</v-flex>
           <v-flex xs12 text-xs-center>
             <div class="total-balance">
-              <img class="balance-icon" src="/img/coin-yellow.png">
+              <img class="balance-icon" src="@/assets/img/coin-yellow.png">
               <div class="secondary--text display-1 font-weight-bold">{{totalBalance}} {{symbol}}</div>
             </div>
           </v-flex>

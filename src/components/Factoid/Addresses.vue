@@ -5,7 +5,7 @@
         <v-flex xs12 md6>
           <v-sheet class="white--text display-1 font-weight-medium" color="primary">
             <div class="total-balance" :title="`${totalFctBalanceText.exact} FCT`">
-              <img class="balance-icon" src="/img/coin-white.png">
+              <img class="balance-icon" src="@/assets/img/coin-white.png">
               <div>{{totalFctBalanceText.rounded}} FCT</div>
             </div>
           </v-sheet>
@@ -13,7 +13,7 @@
         <v-flex xs12 md6>
           <v-sheet color="secondary" class="white--text display-1 font-weight-medium">
             <div class="total-balance" :title="`${totalEcBalanceText} EC`">
-              <img class="balance-icon" src="/img/entry-credit.png">
+              <img class="balance-icon" src="@/assets/img/entry-credit.png">
               <div>{{totalEcBalanceText}} EC</div>
             </div>
           </v-sheet>

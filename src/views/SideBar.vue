@@ -3,7 +3,7 @@
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
         <v-btn fab depressed large slot="activator" color="white" exact :to="`/fct`">
-          <img class="token-icon" src="/img/fct.png">
+          <img class="token-icon" src="@/assets/img/fct.png">
         </v-btn>
         <span>Factoid (FCT)</span>
       </v-tooltip>

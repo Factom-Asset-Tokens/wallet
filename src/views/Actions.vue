@@ -8,7 +8,7 @@
             <div class="display-2 font-weight-light">Factom Asset Token Wallet</div>
           </v-flex>
           <v-flex xs12 text-xs-center mb-5>
-            <img src="/img/fat-icon.png" width="100px">
+            <img src="@/assets/img/fat-icon.png" width="100px">
           </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
             <v-btn color="primary" large block :to="{name: 'TrackToken'}" class="subheading">

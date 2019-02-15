@@ -72,5 +72,5 @@ export default {
 
 <style scoped>
 @import "../../node_modules/jsoneditor/dist/jsoneditor.min.css";
-@import "../../public/css/jsoneditor-theme.css";
+@import "../assets/css/jsoneditor-theme.css";
 </style>
