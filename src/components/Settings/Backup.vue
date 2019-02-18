@@ -2,7 +2,7 @@
   <v-sheet elevation="1">
     <v-container>
       <v-layout wrap>
-        <v-flex xs12 mt-4 text-xs-center>
+        <v-flex xs12 mt-2 text-xs-center>
           <v-btn
             color="primary"
             large
