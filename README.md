@@ -2,35 +2,28 @@
 
 A wallet for [Factom Asset Tokens](https://github.com/Factom-Asset-Tokens/FAT)
 
-![](assets/wallet.png)
-
-## Installation
-
+## Building
 
 ```bash
-git clone https://github.com/Factom-Asset-Tokens/wallet.git
-cd wallet
+git clone https://github.com/Factom-Asset-Tokens/wallet.git fat-wallet
+cd fat-wallet
 npm install
+npm run electron:build
 ```
 
-## Running
+The build for your platform will be located in the `dist_electron` folder.
 
-In the `wallet` directory:
+## Running for development
 
-```bash
-npm start
-```
+After running `npm install` just run `npm start`.
 
 You'll also need a [fat daemon](https://github.com/Factom-Asset-Tokens/fatd) and a factom-walletd running for the wallet to connect to. 
 
 
 ## State Of Development
 
-Follow along with the [project board](https://github.com/Factom-Asset-Tokens/wallet/projects/1) to stay up to date!
+The FAT wallet is currently in active development. It may be buggy and unstable.
 
-Things to be done ASAP:
+## Preview
 
-- Factoid address / Identity management UI
-- Issue token page
-- Fix building binaries
-- Guides & How To
+![](assets/wallet-homepage.png)
