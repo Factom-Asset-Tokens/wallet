@@ -15,12 +15,12 @@
           <v-toolbar-items>
             <v-btn
               flat
-              :disabled="!walletdOk"
+              :disabled="!identitySupport"
               @click.stop="$refs.createIdentityDialog.show()"
             >Create</v-btn>
             <v-btn
               flat
-              :disabled="!walletdOk"
+              :disabled="!identitySupport"
               @click.stop="$refs.identityImportDialog.show()"
             >Import</v-btn>
           </v-toolbar-items>
@@ -29,7 +29,11 @@
         <v-container fluid>
           <v-layout>
             <v-flex xs12>
-              <v-treeview v-if="hasIdentity" :items="identityTreeItems" item-key="name">
+              <div
+                v-if="!identitySupport"
+                class="font-italic subheading"
+              >The version of factom-walletd you are connected to does not support digital identities.</div>
+              <v-treeview v-else-if="hasIdentity" :items="identityTreeItems" item-key="name">
                 <template slot="prepend" slot-scope="{ item, leaf }">
                   <v-icon v-if="!leaf">person</v-icon>
                   <v-icon
@@ -45,9 +49,10 @@
                   >vpn_key</v-icon>
                 </template>
               </v-treeview>
-              <div v-else class="font-italic subheading">
-                No digital identity currently saved in the wallet. You only need an identity if you wish to create or manage your own tokens.
-              </div>
+              <div
+                v-else
+                class="font-italic subheading"
+              >No digital identity currently saved in the wallet. You only need an identity if you wish to create or manage your own tokens.</div>
             </v-flex>
           </v-layout>
         </v-container>
@@ -95,14 +100,12 @@ export default {
   },
   computed: {
     ...mapState({
+      identitySupport: state => state.walletd.identitySupport,
       identities: state => state.identity.identities,
       identityKeysInWallet: state => state.identity.identityKeysInWallet
     }),
     hasIdentity() {
       return Object.keys(this.identities).length > 0;
-    },
-    walletdOk() {
-      return this.$store.state.walletd.status === "ok";
     },
     identityTreeItems() {
       const that = this;

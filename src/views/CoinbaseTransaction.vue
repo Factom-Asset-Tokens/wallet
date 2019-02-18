@@ -46,7 +46,12 @@
             </v-flex>
 
             <v-flex xs12 text-xs-center my-4>
-              <v-btn large :disabled="error !== ''" @click="send" color="primary">send coinbase transaction
+              <v-btn
+                large
+                :disabled="error !== ''"
+                @click="send"
+                color="primary"
+              >send coinbase transaction
                 <v-icon right>send</v-icon>
               </v-btn>
             </v-flex>
@@ -92,6 +97,9 @@ export default {
         .map(t => ({ value: t.chainId, text: t.tokenId }));
     },
     canEmitCoinbaseTransaction() {
+      if (!this.$store.state.walletd.identitySupport) {
+        return false;
+      }
       const identities = new Set(
         Object.keys(this.$store.state.identity.identities)
       );

@@ -19,7 +19,12 @@ let win
 protocol.registerStandardSchemes(['app'], { secure: true })
 function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow()
+  win = new BrowserWindow({
+    webPreferences: {
+      // TODO: remove this
+      webSecurity: false
+    }
+  })
   win.maximize();
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {

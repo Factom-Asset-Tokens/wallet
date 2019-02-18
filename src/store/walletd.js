@@ -8,7 +8,8 @@ export default {
             port: 8089
         },
         status: null,
-        version: null
+        version: null,
+        identitySupport: false
     },
     getters: {
         cli: state => new WalletdCli({
@@ -20,7 +21,8 @@ export default {
     mutations: {
         updateStatus: (state, status) => state.status = status,
         updateVersion: (state, version) => state.version = version,
-        updateConfig: (state, config) => state.config = config
+        updateConfig: (state, config) => state.config = config,
+        updateIdentitySupport: (state, identitySupport) => state.identitySupport = identitySupport
     },
     actions: {
         async update({ commit, dispatch }, config) {
@@ -36,13 +38,21 @@ export default {
                 if (walletversion) {
                     commit('updateStatus', "ok");
                     commit('updateVersion', walletversion);
+                    commit('updateIdentitySupport', supportsIdentity(walletversion));
                 } else {
                     commit('updateStatus', "ko");
+                    commit('updateIdentitySupport', false);
                 }
             } catch (e) {
                 commit('updateStatus', "ko");
+                commit('updateIdentitySupport', false);
             }
         }
     }
+}
+
+function supportsIdentity(semver) {
+    const versions = semver.split('.');
+    return versions[0] >= "2" && versions[1] >= "2" && versions[2] >= "15";
 }
 
