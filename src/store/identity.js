@@ -27,7 +27,8 @@ export default {
         addIdentity: (state, identity) => state.identities = Object.assign(identity, state.identities)
     },
     actions: {
-        async init({ dispatch, rootState }) {
+        async init({ commit, dispatch, rootState }) {
+            commit('updateIdentityKeysInWallet', []);
             if (rootState.walletd.status === "ok") {
                 await dispatch("fetchIdentityKeysFromWalletd");
                 await dispatch("refreshIdentities");
@@ -38,7 +39,6 @@ export default {
 
             const identityKeys = await manager.getAllIdentityKeys();
             const publicIdentityKeys = identityKeys.map(k => k.public);
-
             commit('updateIdentityKeysInWallet', publicIdentityKeys);
         },
         async refreshIdentities({ state, getters, commit }) {

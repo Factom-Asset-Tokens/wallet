@@ -5,7 +5,7 @@
         <v-flex xs12>
           <div>
             <h2>Factom Daemon
-              <DaemonStatus :status="factomdStatus"></DaemonStatus>
+              <DaemonStatus :status="factomdStatus" :version="factomdVersion"></DaemonStatus>
             </h2>
             <v-container>
               <v-layout row wrap>
@@ -20,7 +20,7 @@
           </div>
           <div>
             <h2>FAT Daemon
-              <DaemonStatus :status="fatdStatus"></DaemonStatus>
+              <DaemonStatus :status="fatdStatus" :version="fatdVersion"></DaemonStatus>
             </h2>
             <v-container>
               <v-layout row wrap>
@@ -35,7 +35,7 @@
           </div>
           <div>
             <h2>Wallet Daemon
-              <DaemonStatus :status="walletdStatus"></DaemonStatus>
+              <DaemonStatus :status="walletdStatus" :version="walletdVersion"></DaemonStatus>
             </h2>
             <v-container>
               <v-layout row wrap>
@@ -82,8 +82,11 @@ export default {
   computed: {
     ...mapState({
       walletdStatus: state => state.walletd.status,
+      walletdVersion: state => state.walletd.version,
       fatdStatus: state => state.fatd.status,
-      factomdStatus: state => state.factomd.status
+      fatdVersion: state => state.fatd.version,
+      factomdStatus: state => state.factomd.status,
+      factomdVersion: state => state.factomd.version
     }),
     fatdHost: {
       get() {

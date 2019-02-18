@@ -7,7 +7,8 @@ export default {
             host: 'localhost',
             port: 8088
         },
-        status: null
+        status: null,
+        version: null
     },
     getters: {
         cli: (state, getters, rootState) => new FactomCli({
@@ -25,6 +26,7 @@ export default {
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
+        updateVersion: (state, version) => state.version = version,
         updateConfig: (state, config) => state.config = config
     },
     actions: {
@@ -32,12 +34,21 @@ export default {
             commit('updateConfig', config);
             await dispatch('checkStatus');
         },
-        checkStatus({ commit, getters }) {
+        async checkStatus({ commit, getters }) {
             const cli = getters.cli;
             commit('updateStatus', "checking");
-            return cli.factomdApi('properties')
-                .then(r => r.factomdversion ? commit('updateStatus', "ok") : commit('updateStatus', "ko"))
-                .catch(() => commit('updateStatus', "ko"));
+
+            try {
+                const { factomdversion } = await cli.factomdApi('properties');
+                if (factomdversion) {
+                    commit('updateStatus', "ok");
+                    commit('updateVersion', factomdversion);
+                } else {
+                    commit('updateStatus', "ko");
+                }
+            } catch (e) {
+                commit('updateStatus', "ko");
+            }
         }
     }
 }

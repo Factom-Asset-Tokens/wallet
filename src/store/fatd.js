@@ -8,6 +8,7 @@ export default {
             port: 8078
         },
         status: null,
+        version: null
     },
     getters: {
         cli: state => new CLIBuilder()
@@ -17,6 +18,7 @@ export default {
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
+        updateVersion: (state, version) => state.version = version,
         updateConfig: (state, config) => state.config = config,
     },
     actions: {
@@ -24,12 +26,21 @@ export default {
             commit('updateConfig', config);
             await dispatch('checkStatus');
         },
-        checkStatus({ commit, getters }) {
+        async checkStatus({ commit, getters }) {
             const cli = getters.cli;
             commit('updateStatus', "checking");
-            return cli.getDaemonProperties()
-                .then(() => commit('updateStatus', "ok"))
-                .catch(() => commit('updateStatus', "ko"));
+
+            try {
+                const { fatdversion } = await cli.getDaemonProperties();
+                if (fatdversion) {
+                    commit('updateStatus', "ok");
+                    commit('updateVersion', fatdversion);
+                } else {
+                    commit('updateStatus', "ko");
+                }
+            } catch (e) {
+                commit('updateStatus', "ko");
+            }
         }
     }
 }
