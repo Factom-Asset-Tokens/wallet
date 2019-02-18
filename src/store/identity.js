@@ -4,10 +4,7 @@ const { FactomIdentityManager } = digital;
 export default {
     namespaced: true,
     state: {
-        identities: {
-            '24b44809c6c81a90b58e317538730d40af59c9d6c73a0c0a15e74146fab25881': [],
-            'b64176a23701b7c07da5b05442c126cc554ed56addce475971d326f0226c25db': []
-        },
+        identities: {},
         identityKeysInWallet: new Set()
     },
     getters: {

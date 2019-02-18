@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from '@/store/fat-wallet-persisted-state'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,7 @@ import address from '@/store/address'
 import identity from '@/store/identity'
 
 export default new Vuex.Store({
+    plugins: [createPersistedState],
     modules: {
         factomd,
         walletd,

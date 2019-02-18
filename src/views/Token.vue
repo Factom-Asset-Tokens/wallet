@@ -80,11 +80,8 @@ export default {
         result.balance = await tokenCli.getBalance(address.address);
 
         if (tokenType === "FAT-1") {
-          console.log(address.address, result.balance);
           if (result.balance > 0) {
-            console.log('Checking ', address.address);
             const nfBalance = await tokenCli.getNFBalance(address.address);
-            console.log(nfBalance)
             result.ids = nfBalance.map(standardizeId);
           } else {
             result.ids = [];
