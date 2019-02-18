@@ -29,7 +29,7 @@
         <v-container fluid>
           <v-layout>
             <v-flex xs12>
-              <v-treeview :items="identityTreeItems" item-key="name">
+              <v-treeview v-if="hasIdentity" :items="identityTreeItems" item-key="name">
                 <template slot="prepend" slot-scope="{ item, leaf }">
                   <v-icon v-if="!leaf">person</v-icon>
                   <v-icon
@@ -37,9 +37,17 @@
                     color="green"
                     title="Secret key available in the wallet"
                   >vpn_key</v-icon>
-                  <v-icon v-else color="grey" title="Secret key NOT available in the wallet" @click.stop="$refs.keyImportDialog.show(item.name)">vpn_key</v-icon>
+                  <v-icon
+                    v-else
+                    color="grey"
+                    title="Secret key NOT available in the wallet"
+                    @click.stop="$refs.keyImportDialog.show(item.name)"
+                  >vpn_key</v-icon>
                 </template>
               </v-treeview>
+              <div v-else class="font-italic subheading">
+                No digital identity currently saved in the wallet. You only need an identity if you wish to create or manage your own tokens.
+              </div>
             </v-flex>
           </v-layout>
         </v-container>
@@ -48,9 +56,17 @@
     <IdentityImportDialog ref="identityImportDialog"></IdentityImportDialog>
     <CreateIdentityDialog ref="createIdentityDialog"></CreateIdentityDialog>
     <KeyImportDialog ref="keyImportDialog"></KeyImportDialog>
-    <v-dialog v-model="identityInfoDialog" lazy max-width="800px" @keydown.esc="identityInfoDialog = false">
+    <v-dialog
+      v-model="identityInfoDialog"
+      lazy
+      max-width="800px"
+      @keydown.esc="identityInfoDialog = false"
+    >
       <v-card>
-        <v-card-title class="headline primary white--text" primary-title>What are digital identities?</v-card-title>
+        <v-card-title
+          class="headline primary white--text"
+          primary-title
+        >What are digital identities?</v-card-title>
         <v-card-text>
           <!-- TODO -->
           Explain what are digital identities. How they are used in FAT.
@@ -82,6 +98,9 @@ export default {
       identities: state => state.identity.identities,
       identityKeysInWallet: state => state.identity.identityKeysInWallet
     }),
+    hasIdentity() {
+      return Object.keys(this.identities).length > 0;
+    },
     walletdOk() {
       return this.$store.state.walletd.status === "ok";
     },
