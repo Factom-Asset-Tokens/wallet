@@ -113,7 +113,8 @@ export default {
   data: function() {
     return {
       tab: null,
-      loading: false
+      loading: false,
+      intervalId: 0
     };
   },
   async mounted() {
@@ -204,6 +205,15 @@ export default {
     setPreferredEcAddress(address) {
       this.$store.commit("address/setPreferredEcAddress", address);
     }
+  },
+  created() {
+    const that = this;
+    this.intervalId = setInterval(function() {
+      that.$store.dispatch("address/init");
+    }, 5000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   }
 };
 </script>
