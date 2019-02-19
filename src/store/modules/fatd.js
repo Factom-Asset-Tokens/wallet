@@ -1,33 +1,25 @@
-import { FactomCli } from "factom";
+import { CLIBuilder } from "@fat-token/fat-js";
 
 export default {
     namespaced: true,
     state: {
         config: {
             host: 'localhost',
-            port: 8088
+            port: 8078
         },
         status: null,
         version: null
     },
     getters: {
-        cli: (state, getters, rootState) => new FactomCli({
-            factomd: {
-                host: state.config.host,
-                port: state.config.port,
-                retry: { retries: 0 }
-            },
-            walletd: {
-                host: rootState.walletd.config.host,
-                port: rootState.walletd.config.port,
-                retry: { retries: 0 }
-            }
-        })
+        cli: state => new CLIBuilder()
+            .host(state.config.host)
+            .port(state.config.port)
+            .build()
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
         updateVersion: (state, version) => state.version = version,
-        updateConfig: (state, config) => state.config = config
+        updateConfig: (state, config) => state.config = config,
     },
     actions: {
         async update({ commit, dispatch }, config) {
@@ -36,13 +28,12 @@ export default {
         },
         async checkStatus({ commit, getters }) {
             const cli = getters.cli;
-            commit('updateStatus', "checking");
 
             try {
-                const { factomdversion } = await cli.factomdApi('properties');
-                if (factomdversion) {
+                const { fatdversion } = await cli.getDaemonProperties();
+                if (fatdversion) {
                     commit('updateStatus', "ok");
-                    commit('updateVersion', factomdversion);
+                    commit('updateVersion', fatdversion);
                 } else {
                     commit('updateStatus', "ko");
                 }

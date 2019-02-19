@@ -28,10 +28,11 @@ export default {
     },
     actions: {
         async init({ commit, dispatch, rootState }) {
-            commit('updateIdentityKeysInWallet', []);
             if (rootState.walletd.status === "ok" && rootState.walletd.identitySupport) {
                 await dispatch("fetchIdentityKeysFromWalletd");
                 await dispatch("refreshIdentities");
+            } else {
+                commit('updateIdentityKeysInWallet', []);
             }
         },
         async fetchIdentityKeysFromWalletd({ commit, getters }) {

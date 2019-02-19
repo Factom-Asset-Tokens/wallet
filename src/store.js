@@ -1,20 +1,24 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import createPersistedState from '@/store/fat-wallet-persisted-state'
 
 Vue.use(Vuex)
 
 const debug = process.env.NODE_ENV !== 'production';
 
-import factomd from '@/store/factomd'
-import walletd from '@/store/walletd'
-import fatd from '@/store/fatd'
-import tokens from '@/store/tokens'
-import address from '@/store/address'
-import identity from '@/store/identity'
+// Modules
+import factomd from '@/store/modules/factomd'
+import walletd from '@/store/modules/walletd'
+import fatd from '@/store/modules/fatd'
+import tokens from '@/store/modules/tokens'
+import address from '@/store/modules/address'
+import identity from '@/store/modules/identity'
+
+// Plugins
+import createPersistedState from '@/store/plugins/fat-wallet-persisted-state'
+import watch from '@/store/plugins/watch'
 
 export default new Vuex.Store({
-    plugins: [createPersistedState],
+    plugins: [createPersistedState, watch],
     modules: {
         factomd,
         walletd,
@@ -50,7 +54,6 @@ export default new Vuex.Store({
                 dispatch('walletd/checkStatus'),
                 dispatch('factomd/checkStatus'),
                 dispatch('fatd/checkStatus')]);
-            await Promise.all([dispatch('address/init'), dispatch('identity/init')]);
         },
         async backup({ state, getters }) {
             const backup = { config: {}, address: {} };

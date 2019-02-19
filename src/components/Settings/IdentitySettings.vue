@@ -98,6 +98,9 @@ export default {
       identityInfoDialog: false
     };
   },
+  mounted() {
+    this.$store.dispatch("identity/init");
+  },
   computed: {
     ...mapState({
       identitySupport: state => state.walletd.identitySupport,

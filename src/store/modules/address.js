@@ -41,10 +41,21 @@ export default {
         async init({ rootState, dispatch }) {
             if (rootState.walletd.status === "ok") {
                 await dispatch('fetchAddresses');
+                if (rootState.factomd.status === "ok") {
+                    await dispatch('fetchBalances');
+                }
+            } else {
+                dispatch('clearAddresses');
+                dispatch('clearBalances');
             }
-            if (rootState.factomd.status === "ok") {
-                await dispatch('fetchBalances');
-            }
+        },
+        clearAddresses({ commit }) {
+            commit('updateEcAddresses', []);
+            commit('updateFctAddresses', []);
+        },
+        clearBalances({ commit }) {
+            commit('updateFctBalances', {});
+            commit('updateEcBalances', {});
         },
         async fetchAddresses({ commit, rootGetters }) {
             const cli = rootGetters['walletd/cli'];
