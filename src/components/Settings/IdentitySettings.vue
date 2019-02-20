@@ -50,15 +50,21 @@
       lazy
       max-width="800px"
       @keydown.esc="identityInfoDialog = false"
+      @keydown.enter="identityInfoDialog = false"
     >
       <v-card>
         <v-card-title
           class="headline primary white--text"
           primary-title
         >What are digital identities?</v-card-title>
-        <v-card-text>
-          <!-- TODO -->
-          Explain what are digital identities. How they are used in FAT.
+        <v-card-text class="subheading">
+          <div>
+          Digital identities are identities registered on the Factom blockchain and referenced by their chain ID. A set of ed25519 key pairs is associated with an identities. 
+          Those keys can be used to sign and authenticate data.
+          </div>
+          <div>
+            Digital identities are used in the FAT protocol context to issue new tokens and manage tokens supply.
+          </div>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
