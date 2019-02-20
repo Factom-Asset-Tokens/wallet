@@ -48,6 +48,16 @@
                     @click.stop="$refs.keyImportDialog.show(item.name)"
                   >vpn_key</v-icon>
                 </template>
+                <template slot="label" slot-scope="{ item, leaf }">
+                  <div v-if="!leaf">({{item.availableKeys}}/{{item.totalKeys}}) {{item.name}}</div>
+                  <div v-else-if="leaf && item.available">{{item.name}}</div>
+                  <div
+                    v-else
+                    class="grey--text pointer"
+                    title="Secret key NOT available in the wallet"
+                    @click.stop="$refs.keyImportDialog.show(item.name)"
+                  >{{item.name}}</div>
+                </template>
               </v-treeview>
               <div
                 v-else
@@ -119,13 +129,13 @@ export default {
             name: key,
             available: that.identityKeysInWallet.has(key)
           }));
-          // TODO
-          // https://github.com/vuetifyjs/vuetify/issues/5531
-          // Add available/total keys to the right + grey out unavailable keys
-          // const totalKeys = keys.length;
-          // const availableKeys = keys.filter(k => k.available).length;
+
+          const totalKeys = keys.length;
+          const availableKeys = keys.filter(k => k.available).length;
           return {
             name: `${chainId}`,
+            totalKeys,
+            availableKeys,
             children: keys
           };
         });
@@ -136,4 +146,7 @@ export default {
 
 
 <style scoped>
+.pointer {
+  cursor: pointer;
+}
 </style>
