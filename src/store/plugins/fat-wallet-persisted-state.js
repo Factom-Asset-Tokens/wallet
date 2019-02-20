@@ -15,7 +15,8 @@ export default createPersistedState({
             "tokens/track",
             "tokens/untrack",
             "identity/updateIdentities",
-            "identity/addIdentity"
+            "identity/addIdentity",
+            "identity/removeIdentity"
         ],
     statePick: (state) => ({
         address: {

@@ -24,7 +24,12 @@ export default {
     mutations: {
         updateIdentities: (state, identities) => state.identities = identities,
         updateIdentityKeysInWallet: (state, keysInWallet) => state.identityKeysInWallet = new Set(keysInWallet),
-        addIdentity: (state, identity) => state.identities = Object.assign(identity, state.identities)
+        addIdentity: (state, identity) => state.identities = Object.assign(identity, state.identities),
+        removeIdentity(state, identity) {
+            const copy = { ...state.identities };
+            delete copy[identity];
+            state.identities = copy;
+        }
     },
     actions: {
         async init({ commit, dispatch, rootState }) {

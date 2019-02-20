@@ -33,32 +33,7 @@
                 v-if="!identitySupport"
                 class="font-italic subheading"
               >The version of factom-walletd you are connected to does not support digital identities.</div>
-              <v-treeview v-else-if="hasIdentity" :items="identityTreeItems" item-key="name">
-                <template slot="prepend" slot-scope="{ item, leaf }">
-                  <v-icon v-if="!leaf">person</v-icon>
-                  <v-icon
-                    v-else-if="leaf && item.available"
-                    color="green"
-                    title="Secret key available in the wallet"
-                  >vpn_key</v-icon>
-                  <v-icon
-                    v-else
-                    color="grey"
-                    title="Secret key NOT available in the wallet"
-                    @click.stop="$refs.keyImportDialog.show(item.name)"
-                  >vpn_key</v-icon>
-                </template>
-                <template slot="label" slot-scope="{ item, leaf }">
-                  <div v-if="!leaf">({{item.availableKeys}}/{{item.totalKeys}}) {{item.name}}</div>
-                  <div v-else-if="leaf && item.available">{{item.name}}</div>
-                  <div
-                    v-else
-                    class="grey--text pointer"
-                    title="Secret key NOT available in the wallet"
-                    @click.stop="$refs.keyImportDialog.show(item.name)"
-                  >{{item.name}}</div>
-                </template>
-              </v-treeview>
+              <IdentityTree v-else-if="hasIdentity"></IdentityTree>
               <div
                 v-else
                 class="font-italic subheading"
@@ -70,7 +45,6 @@
     </v-flex>
     <IdentityImportDialog ref="identityImportDialog"></IdentityImportDialog>
     <CreateIdentityDialog ref="createIdentityDialog"></CreateIdentityDialog>
-    <KeyImportDialog ref="keyImportDialog"></KeyImportDialog>
     <v-dialog
       v-model="identityInfoDialog"
       lazy
@@ -98,11 +72,11 @@
 <script>
 import IdentityImportDialog from "./IdentitySettings/IdentityImportDialog";
 import CreateIdentityDialog from "./IdentitySettings/CreateIdentityDialog";
-import KeyImportDialog from "./IdentitySettings/KeyImportDialog";
+import IdentityTree from "./IdentitySettings/IdentityTree";
 import { mapState } from "vuex";
 
 export default {
-  components: { IdentityImportDialog, CreateIdentityDialog, KeyImportDialog },
+  components: { IdentityImportDialog, CreateIdentityDialog, IdentityTree },
   data: function() {
     return {
       identityInfoDialog: false
@@ -115,30 +89,9 @@ export default {
     ...mapState({
       identitySupport: state => state.walletd.identitySupport,
       identities: state => state.identity.identities,
-      identityKeysInWallet: state => state.identity.identityKeysInWallet
     }),
     hasIdentity() {
       return Object.keys(this.identities).length > 0;
-    },
-    identityTreeItems() {
-      const that = this;
-      return Object.keys(this.identities)
-        .sort()
-        .map(function(chainId) {
-          const keys = that.identities[chainId].map(key => ({
-            name: key,
-            available: that.identityKeysInWallet.has(key)
-          }));
-
-          const totalKeys = keys.length;
-          const availableKeys = keys.filter(k => k.available).length;
-          return {
-            name: `${chainId}`,
-            totalKeys,
-            availableKeys,
-            children: keys
-          };
-        });
     }
   }
 };
@@ -146,7 +99,4 @@ export default {
 
 
 <style scoped>
-.pointer {
-  cursor: pointer;
-}
 </style>
