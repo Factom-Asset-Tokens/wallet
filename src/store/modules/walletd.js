@@ -31,6 +31,7 @@ export default {
         },
         async checkStatus({ commit, getters }) {
             const cli = getters.cli;
+            commit('updateStatus', "checking");
 
             try {
                 const { walletversion } = await cli.call('properties');
