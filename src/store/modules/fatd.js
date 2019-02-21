@@ -1,34 +1,48 @@
 import { CLIBuilder } from "@fat-token/fat-js";
+import { URL } from 'url';
+import { getIntegerPort } from './common';
 
 export default {
     namespaced: true,
     state: {
-        config: {
-            host: 'localhost',
-            port: 8078
-        },
+        endpoint: 'http://localhost:8078',
         status: null,
         version: null
     },
     getters: {
-        cli: state => new CLIBuilder()
-            .host(state.config.host)
-            .port(state.config.port)
-            .build()
+        config: state => {
+            try {
+                const url = new URL(state.endpoint);
+                return {
+                    hostname: url.hostname,
+                    port: getIntegerPort(url)
+                }
+            } catch (e) {
+                return;
+            }
+        },
+        cli: (state, getters) => getters.config ? new CLIBuilder()
+            .host(getters.config.hostname)
+            .port(getters.config.port)
+            .build() : undefined
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
         updateVersion: (state, version) => state.version = version,
-        updateConfig: (state, config) => state.config = config,
+        updateEndpoint: (state, endpoint) => state.endpoint = endpoint,
     },
     actions: {
-        async update({ commit, dispatch }, config) {
-            commit('updateConfig', config);
+        async update({ commit, dispatch }, endpoint) {
+            commit('updateEndpoint', endpoint);
             await dispatch('checkStatus');
         },
         async checkStatus({ commit, getters }) {
             const cli = getters.cli;
-            commit('updateStatus', "checking");
+            if (cli) {
+                commit('updateStatus', "checking");
+            } else {
+                return commit('updateStatus', "ko");
+            }
 
             try {
                 const { fatdversion } = await cli.getDaemonProperties();

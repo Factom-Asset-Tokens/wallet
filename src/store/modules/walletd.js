@@ -1,37 +1,50 @@
 import { WalletdCli } from "factom";
+import { URL } from 'url';
+import { getIntegerPort } from './common';
 
 export default {
     namespaced: true,
     state: {
-        config: {
-            host: 'localhost',
-            port: 8089
-        },
+        endpoint: 'http://localhost:8089/v2',
         status: null,
         version: null,
         identitySupport: false
     },
     getters: {
-        cli: state => new WalletdCli({
-            host: state.config.host,
-            port: state.config.port,
-            retry: { retries: 0 }
-        })
+        config: state => {
+            try {
+                const url = new URL(state.endpoint);
+                return {
+                    host: url.hostname,
+                    port: getIntegerPort(url),
+                    protocol: url.protocol.slice(0, -1),
+                    path: url.pathname,
+                    retry: { retries: 0 }
+                }
+            } catch (e) {
+                return;
+            }
+        },
+        cli: (state, getters) => getters.config ? new WalletdCli(getters.config) : undefined
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
         updateVersion: (state, version) => state.version = version,
-        updateConfig: (state, config) => state.config = config,
+        updateEndpoint: (state, endpoint) => state.endpoint = endpoint,
         updateIdentitySupport: (state, identitySupport) => state.identitySupport = identitySupport
     },
     actions: {
-        async update({ commit, dispatch }, config) {
-            commit('updateConfig', config);
+        async update({ commit, dispatch }, endpoint) {
+            commit('updateEndpoint', endpoint);
             await dispatch('checkStatus');
         },
         async checkStatus({ commit, getters }) {
             const cli = getters.cli;
-            commit('updateStatus', "checking");
+            if (cli) {
+                commit('updateStatus', "checking");
+            } else {
+                return commit('updateStatus', "ko");
+            }
 
             try {
                 const { walletversion } = await cli.call('properties');

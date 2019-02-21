@@ -1,42 +1,52 @@
 import { FactomCli } from "factom";
+import { URL } from 'url';
+import { getIntegerPort } from './common';
 
 export default {
     namespaced: true,
     state: {
-        config: {
-            host: 'localhost',
-            port: 8088
-        },
+        endpoint: 'http://localhost:8088/v2',
         status: null,
         version: null
     },
     getters: {
-        cli: (state, getters, rootState) => new FactomCli({
-            factomd: {
-                host: state.config.host,
-                port: state.config.port,
-                retry: { retries: 0 }
-            },
-            walletd: {
-                host: rootState.walletd.config.host,
-                port: rootState.walletd.config.port,
-                retry: { retries: 0 }
+        config: state => {
+            try {
+                const url = new URL(state.endpoint);
+                return {
+                    host: url.hostname,
+                    port: getIntegerPort(url),
+                    protocol: url.protocol.slice(0, -1),
+                    path: url.pathname,
+                    retry: { retries: 0 }
+                }
+            } catch (e) {
+                return;
             }
-        })
+        },
+        cli: (state, getters, rootState, rootGetters) => {
+            return getters.config ? new FactomCli({
+            factomd: getters.config,
+            walletd: rootGetters['walletd/config']
+        }) : undefined}
     },
     mutations: {
         updateStatus: (state, status) => state.status = status,
         updateVersion: (state, version) => state.version = version,
-        updateConfig: (state, config) => state.config = config
+        updateEndpoint: (state, endpoint) => state.endpoint = endpoint
     },
     actions: {
-        async update({ commit, dispatch }, config) {
-            commit('updateConfig', config);
+        async update({ commit, dispatch }, endpoint) {
+            commit('updateEndpoint', endpoint);
             await dispatch('checkStatus');
         },
         async checkStatus({ commit, getters }) {
             const cli = getters.cli;
-            commit('updateStatus', "checking");
+            if (cli) {
+                commit('updateStatus', "checking");
+            } else {
+                return commit('updateStatus', "ko");
+            }
 
             try {
                 const { factomdversion } = await cli.factomdApi('properties');
@@ -52,4 +62,3 @@ export default {
         }
     }
 }
-

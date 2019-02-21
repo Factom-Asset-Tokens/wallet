@@ -74,11 +74,19 @@ export default {
         this.createError = "";
         try {
           const manager = this.$store.getters["identity/manager"];
-          const ecAddress = this.$store.getters["address/payingEcAddress"];
+          const payingEcAddress = this.$store.getters[
+            "address/payingEcAddress"
+          ];
+
+          if (!payingEcAddress) {
+            throw new Error(
+              "No Entry Credit available to pay for the transaction."
+            );
+          }
           const created = await manager.createIdentity(
             this.tags,
             this.numberOfKeys,
-            ecAddress,
+            payingEcAddress,
             { fromWalletSeed: true }
           );
 

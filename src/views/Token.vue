@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     async fetchBalances() {
-      if (!this.token) {
+      if (!this.token || this.$store.state.fatd.status !== 'ok') {
         return;
       }
 

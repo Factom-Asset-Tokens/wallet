@@ -43,6 +43,8 @@ export default {
                 await dispatch('fetchAddresses');
                 if (rootState.factomd.status === "ok") {
                     await dispatch('fetchBalances');
+                } else {
+                    dispatch('clearBalances');
                 }
             } else {
                 dispatch('clearAddresses');
@@ -60,16 +62,18 @@ export default {
         async fetchAddresses({ commit, rootGetters }) {
             const cli = rootGetters['walletd/cli'];
             const data = await cli.call('all-addresses');
-            const ec = [], fct = [];
-            data.addresses.map(a => a.public).forEach(function (address) {
-                if (address[0] === 'E') {
-                    ec.push(address);
-                } else {
-                    fct.push(address);
-                }
-            });
-            commit('updateEcAddresses', ec);
-            commit('updateFctAddresses', fct);
+            if (Array.isArray(data.addresses)) {
+                const ec = [], fct = [];
+                data.addresses.map(a => a.public).forEach(function (address) {
+                    if (address[0] === 'E') {
+                        ec.push(address);
+                    } else {
+                        fct.push(address);
+                    }
+                });
+                commit('updateEcAddresses', ec);
+                commit('updateFctAddresses', fct);
+            }
         },
         async fetchBalances({ dispatch }) {
             await Promise.all([dispatch('fetchFctBalances'), dispatch('fetchEcBalances')]);

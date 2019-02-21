@@ -8,12 +8,9 @@
               <DaemonStatus :status="factomdStatus" :version="factomdVersion"></DaemonStatus>
             </h2>
             <v-container>
-              <v-layout row wrap>
-                <v-flex xs12 sm9>
-                  <v-text-field label="Host" v-model.trim="factomdHost"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm2 offset-sm1>
-                  <v-text-field label="Port" type="number" v-model.number="factomdPort"></v-text-field>
+              <v-layout wrap>
+                <v-flex xs12>
+                  <v-text-field label="Endpoint" v-model.trim="factomdEndpoint" :rules="urlRules"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -23,12 +20,9 @@
               <DaemonStatus :status="fatdStatus" :version="fatdVersion"></DaemonStatus>
             </h2>
             <v-container>
-              <v-layout row wrap>
-                <v-flex xs12 sm9>
-                  <v-text-field label="Host" v-model.trim="fatdHost"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm2 offset-sm1>
-                  <v-text-field label="Port" type="number" v-model.number="fatdPort"></v-text-field>
+              <v-layout wrap>
+                <v-flex xs12>
+                  <v-text-field label="Endpoint" v-model.trim="fatdEndpoint" :rules="urlRules"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -39,11 +33,8 @@
             </h2>
             <v-container>
               <v-layout row wrap>
-                <v-flex xs12 sm9>
-                  <v-text-field label="Host" v-model.trim="walletdHost"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm2 offset-sm1>
-                  <v-text-field label="Port" type="number" v-model.number="walletdPort"></v-text-field>
+                <v-flex xs12>
+                  <v-text-field label="Endpoint" v-model.trim="walletdEndpoint" :rules="urlRules"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -58,12 +49,15 @@
 import debounce from "lodash.debounce";
 import DaemonStatus from "./DaemonSettings/DaemonStatus.vue";
 import { mapState } from "vuex";
+import { URL } from "url";
 
 export default {
   name: "DaemonSettings",
   components: { DaemonStatus },
   data: function() {
-    return {};
+    return {
+      urlRules: [v => isValidUrl(v) || "Invalid URL scheme"]
+    };
   },
   created: function() {
     this.debouncedUpdateFatd = debounce(
@@ -88,56 +82,41 @@ export default {
       factomdStatus: state => state.factomd.status,
       factomdVersion: state => state.factomd.version
     }),
-    fatdHost: {
+    fatdEndpoint: {
       get() {
-        return this.$store.state.fatd.config.host;
+        return this.$store.state.fatd.endpoint;
       },
       set(value) {
-        this.debouncedUpdateFatd({ host: value, port: this.fatdPort });
+        this.debouncedUpdateFatd(value);
       }
     },
-    fatdPort: {
+    walletdEndpoint: {
       get() {
-        return this.$store.state.fatd.config.port;
+        return this.$store.state.walletd.endpoint;
       },
       set(value) {
-        this.debouncedUpdateFatd({ host: this.fatdHost, port: value });
+        this.debouncedUpdateWalletd(value);
       }
     },
-    walletdHost: {
+    factomdEndpoint: {
       get() {
-        return this.$store.state.walletd.config.host;
+        return this.$store.state.factomd.endpoint;
       },
       set(value) {
-        this.debouncedUpdateWalletd({ host: value, port: this.walletdPort });
-      }
-    },
-    walletdPort: {
-      get() {
-        return this.$store.state.walletd.config.port;
-      },
-      set(value) {
-        this.debouncedUpdateWalletd({ host: this.walletdHost, port: value });
-      }
-    },
-    factomdHost: {
-      get() {
-        return this.$store.state.factomd.config.host;
-      },
-      set(value) {
-        this.debouncedUpdateFactomd({ host: value, port: this.factomdPort });
-      }
-    },
-    factomdPort: {
-      get() {
-        return this.$store.state.factomd.config.port;
-      },
-      set(value) {
-        this.debouncedUpdateFactomd({ host: this.factomdHost, port: value });
+        this.debouncedUpdateFactomd(value);
       }
     }
   }
 };
+
+function isValidUrl(url) {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 </script>
 
 

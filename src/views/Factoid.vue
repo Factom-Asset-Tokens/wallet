@@ -23,8 +23,9 @@ export default {
   created() {
     const that = this;
     this.intervalId = setInterval(function() {
-      that.$store.dispatch("address/fetchFctBalances");
-      that.$store.dispatch("address/fetchEcBalances");
+      if (that.$store.state.factomd.status === "ok") {
+        that.$store.dispatch("address/fetchBalances");
+      }
     }, 5000);
   },
   beforeDestroy() {

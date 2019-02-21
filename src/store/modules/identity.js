@@ -8,18 +8,14 @@ export default {
         identityKeysInWallet: new Set()
     },
     getters: {
-        manager: (state, getters, rootState) => new FactomIdentityManager({
-            factomd: {
-                host: rootState.factomd.config.host,
-                port: rootState.factomd.config.port,
-                retry: { retries: 0 }
-            },
-            walletd: {
-                host: rootState.walletd.config.host,
-                port: rootState.walletd.config.port,
-                retry: { retries: 0 }
-            }
-        })
+        manager: function (state, getters, rootState, rootGetters) {
+            const config = {
+                factomd: rootGetters['factomd/config'],
+                walletd: rootGetters['walletd/config']
+            };
+
+            return new FactomIdentityManager(config);
+        }
     },
     mutations: {
         updateIdentities: (state, identities) => state.identities = identities,
