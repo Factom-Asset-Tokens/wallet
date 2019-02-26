@@ -13,7 +13,7 @@
         <template slot="items" slot-scope="props">
           <td>{{ props.item.address }}</td>
           <td>{{ props.item.name }}</td>
-          <td class="text-xs-right">{{ props.item.balance }}</td>
+          <td class="text-xs-right">{{ props.item.balance.toLocaleString(undefined, {maximumFractionDigits:10}) }}</td>
         </template>
       </v-data-table>
     </v-flex>

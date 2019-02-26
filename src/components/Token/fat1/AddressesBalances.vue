@@ -15,7 +15,7 @@
           <td>{{ props.item.name }}</td>
           <td>
             <div style="display: flex; justify-content: flex-end; align-items: center">
-              <div>{{ props.item.balance }}</div>
+              <div>{{ props.item.balance.toLocaleString() }}</div>
               <v-icon
                 color="primary"
                 @click="props.expanded = !props.expanded"
