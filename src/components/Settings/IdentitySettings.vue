@@ -15,12 +15,12 @@
           <v-toolbar-items>
             <v-btn
               flat
-              :disabled="!identitySupport"
+              :disabled="disableIdentityOperations"
               @click.stop="$refs.createIdentityDialog.show()"
             >Create</v-btn>
             <v-btn
               flat
-              :disabled="!identitySupport"
+              :disabled="disableIdentityOperations"
               @click.stop="$refs.identityImportDialog.show()"
             >Import</v-btn>
           </v-toolbar-items>
@@ -59,12 +59,10 @@
         >What are digital identities?</v-card-title>
         <v-card-text class="subheading">
           <div>
-          Digital identities are identities registered on the Factom blockchain and referenced by their chain ID. A set of ed25519 key pairs is associated with an identities. 
-          Those keys can be used to sign and authenticate data.
+            Digital identities are identities registered on the Factom blockchain and referenced by their chain ID. A set of ed25519 key pairs is associated with an identities.
+            Those keys can be used to sign and authenticate data.
           </div>
-          <div>
-            Digital identities are used in the FAT protocol context to issue new tokens and manage tokens supply.
-          </div>
+          <div>Digital identities are used in the FAT protocol context to issue new tokens and manage tokens supply.</div>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -80,9 +78,11 @@ import IdentityImportDialog from "./IdentitySettings/IdentityImportDialog";
 import CreateIdentityDialog from "./IdentitySettings/CreateIdentityDialog";
 import IdentityTree from "./IdentitySettings/IdentityTree";
 import { mapState } from "vuex";
+import AvailableFeatures from "@/mixins/AvailableFeatures";
 
 export default {
   components: { IdentityImportDialog, CreateIdentityDialog, IdentityTree },
+  mixins: [AvailableFeatures],
   data: function() {
     return {
       identityInfoDialog: false
@@ -94,8 +94,11 @@ export default {
   computed: {
     ...mapState({
       identitySupport: state => state.walletd.identitySupport,
-      identities: state => state.identity.identities,
+      identities: state => state.identity.identities
     }),
+    disableIdentityOperations() {
+      return !this.availableFeatures('identity', 'factomd');
+    },
     hasIdentity() {
       return Object.keys(this.identities).length > 0;
     }

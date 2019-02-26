@@ -1,11 +1,11 @@
 <template>
   <v-container>
-    <template v-if="token">
-      <v-layout row wrap mb-5>
+    <template v-if="token && canManageFatTokens">
+      <v-layout wrap mb-5>
         <TokenHeader :token="token" :totalBalance="totalBalance"></TokenHeader>
       </v-layout>
 
-      <v-layout row wrap mb-4>
+      <v-layout wrap mb-4>
         <AddressesBalances
           :type="token.issuance.type"
           :balances="balances"
@@ -13,7 +13,7 @@
           :tokenCli="tokenCli"
         ></AddressesBalances>
       </v-layout>
-      <v-layout row wrap>
+      <v-layout wrap>
         <CreateTransaction
           :type="token.issuance.type"
           :balances="balances"
@@ -22,9 +22,24 @@
         ></CreateTransaction>
       </v-layout>
     </template>
+    <v-layout v-else-if="!cancanManageFatTokens">
+      <v-flex xs12>
+        <v-alert
+          value="true"
+          type="error"
+          class="title"
+          outline
+        >The configuration of fatd, factomd or walletd is incorrect. Go to the settings to fix them.</v-alert>
+      </v-flex>
+    </v-layout>
     <v-layout v-else row>
-      <v-flex xs12 sm8 offset-sm2>
-        <v-alert value="true" type="error" outline>This token is not tracked.</v-alert>
+      <v-flex xs12>
+        <v-alert
+          value="true"
+          type="error"
+          class="title"
+          outline
+        >This token is not currently tracked.</v-alert>
       </v-flex>
     </v-layout>
   </v-container>
@@ -36,10 +51,12 @@ import AddressesBalances from "@/components/Token/AddressesBalances";
 import CreateTransaction from "@/components/Token/CreateTransaction";
 import Promise from "bluebird";
 import { standardizeId } from "@/components/Token/fat1/ids-utils.js";
+import AvailableFeatures from "@/mixins/AvailableFeatures";
 
 export default {
   name: "Token",
   components: { TokenHeader, AddressesBalances, CreateTransaction },
+  mixins: [AvailableFeatures],
   data() {
     return {
       balances: [],
@@ -47,6 +64,9 @@ export default {
     };
   },
   computed: {
+    canManageFatTokens() {
+      return this.availableFeatures("fatd", "factomd", "walletd");
+    },
     chainId() {
       return this.$route.params.chainid;
     },
@@ -67,7 +87,7 @@ export default {
   },
   methods: {
     async fetchBalances() {
-      if (!this.token || this.$store.state.fatd.status !== 'ok') {
+      if (!this.token || !this.canManageFatTokens) {
         return;
       }
 

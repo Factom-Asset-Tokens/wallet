@@ -120,10 +120,6 @@ export default {
   async mounted() {
     this.loading = true;
     try {
-      await Promise.all([
-        this.$store.dispatch("walletd/checkStatus"),
-        this.$store.dispatch("factomd/checkStatus")
-      ]);
       await this.$store.dispatch("address/init");
     } finally {
       this.loading = false;

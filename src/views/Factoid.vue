@@ -1,10 +1,17 @@
 <template>
   <v-container>
-    <v-layout wrap>
+    <v-layout wrap v-if="canManageFactoids">
       <Addresses class="section-margin-bottom"></Addresses>
       <CreateBasicTransaction class="section-margin-bottom"></CreateBasicTransaction>
       <ConvertFctToEcTransaction></ConvertFctToEcTransaction>
     </v-layout>
+    <v-alert
+      v-else
+      value="true"
+      class="title"
+      type="error"
+      outline
+    >The configuration of factomd or walletd is incorrect. Go to the settings to fix them.</v-alert>
   </v-container>
 </template>
 
@@ -12,21 +19,28 @@
 import Addresses from "@/components/Factoid/Addresses";
 import CreateBasicTransaction from "@/components/Factoid/CreateBasicTransaction";
 import ConvertFctToEcTransaction from "@/components/Factoid/ConvertFctToEcTransaction";
+import AvailableFeatures from "@/mixins/AvailableFeatures";
 
 export default {
   components: { Addresses, CreateBasicTransaction, ConvertFctToEcTransaction },
+  mixins: [AvailableFeatures],
   data() {
     return {
       intervalId: null
     };
   },
+  computed: {
+    canManageFactoids() {
+      return this.availableFeatures("factomd", "walletd");
+    }
+  },
   created() {
-    const that = this;
-    this.intervalId = setInterval(function() {
-      if (that.$store.state.factomd.status === "ok") {
+    if (this.canManageFactoids) {
+      const that = this;
+      this.intervalId = setInterval(function() {
         that.$store.dispatch("address/fetchBalances");
-      }
-    }, 5000);
+      }, 5000);
+    }
   },
   beforeDestroy() {
     clearInterval(this.intervalId);
