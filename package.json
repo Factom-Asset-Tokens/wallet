@@ -14,7 +14,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@fat-token/fat-js": "0.1.0-rc1",
+    "@fat-token/fat-js": "0.1.0-rc4",
     "@fortawesome/fontawesome-free": "^5.7.2",
     "@vue/cli-plugin-babel": "^3.4.0",
     "@vue/cli-plugin-eslint": "^3.4.0",

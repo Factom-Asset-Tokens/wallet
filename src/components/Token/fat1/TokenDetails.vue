@@ -54,7 +54,7 @@ export default {
   },
   watch: {
     async id() {
-      this.data = await this.tokenCli.getToken(this.id);
+      this.data = await this.tokenCli.getNFToken(this.id);
     }
   }
 };

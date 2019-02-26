@@ -23,7 +23,7 @@
           class="primary--text font-weight-black title"
           exact
           :to="`/token/${token.chainId}`"
-        >{{token.issuance.symbol}}</v-btn>
+        >{{getTokenIcon(token)}}</v-btn>
         <span>{{getTokenTooltip(token)}}</span>
       </v-tooltip>
 
@@ -60,9 +60,12 @@ export default {
     }
   },
   methods: {
+    getTokenIcon(token) {
+      return token.symbol || token.tokenId[0];
+    },
     getTokenTooltip(token) {
-      return token.issuance && token.issuance.name
-        ? `${token.issuance.name} (${token.issuance.symbol})`
+      return token.symbol
+        ? `${token.tokenId} (${token.symbol})`
         : token.tokenId;
     }
   }

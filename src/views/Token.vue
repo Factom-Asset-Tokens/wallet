@@ -7,22 +7,22 @@
 
       <v-layout wrap mb-4>
         <AddressesBalances
-          :type="token.issuance.type"
+          :type="token.type"
           :balances="balances"
-          :symbol="token.issuance.symbol"
+          :symbol="token.symbol"
           :tokenCli="tokenCli"
         ></AddressesBalances>
       </v-layout>
       <v-layout wrap>
         <CreateTransaction
-          :type="token.issuance.type"
+          :type="token.type"
           :balances="balances"
-          :symbol="token.issuance.symbol"
+          :symbol="token.symbol"
           :tokenCli="tokenCli"
         ></CreateTransaction>
       </v-layout>
     </template>
-    <v-layout v-else-if="!cancanManageFatTokens">
+    <v-layout v-else-if="!canManageFatTokens">
       <v-flex xs12>
         <v-alert
           value="true"
@@ -71,8 +71,7 @@ export default {
       return this.$route.params.chainid;
     },
     tokenCli() {
-      const cli = this.$store.getters["fatd/cli"];
-      return cli.getTokenCLI(this.chainId);
+      return this.$store.state.tokens.clis[this.chainId];
     },
     token() {
       return this.$store.state.tokens.tracked[this.chainId];
@@ -94,14 +93,15 @@ export default {
       const tokenCli = this.tokenCli;
       const addresses = this.$store.getters["address/fctAddressesWithNames"];
 
-      const tokenType = this.token.issuance.type;
       this.balances = await Promise.map(addresses, async function(address) {
         const result = {};
         result.balance = await tokenCli.getBalance(address.address);
 
-        if (tokenType === "FAT-1") {
+        if (tokenCli.getType() === "FAT-1") {
           if (result.balance > 0) {
-            const nfBalance = await tokenCli.getNFBalance(address.address);
+            const nfBalance = await tokenCli.getNFBalance({
+              address: address.address
+            });
             result.ids = nfBalance.map(standardizeId);
           } else {
             result.ids = [];

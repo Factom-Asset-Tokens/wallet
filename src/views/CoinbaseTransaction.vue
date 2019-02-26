@@ -89,12 +89,13 @@ export default {
       return this.$store.state.tokens.tracked[this.tokenChainId];
     },
     symbol() {
-      return this.token ? this.token.issuance.symbol : undefined;
+      return this.token ? this.token.symbol : undefined;
     },
     trackedTokens() {
-      return Object.values(this.$store.state.tokens.tracked)
-        .filter(t => t.issuance)
-        .map(t => ({ value: t.chainId, text: t.tokenId }));
+      return Object.values(this.$store.state.tokens.tracked).map(t => ({
+        value: t.chainId,
+        text: t.tokenId
+      }));
     },
     canEmitCoinbaseTransaction() {
       if (!this.$store.state.walletd.identitySupport) {
@@ -158,10 +159,8 @@ export default {
   },
   watch: {
     async tokenChainId() {
-      const cli = this.$store.getters["fatd/cli"];
-      const { burned, circulating, supply } = await cli
-        .getTokenCLI(this.tokenChainId)
-        .getStats();
+      const tokenCli = this.$store.state.tokens.clis[this.tokenChainId];
+      const { burned, circulating, supply } = await tokenCli.getStats();
 
       if (supply === -1) {
         this.remainingSupply = -1;

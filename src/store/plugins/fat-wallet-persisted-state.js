@@ -12,8 +12,8 @@ export default createPersistedState({
             "fatd/updateEndpoint",
             "factomd/updateEndpoint",
             "walletd/updateEndpoint",
-            "tokens/track",
-            "tokens/untrack",
+            "tokens/addToken",
+            "tokens/removeToken",
             "identity/updateIdentities",
             "identity/addIdentity",
             "identity/removeIdentity"

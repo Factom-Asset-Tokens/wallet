@@ -5,4 +5,10 @@ export default (store) => {
             Promise.all([store.dispatch('address/init'), store.dispatch('identity/init')]);
         }
     });
+    store.watch((state) => state.fatd.status, (status) => {
+        if (status === "ok") {
+            // Refresh token clis
+            store.dispatch('tokens/init');
+        }
+    });
 }

@@ -197,7 +197,7 @@ export default {
       const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId());
 
       const idsWithOwner = await Promise.map(this.selectedTokens, id =>
-        this.tokenCli.getToken(id.min).then(t => ({ id, owner: t.owner }))
+        this.tokenCli.getNFToken(id.min).then(t => ({ id, owner: t.owner }))
       );
 
       const inputs = groupBy(idsWithOwner, e => e.owner);

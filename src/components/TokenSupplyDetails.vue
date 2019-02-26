@@ -24,10 +24,6 @@ export default {
     };
   },
   computed: {
-    fatdCli() {
-      const cli = this.$store.getters["fatd/cli"];
-      return cli.getTokenCLI(this.chainId);
-    },
     maxSupply() {
       return this.stats.supply;
     },
@@ -61,7 +57,8 @@ export default {
   },
   methods: {
     async fetchStats() {
-      this.stats = await this.fatdCli.getStats();
+      const tokenCli = this.$store.state.tokens.clis[this.chainId];
+      this.stats = await tokenCli.getStats();
     }
   },
   watch: {

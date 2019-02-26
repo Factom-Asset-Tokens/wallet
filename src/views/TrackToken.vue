@@ -50,19 +50,23 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true;
         const cli = this.$store.getters["fatd/cli"];
-        const tokenCli = cli.getTokenCLI(this.tokenChainId);
+        const tokenCli = await cli.getTokenCLI(this.tokenChainId);
 
         try {
-          const result = await tokenCli.getIssuance();
+          const issuance = await tokenCli.getIssuance();
 
           const token = {
-            chainId: result.chainid,
-            issuer: result.issuerid,
-            tokenId: result.tokenid,
-            issuance: result.issuance
+            chainId: issuance.getTokenChainId(),
+            issuer: issuance.getIssuerIdentityRootChainId(),
+            tokenId: issuance.getTokenId(),
+            entryHash: issuance.getEntryhash(),
+            timestamp: issuance.getTimestamp(),
+            type: issuance.getType(),
+            symbol: issuance.getSymbol(),
+            supply: issuance.getSupply()
           };
 
-          this.$store.commit("tokens/track", token);
+          this.$store.dispatch("tokens/track", { token, cli: tokenCli });
           this.$router.push({ path: `/token/${this.tokenChainId}` });
         } catch (e) {
           const code = tryParseApiErrorCode(e);

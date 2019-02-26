@@ -3,7 +3,7 @@
     <v-card color="primary">
       <v-card-text>
         <v-layout align-center justify-center wrap>
-          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center mb-3>{{name}}</v-flex>
+          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center mb-3>{{token.tokenId}}</v-flex>
           <v-flex xs12 text-xs-center>
             <div class="total-balance">
               <img class="balance-icon" src="@/assets/img/coin-yellow.png">
@@ -28,7 +28,7 @@
             <v-flex xs2 my-2>Issuer:</v-flex>
             <v-flex xs10 my-2>{{token.issuer}}</v-flex>
 
-            <TokenSupplyDetails :chainId="token.chainId" :symbol="token.issuance.symbol"></TokenSupplyDetails>
+            <TokenSupplyDetails :chainId="token.chainId" :symbol="symbol"></TokenSupplyDetails>
             <v-flex xs12 text-xs-right>
               <v-btn color="primary" @click="untrack">stop tracking</v-btn>
             </v-flex>
@@ -52,16 +52,8 @@ export default {
   },
   props: ["token", "totalBalance"],
   computed: {
-    name() {
-      return this.token.issuance.name
-        ? this.token.issuance.name
-        : this.token.tokenId;
-    },
     symbol() {
-      return this.token.issuance.symbol || "";
-    },
-    description() {
-      return this.token.issuance.description;
+      return this.token.symbol || "";
     }
   },
   methods: {
