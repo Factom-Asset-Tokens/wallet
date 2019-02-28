@@ -92,9 +92,8 @@ export default {
 
           const identity = {};
           identity[created.chainId] = created.identityKeys.map(k => k.public);
-          this.$store.commit("identity/addIdentity", identity);
           await this.$store.dispatch("identity/fetchIdentityKeysFromWalletd");
-          await this.$store.dispatch("address/fetchBalances");
+          this.$store.commit("identity/addIdentity", identity);
 
           this.display = false;
         } catch (e) {
