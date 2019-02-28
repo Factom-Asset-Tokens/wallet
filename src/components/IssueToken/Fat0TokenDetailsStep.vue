@@ -27,7 +27,7 @@
       ></v-text-field>
     </v-flex>
     <v-flex xs12>
-      <v-textarea v-model.trim="description" label="Token description" solo></v-textarea>
+      <v-textarea v-model.trim="metadata" label="Token metadata" solo></v-textarea>
     </v-flex>
   </v-layout>
 </template>
@@ -40,7 +40,7 @@ export default {
     infiniteSupply: false,
     supply: null,
     symbol: "",
-    description: "",
+    metadata: "",
     symbolRules: [v => SYMBOL_REGEX.test(v) || "Invalid symbol"]
   }),
   computed: {
@@ -53,7 +53,7 @@ export default {
         infiniteSupply: this.infiniteSupply,
         supply: this.supply,
         symbol: this.symbol,
-        description: this.description,
+        metadata: this.metadata,
       }
     }
   },
