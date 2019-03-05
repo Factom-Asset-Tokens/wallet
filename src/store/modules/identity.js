@@ -40,7 +40,7 @@ export default {
             const manager = getters.manager;
 
             const identityKeys = await manager.getAllIdentityKeys();
-            const publicIdentityKeys = identityKeys.map(k => k.public);
+            const publicIdentityKeys = (identityKeys || []).map(k => k.public);
             commit('updateIdentityKeysInWallet', publicIdentityKeys);
         },
         async refreshIdentities({ state, getters, commit }) {
