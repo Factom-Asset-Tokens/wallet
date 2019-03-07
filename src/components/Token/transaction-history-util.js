@@ -11,10 +11,12 @@ export function buildTransactionHistory(transactions, addresses) {
 
 function buildTransactionMovements(tx, addressSet) {
     const result = [];
-    
+
+    const isCoinbase = !!tx.getInputs()['FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC'];
+
     for (const address in tx.getOutputs()) {
         if (addressSet.has(address)) {
-            result.push(buildTransactionMovement({ tx, address, sign: '+', amount: tx.getOutputs()[address] }));
+            result.push(buildTransactionMovement({ tx, address, sign: '+', amount: tx.getOutputs()[address], isCoinbase }));
         }
     }
     for (const address in tx.getInputs()) {
@@ -27,13 +29,14 @@ function buildTransactionMovements(tx, addressSet) {
     return result;
 }
 
-function buildTransactionMovement({ tx, address, sign, amount }) {
+function buildTransactionMovement({ tx, address, sign, amount, isCoinbase }) {
     return {
         id: tx.getEntryhash(),
         address,
         sign,
         amount: Array.isArray(amount) ? computeTotalBalanceOfNfTokens(amount) : amount,
-        timestamp: tx.getTimestamp()
+        timestamp: tx.getTimestamp(),
+        coinbase: isCoinbase
     }
 }
 

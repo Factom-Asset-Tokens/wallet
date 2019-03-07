@@ -11,12 +11,10 @@
           <v-layout wrap>
             <v-flex xs2>{{tx.timestamp | formatTimestamp}}</v-flex>
             <v-flex xs6 class="font-italic">{{tx.address}}</v-flex>
-            <v-flex
-              xs4
-              class="font-weight-bold"
-              :class="amountColorClass(tx.sign)"
-              text-xs-right
-            >{{tx.sign}} {{tx.amount.toLocaleString(undefined, {maximumFractionDigits:8})}}</v-flex>
+            <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
+              {{tx.sign}} {{tx.amount.toLocaleString(undefined, {maximumFractionDigits:8})}}
+              <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase">star</v-icon>
+            </v-flex>
           </v-layout>
         </v-list-tile>
         <v-divider v-if="index + 1 < transactions.length" :key="index"></v-divider>
@@ -38,7 +36,7 @@
 
 <script>
 import { buildTransactionHistory } from "./transaction-history-util.js";
-import moment from "moment"
+import moment from "moment";
 
 const PAGINATION_LIMIT = 10;
 
@@ -97,7 +95,7 @@ export default {
   },
   filters: {
     formatTimestamp(timestamp) {
-      return moment(timestamp * 1000).format('L LT');
+      return moment(timestamp * 1000).format("L LT");
     }
   },
   watch: {
