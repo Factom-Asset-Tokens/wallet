@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-flex text-xs-center xs12 my-4>
+    <v-flex text-xs-center xs12 mt-5 mb-3>
       <v-sheet class="white--text" color="primary" elevation="1">
         <div class="display-1 font-weight-bold">Send transaction
           <v-btn flat icon color="secondary" @click="toggleMode">

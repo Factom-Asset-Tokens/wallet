@@ -5,22 +5,21 @@
         <TokenHeader :token="token" :totalBalance="totalBalance"></TokenHeader>
       </v-layout>
 
-      <v-layout wrap mb-4>
-        <AddressesBalances
-          :type="token.type"
-          :balances="balances"
-          :symbol="token.symbol"
-          :tokenCli="tokenCli"
-        ></AddressesBalances>
-      </v-layout>
-      <v-layout wrap>
-        <CreateTransaction
-          :type="token.type"
-          :balances="balances"
-          :symbol="token.symbol"
-          :tokenCli="tokenCli"
-        ></CreateTransaction>
-      </v-layout>
+      <AddressesBalances
+        :type="token.type"
+        :balances="balances"
+        :symbol="token.symbol"
+        :tokenCli="tokenCli"
+      ></AddressesBalances>
+
+      <CreateTransaction
+        :type="token.type"
+        :balances="balances"
+        :symbol="token.symbol"
+        :tokenCli="tokenCli"
+      ></CreateTransaction>
+
+      <TransactionHistory :tokenCli="tokenCli"></TransactionHistory>
     </template>
     <v-layout v-else-if="!canManageFatTokens">
       <v-flex xs12>
@@ -49,13 +48,20 @@
 import TokenHeader from "@/components/Token/TokenHeader";
 import AddressesBalances from "@/components/Token/AddressesBalances";
 import CreateTransaction from "@/components/Token/CreateTransaction";
+import TransactionHistory from "@/components/Token/TransactionHistory";
+
 import Promise from "bluebird";
 import { standardizeId } from "@/components/Token/fat1/ids-utils.js";
 import AvailableFeatures from "@/mixins/AvailableFeatures";
 
 export default {
   name: "Token",
-  components: { TokenHeader, AddressesBalances, CreateTransaction },
+  components: {
+    TokenHeader,
+    AddressesBalances,
+    CreateTransaction,
+    TransactionHistory
+  },
   mixins: [AvailableFeatures],
   data() {
     return {
@@ -64,6 +70,9 @@ export default {
     };
   },
   computed: {
+    addresses() {
+      return this.balances.map(v => v.address);
+    },
     canManageFatTokens() {
       return this.availableFeatures("fatd", "factomd", "walletd");
     },

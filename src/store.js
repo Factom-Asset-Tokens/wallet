@@ -42,6 +42,11 @@ export default new Vuex.Store({
             state.snackMessage = message;
             state.snack = true;
         },
+        snackInfo(state, message) {
+            state.snackColor = "info";
+            state.snackMessage = message;
+            state.snack = true;
+        },
         snackSuccess(state, message) {
             state.snackColor = "success";
             state.snackMessage = message;

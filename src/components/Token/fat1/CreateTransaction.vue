@@ -1,8 +1,8 @@
 <template>
   <v-layout wrap>
-    <v-flex text-xs-center xs12 mt-4>
+    <v-flex text-xs-center xs12 mt-5>
       <v-sheet class="white--text" color="primary" elevation="1">
-        <h1>Send transaction</h1>
+        <div class="display-1 font-weight-bold">Send transaction</div>
       </v-sheet>
     </v-flex>
     <v-flex>
