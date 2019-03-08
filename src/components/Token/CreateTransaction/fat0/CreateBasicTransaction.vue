@@ -49,13 +49,13 @@
     </v-layout>
 
     <!-- Dialogs -->
-    <ConfirmBasicTransactionDialog
+    <ConfirmTransactionDialog
       ref="confirmTransactionDialog"
       :amount="amount"
       :address="address"
       :symbol="symbol"
       @confirmed="send"
-    ></ConfirmBasicTransactionDialog>
+    ></ConfirmTransactionDialog>
     <ConfirmBurnDialog ref="confirmBurnDialog" :amount="amount" :symbol="symbol" @confirmed="send"></ConfirmBurnDialog>
   </v-form>
 </template>
@@ -68,11 +68,11 @@ import { FAT0 } from "@fat-token/fat-js";
 const {
   Transaction: { TransactionBuilder }
 } = FAT0;
-import ConfirmBasicTransactionDialog from "./ConfirmBasicTransactionDialog";
-import ConfirmBurnDialog from "./ConfirmBurnDialog";
+import ConfirmTransactionDialog from "./CreateBasicTransaction/ConfirmTransactionDialog";
+import ConfirmBurnDialog from "./CreateBasicTransaction/ConfirmBurnDialog";
 
 export default {
-  components: { ConfirmBasicTransactionDialog, ConfirmBurnDialog },
+  components: { ConfirmTransactionDialog, ConfirmBurnDialog },
   mixins: [SendTransaction],
   data() {
     return {

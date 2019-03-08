@@ -3,7 +3,7 @@
     <v-layout wrap v-if="canManageFactoids">
       <Addresses class="section-margin-bottom"></Addresses>
       <CreateBasicTransaction class="section-margin-bottom"></CreateBasicTransaction>
-      <ConvertFctToEcTransaction></ConvertFctToEcTransaction>
+      <ConvertFctToEc></ConvertFctToEc>
     </v-layout>
     <v-alert
       v-else
@@ -18,11 +18,11 @@
 <script>
 import Addresses from "@/components/Factoid/Addresses";
 import CreateBasicTransaction from "@/components/Factoid/CreateBasicTransaction";
-import ConvertFctToEcTransaction from "@/components/Factoid/ConvertFctToEcTransaction";
+import ConvertFctToEc from "@/components/Factoid/ConvertFctToEc";
 import AvailableFeatures from "@/mixins/AvailableFeatures";
 
 export default {
-  components: { Addresses, CreateBasicTransaction, ConvertFctToEcTransaction },
+  components: { Addresses, CreateBasicTransaction, ConvertFctToEc },
   mixins: [AvailableFeatures],
   data() {
     return {

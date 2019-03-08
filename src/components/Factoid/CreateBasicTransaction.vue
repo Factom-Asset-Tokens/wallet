@@ -72,7 +72,7 @@ import {
   buildTransaction,
   getFeeAdjustedTransaction
 } from "./TransactionHelper";
-import ConfirmBasicTransactionDialog from "./ConfirmBasicTransactionDialog";
+import ConfirmBasicTransactionDialog from "./CreateBasicTransaction/ConfirmBasicTransactionDialog";
 
 const FACTOSHI_MULTIPLIER = 100000000;
 

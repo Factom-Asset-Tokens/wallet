@@ -99,7 +99,7 @@
 
     <!-- Dialogs -->
     <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
-    <TokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></TokenDetailsDialog>
+    <NfTokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></NfTokenDetailsDialog>
     <ConfirmTransactionDialog
       ref="confirmTransactionDialog"
       :selectedTokens="selectedTokens"
@@ -116,20 +116,21 @@ import Promise from "bluebird";
 import flatmap from "lodash.flatmap";
 import groupBy from "lodash.groupby";
 import { isValidPublicFctAddress } from "factom";
-import { displayIds, idsSetDiff } from "./ids-utils.js";
+import { TransactionBuilder } from "@fat-token/fat-js/1/Transaction";
+import { displayIds, idsSetDiff } from "@/components/Token/nf-token-ids.js";
+import SendTransaction from "@/mixins/SendTransaction";
+// Components
 import SelectIdRangeDialog from "./SelectIdRangeDialog";
 import ConfirmTransactionDialog from "./ConfirmTransactionDialog";
 import ConfirmBurnDialog from "./ConfirmBurnDialog";
-import TokenDetailsDialog from "./TokenDetailsDialog";
-import { TransactionBuilder } from "@fat-token/fat-js/1/Transaction";
-import SendTransaction from "@/mixins/SendTransaction";
+import NfTokenDetailsDialog from "@/components/Token/NfTokenDetailsDialog";
 
 export default {
   props: ["symbol", "tokenCli", "balances"],
   mixins: [SendTransaction],
   components: {
     SelectIdRangeDialog,
-    TokenDetailsDialog,
+    NfTokenDetailsDialog,
     ConfirmTransactionDialog,
     ConfirmBurnDialog
   },

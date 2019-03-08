@@ -106,12 +106,12 @@
     </v-layout>
 
     <!-- Dialogs -->
-    <ConfirmAdvancedTransactionDialog
+    <ConfirmTransactionDialog
       ref="confirmTransactionDialog"
       :outputs="outputs"
       :symbol="symbol"
       @confirmed="send"
-    ></ConfirmAdvancedTransactionDialog>
+    ></ConfirmTransactionDialog>
   </v-form>
 </template>
 
@@ -119,8 +119,8 @@
 import Promise from "bluebird";
 import { isValidPublicFctAddress } from "factom";
 import SendTransaction from "@/mixins/SendTransaction";
-import TransactionInput from "./TransactionInput";
-import ConfirmAdvancedTransactionDialog from "./ConfirmAdvancedTransactionDialog";
+import TransactionInput from "./CreateAdvancedTransaction/TransactionInput";
+import ConfirmTransactionDialog from "./CreateAdvancedTransaction/ConfirmTransactionDialog";
 import { FAT0 } from "@fat-token/fat-js";
 const {
   Transaction: { TransactionBuilder }
@@ -134,7 +134,7 @@ const newInoutput = (function() {
 })();
 
 export default {
-  components: { TransactionInput, ConfirmAdvancedTransactionDialog },
+  components: { TransactionInput, ConfirmTransactionDialog },
   mixins: [SendTransaction],
   data() {
     return {

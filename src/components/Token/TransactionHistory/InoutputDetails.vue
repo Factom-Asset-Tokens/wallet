@@ -42,7 +42,7 @@ import {
   displayIds,
   sortIds,
   standardizeId
-} from "@/components/Token/fat1/ids-utils.js";
+} from "@/components/Token/nf-token-ids.js";
 
 export default {
   props: ["ios", "type"],

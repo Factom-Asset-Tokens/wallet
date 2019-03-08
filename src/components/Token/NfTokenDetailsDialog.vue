@@ -10,7 +10,7 @@
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>{{symbol}} {{title}}</v-card-title>
       <v-card-text>
-        <TokenDetails ref="rangeDetails" :tokenCli="tokenCli" :min="id.min" :max="id.max"></TokenDetails>
+        <NfTokenDetails ref="rangeDetails" :tokenCli="tokenCli" :min="id.min" :max="id.max"></NfTokenDetails>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -21,10 +21,10 @@
 </template>
 
 <script>
-import TokenDetails from "./TokenDetails";
+import NfTokenDetails from "./NfTokenDetailsDialog/NfTokenDetails";
 
 export default {
-  components: { TokenDetails },
+  components: { NfTokenDetails },
   props: ["symbol", "tokenCli"],
   data() {
     return {

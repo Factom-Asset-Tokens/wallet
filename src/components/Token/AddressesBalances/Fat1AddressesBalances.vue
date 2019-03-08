@@ -40,16 +40,16 @@
         </template>
       </v-data-table>
     </v-flex>
-    <TokenDetailsDialog ref="detailsDialog" :symbol="symbol" :tokenCli="tokenCli"></TokenDetailsDialog>
+    <NfTokenDetailsDialog ref="detailsDialog" :symbol="symbol" :tokenCli="tokenCli"></NfTokenDetailsDialog>
   </v-layout>
 </template>
 
 <script>
-import { displayIds, sortIds } from "./ids-utils.js";
-import TokenDetailsDialog from "./TokenDetailsDialog";
+import { displayIds, sortIds } from "@/components/Token/nf-token-ids.js";
+import NfTokenDetailsDialog from "@/components/Token/NfTokenDetailsDialog";
 
 export default {
-  components: { TokenDetailsDialog },
+  components: { NfTokenDetailsDialog },
   props: ["balances", "symbol", "tokenCli"],
   methods: {
     sortIds,

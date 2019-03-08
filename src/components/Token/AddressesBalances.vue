@@ -1,20 +1,20 @@
 <template>
-  <AddressesBalancesFat0 v-if="type === 'FAT-0'" :balances="balances" :symbol="symbol"></AddressesBalancesFat0>
-  <AddressesBalancesFat1
+  <Fat0AddressesBalances v-if="type === 'FAT-0'" :balances="balances" :symbol="symbol"></Fat0AddressesBalances>
+  <Fat1AddressesBalances
     v-else-if="type === 'FAT-1'"
     :balances="balances"
     :symbol="symbol"
     :tokenCli="tokenCli"
-  ></AddressesBalancesFat1>
+  ></Fat1AddressesBalances>
 </template>
 
 <script>
-import AddressesBalancesFat0 from "./fat0/AddressesBalances";
-import AddressesBalancesFat1 from "./fat1/AddressesBalances";
+import Fat0AddressesBalances from "./AddressesBalances/Fat0AddressesBalances";
+import Fat1AddressesBalances from "./AddressesBalances/Fat1AddressesBalances";
 
 export default {
   name: "AddressesBalances",
-  components: { AddressesBalancesFat0, AddressesBalancesFat1 },
+  components: { Fat0AddressesBalances, Fat1AddressesBalances },
   props: ["type", "balances", "symbol", "tokenCli"]
 };
 </script>

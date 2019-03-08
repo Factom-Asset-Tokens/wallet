@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import AddressImportDialog from "./AddressImportDialog";
+import AddressImportDialog from "./Addresses/AddressImportDialog";
 
 export default {
   components: { AddressImportDialog },

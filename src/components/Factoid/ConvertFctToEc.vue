@@ -57,13 +57,13 @@
         </v-layout>
       </v-form>
     </v-flex>
-    <ConfirmFctToEcTransactionDialog
+    <ConfirmFctToEcConversionDialog
       ref="confirmTransactionDialog"
       :address="outputAddress"
       :ecAmount="outputAmount"
       :fctCost="fctCost"
       @confirmed="send"
-    ></ConfirmFctToEcTransactionDialog>
+    ></ConfirmFctToEcConversionDialog>
   </v-layout>
 </template>
 
@@ -73,12 +73,12 @@ import {
   buildTransaction,
   getFeeAdjustedTransaction
 } from "./TransactionHelper";
-import ConfirmFctToEcTransactionDialog from "./ConfirmFctToEcTransactionDialog";
+import ConfirmFctToEcConversionDialog from "./ConvertFctToEc/ConfirmFctToEcConversionDialog";
 
 const FACTOSHI_MULTIPLIER = 100000000;
 
 export default {
-  components: { ConfirmFctToEcTransactionDialog },
+  components: { ConfirmFctToEcConversionDialog },
   data() {
     return {
       outputAddress: "",

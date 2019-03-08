@@ -51,7 +51,7 @@ import CreateTransaction from "@/components/Token/CreateTransaction";
 import TransactionHistory from "@/components/Token/TransactionHistory";
 
 import Promise from "bluebird";
-import { standardizeId } from "@/components/Token/fat1/ids-utils.js";
+import { standardizeId } from "@/components/Token/nf-token-ids.js";
 import AvailableFeatures from "@/mixins/AvailableFeatures";
 
 export default {
