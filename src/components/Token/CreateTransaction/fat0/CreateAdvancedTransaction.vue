@@ -156,10 +156,10 @@ export default {
     selectedInputAddresses() {
       return new Set(this.inputs.map(i => i.address));
     },
-    outputAddressesCounter() {
-      return this.outputs.reduce((acc, val) => {
-        acc[val.address] ? acc[val.address]++ : (acc[val.address] = 1);
-        return acc;
+    addressesCount() {
+      return this.inputs.concat(this.outputs).reduce((count, val) => {
+        count[val.address] ? count[val.address]++ : (count[val.address] = 1);
+        return count;
       }, {});
     },
     outputAddressRules() {
@@ -184,7 +184,7 @@ export default {
         .reduce((a, b) => a + b, 0);
     },
     validTransactionProperties() {
-      return [this.totalInputs, this.totalOutputs, this.outputAddressesCounter];
+      return [this.totalInputs, this.totalOutputs, this.addressesCount];
     }
   },
   methods: {
@@ -237,18 +237,23 @@ export default {
   },
   watch: {
     validTransactionProperties() {
-      for (const address in this.outputAddressesCounter) {
-        if (this.outputAddressesCounter[address] > 1) {
+      // An address can appear only once accross both inptus and outputs
+      for (const address in this.addressesCount) {
+        if (this.addressesCount[address] > 1) {
           this.validTransaction = false;
-          this.transactionError = `The same address is used in multiple outputs (${address}).`;
+          this.transactionError = `${address} is used multiple times accross inputs or outputs.`;
           return;
         }
       }
+
+      // Total inputs and outputs must be equal
       if (this.totalInputs !== this.totalOutputs) {
         this.validTransaction = false;
         this.transactionError = "The sum of inputs and outputs must be equal.";
         return;
       }
+
+      // The amount transfered has to be greater than 0
       if (this.totalInputs === 0) {
         this.validTransaction = false;
         this.transactionError = "The amount transfered cannot be 0.";
