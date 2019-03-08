@@ -1,13 +1,13 @@
 <template>
   <v-layout wrap>
-    <v-flex xs2 my-2>Maximum supply:</v-flex>
-    <v-flex xs10 my-2>{{maxSupplyText}}</v-flex>
-    <v-flex xs2 my-2>Circulating supply:</v-flex>
-    <v-flex xs10 my-2>{{circulatingSupplyText}}</v-flex>
-    <v-flex xs2 my-2>Burned:</v-flex>
-    <v-flex xs10 my-2>{{burnedText}}</v-flex>
-    <v-flex xs2 my-2>Remaining supply:</v-flex>
-    <v-flex xs10 my-2>{{remainingSupplyText}}</v-flex>
+    <v-flex xs2 my-2 class="secondary--text font-weight-bold">Maximum supply</v-flex>
+    <v-flex xs10 my-2 pl-3>{{maxSupplyText}}</v-flex>
+    <v-flex xs2 my-2 class="secondary--text font-weight-bold">Circulating supply</v-flex>
+    <v-flex xs10 my-2 pl-3>{{circulatingSupplyText}}</v-flex>
+    <v-flex xs2 my-2 class="secondary--text font-weight-bold">Burned</v-flex>
+    <v-flex xs10 my-2 pl-3>{{burnedText}}</v-flex>
+    <v-flex xs2 my-2 class="secondary--text font-weight-bold">Remaining supply</v-flex>
+    <v-flex xs10 my-2 pl-3>{{remainingSupplyText}}</v-flex>
   </v-layout>
 </template>
 

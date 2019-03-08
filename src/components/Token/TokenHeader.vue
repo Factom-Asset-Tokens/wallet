@@ -23,10 +23,10 @@
       <v-sheet v-show="showDetails">
         <v-container>
           <v-layout wrap>
-            <v-flex xs2 my-2>Chain ID:</v-flex>
-            <v-flex xs10 my-2>{{token.chainId}}</v-flex>
-            <v-flex xs2 my-2>Issuer:</v-flex>
-            <v-flex xs10 my-2>{{token.issuer}}</v-flex>
+            <v-flex xs2 my-2 class="secondary--text font-weight-bold">Chain ID</v-flex>
+            <v-flex xs10 my-2 pl-3>{{token.chainId}}</v-flex>
+            <v-flex xs2 my-2 class="secondary--text font-weight-bold">Issuer</v-flex>
+            <v-flex xs10 my-2 pl-3>{{token.issuer}}</v-flex>
 
             <TokenSupplyDetails :chainId="token.chainId" :symbol="symbol"></TokenSupplyDetails>
             <v-flex xs12 text-xs-right>
