@@ -20,11 +20,11 @@
             <v-flex xs12 class="font-weight-bold secondary--text" mt-4>
               <v-icon left color="secondary">fa-sign-in-alt</v-icon>Inputs
             </v-flex>
-            <InoutputDetails :ios="inputs"></InoutputDetails>
+            <InoutputDetails :ios="inputs" type="input"></InoutputDetails>
             <v-flex xs12 class="font-weight-bold secondary--text">
               <v-icon left color="secondary">fa-sign-out-alt</v-icon>Outputs
             </v-flex>
-            <InoutputDetails :ios="outputs"></InoutputDetails>
+            <InoutputDetails :ios="outputs" type="output"></InoutputDetails>
             <template v-if="metadata">
               <v-flex xs12 my-3 class="font-weight-bold secondary--text">Metadata</v-flex>
               <v-flex xs12 mb-3>{{metadata}}</v-flex>
