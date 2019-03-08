@@ -1,7 +1,7 @@
 
 import flatmap from "lodash.flatmap";
 
-export function buildTransactionHistory(transactions, addresses) {
+export function buildTransactionsMovements(transactions, addresses) {
     const addressSet = new Set(addresses);
 
     return flatmap(
@@ -51,4 +51,19 @@ function computeTotalBalanceOfNfTokens(tokens) {
                 throw new Error('Unsupported token', token);
         }
     }, 0);
+}
+
+export function transformInoutputsToArray(inoutputs) {
+    return Object.keys(inoutputs).map(address => ({
+        address,
+        amount: inoutputs[address]
+    }));
+}
+
+export function getTotalTransaction(transaction) {
+    const toSum = Object.keys(transaction.getInputs()) < Object.keys(transaction.getOutputs()) ?
+        Object.values(transaction.getInputs()) : Object.values(transaction.getOutputs());
+
+    return toSum.map(amount => Array.isArray(amount) ? computeTotalBalanceOfNfTokens(amount) : amount)
+        .reduce((acc, val) => acc + val, 0);
 }

@@ -6,8 +6,8 @@
       </v-sheet>
     </v-flex>
     <v-list>
-      <template v-for="(tx, index) in transactions">
-        <v-list-tile :key="tx.id + tx.address">
+      <template v-for="(tx, index) in movements">
+        <v-list-tile :key="tx.id + tx.address" @click.stop="openDetails(tx.id)">
           <v-layout wrap>
             <v-flex xs2>{{tx.timestamp | formatTimestamp}}</v-flex>
             <v-flex xs6 class="font-italic">{{tx.address}}</v-flex>
@@ -17,39 +17,37 @@
             </v-flex>
           </v-layout>
         </v-list-tile>
-        <v-divider v-if="index + 1 < transactions.length" :key="index"></v-divider>
+        <v-divider v-if="index + 1 < movements.length" :key="index"></v-divider>
       </template>
     </v-list>
     <v-flex xs12 text-xs-center mt-3>
-      <v-btn
-        id="scrollButton"
-        large
-        color="primary"
-        :loading="loading"
-        @click="loadMoreTransactions"
-      >
+      <v-btn id="scrollButton" large color="primary" :loading="loading" @click="loadMoreMovements">
         <v-icon left>arrow_drop_down_circle</v-icon>Load more transactions
       </v-btn>
     </v-flex>
+    <TransactionDetailsDialog :symbol="symbol" ref="transactionDetailsDialog"></TransactionDetailsDialog>
   </div>
 </template>
 
 <script>
-import { buildTransactionHistory } from "./transaction-history-util.js";
+import { buildTransactionsMovements } from "./TransactionHistory/transaction-history-util.js";
+import TransactionDetailsDialog from "./TransactionHistory/TransactionDetailsDialog";
 import moment from "moment";
 
 const PAGINATION_LIMIT = 10;
 
 export default {
   name: "TransactionHistory",
+  components: { TransactionDetailsDialog },
   data() {
     return {
-      transactions: [],
+      movements: [],
+      transactions: {},
       page: 0,
       loading: false
     };
   },
-  props: ["tokenCli"],
+  props: ["tokenCli", "symbol"],
   computed: {
     addresses() {
       return this.$store.state.address.fctAddresses;
@@ -62,7 +60,7 @@ export default {
     amountColorClass(sign) {
       return sign === "+" ? "green--text" : "red--text";
     },
-    async loadMoreTransactions() {
+    async loadMoreMovements() {
       try {
         this.loading = true;
         await this.fetchPage(this.page + 1);
@@ -88,9 +86,14 @@ export default {
         limit: PAGINATION_LIMIT
       });
 
-      this.transactions = this.transactions.concat(
-        buildTransactionHistory(transactions, this.addresses)
+      transactions.forEach(tx => (this.transactions[tx.getEntryhash()] = tx));
+
+      this.movements = this.movements.concat(
+        buildTransactionsMovements(transactions, this.addresses)
       );
+    },
+    openDetails(txId) {
+      this.$refs.transactionDetailsDialog.show(this.transactions[txId]);
     }
   },
   filters: {
@@ -100,7 +103,8 @@ export default {
   },
   watch: {
     tokenCli() {
-      this.transactions = [];
+      this.movements = [];
+      this.transactions = {};
       this.page = 0;
       this.fetchPage(0);
     }

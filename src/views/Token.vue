@@ -19,7 +19,7 @@
         :tokenCli="tokenCli"
       ></CreateTransaction>
 
-      <TransactionHistory :tokenCli="tokenCli"></TransactionHistory>
+      <TransactionHistory :tokenCli="tokenCli" :symbol="token.symbol"></TransactionHistory>
     </template>
     <v-layout v-else-if="!canManageFatTokens">
       <v-flex xs12>
