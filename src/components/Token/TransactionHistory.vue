@@ -12,8 +12,9 @@
             <v-flex xs2>{{tx.timestamp | formatTimestamp}}</v-flex>
             <v-flex xs6 class="font-italic">{{tx.address}}</v-flex>
             <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
+              <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
+              <v-icon v-if="tx.burn" color="secondary" title="Burn" left>fas fa-fire-alt</v-icon>
               {{tx.sign}} {{tx.amount.toLocaleString(undefined, {maximumFractionDigits:8})}}
-              <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase">star</v-icon>
             </v-flex>
           </v-layout>
         </v-list-tile>

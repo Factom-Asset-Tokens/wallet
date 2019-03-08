@@ -11,11 +11,11 @@
       <v-card-text>
         <v-container fluid class="subheading">
           <v-layout wrap>
-            <v-flex xs2 class="font-weight-bold secondary--text">Transaction ID:</v-flex>
+            <v-flex xs2 class="font-weight-bold secondary--text">Transaction ID</v-flex>
             <v-flex xs10>{{txId}}</v-flex>
-            <v-flex xs2 class="font-weight-bold secondary--text">Time:</v-flex>
+            <v-flex xs2 class="font-weight-bold secondary--text">Time</v-flex>
             <v-flex xs10>{{timestamp | formatTimestamp}}</v-flex>
-            <v-flex xs2 class="font-weight-bold secondary--text">Total:</v-flex>
+            <v-flex xs2 class="font-weight-bold secondary--text">Total</v-flex>
             <v-flex xs10>{{totalText}} {{symbol}}</v-flex>
             <v-flex xs12 class="font-weight-bold secondary--text" mt-4>
               <v-icon left color="secondary">fa-sign-in-alt</v-icon>Inputs

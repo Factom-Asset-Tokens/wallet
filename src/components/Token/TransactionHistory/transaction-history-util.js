@@ -13,6 +13,7 @@ function buildTransactionMovements(tx, addressSet) {
     const result = [];
 
     const isCoinbase = !!tx.getInputs()['FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC'];
+    const isBurn = !!tx.getOutputs()['FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC'];
 
     for (const address in tx.getOutputs()) {
         if (addressSet.has(address)) {
@@ -21,7 +22,7 @@ function buildTransactionMovements(tx, addressSet) {
     }
     for (const address in tx.getInputs()) {
         if (addressSet.has(address)) {
-            result.push(buildTransactionMovement({ tx, address, sign: '-', amount: tx.getInputs()[address] }));
+            result.push(buildTransactionMovement({ tx, address, sign: '-', amount: tx.getInputs()[address], isBurn }));
         }
     }
 
@@ -29,14 +30,15 @@ function buildTransactionMovements(tx, addressSet) {
     return result;
 }
 
-function buildTransactionMovement({ tx, address, sign, amount, isCoinbase }) {
+function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = false, isBurn = false }) {
     return {
         id: tx.getEntryhash(),
         address,
         sign,
         amount: Array.isArray(amount) ? computeTotalBalanceOfNfTokens(amount) : amount,
         timestamp: tx.getTimestamp(),
-        coinbase: isCoinbase
+        coinbase: isCoinbase,
+        burn: isBurn
     }
 }
 
