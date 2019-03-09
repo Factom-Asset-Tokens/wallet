@@ -2,6 +2,7 @@
 import { join } from 'path'
 import { execFile } from 'child_process'
 import fs from 'fs'
+import { WalletdCli } from 'factom'
 
 const EXECUTABLE_NAME = getExecutableName()
 
@@ -40,6 +41,23 @@ export default class Walletd {
             console.log(stderr)
             console.log(stdout)
         })
+    }
+
+    async bootstrap() {
+        try {
+            const cli = new WalletdCli();
+            const { addresses } = await cli.call('all-addresses')
+
+            // If the wallet is empty create one FCT and one EC address.
+            if (!addresses) {
+                Promise.all([
+                    cli.call('generate-ec-address'),
+                    cli.call('generate-factoid-address')
+                ])
+            }
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     stop() {
