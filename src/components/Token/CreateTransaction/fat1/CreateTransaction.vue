@@ -80,6 +80,17 @@
               </v-btn>
             </v-flex>
 
+            <!-- Extra validation rules errors (not dismissable) -->
+            <v-flex xs12>
+              <v-alert
+                v-if="sendClicked"
+                :value="!validTransaction"
+                color="error"
+                icon="warning"
+                outline
+              >{{transactionError}}</v-alert>
+            </v-flex>
+
             <!-- Alerts transaction success/failure-->
             <v-flex v-if="errorMessage" xs12>
               <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
@@ -117,7 +128,11 @@ import flatmap from "lodash.flatmap";
 import groupBy from "lodash.groupby";
 import { isValidPublicFctAddress } from "factom";
 import { TransactionBuilder } from "@fat-token/fat-js/1/Transaction";
-import { displayIds, idsSetDiff } from "@/components/Token/nf-token-ids.js";
+import {
+  displayIds,
+  idsSetDiff,
+  matchOwners
+} from "@/components/Token/nf-token-ids.js";
 import SendTransaction from "@/mixins/SendTransaction";
 // Components
 import SelectIdRangeDialog from "./SelectIdRangeDialog";
@@ -141,6 +156,8 @@ export default {
       selectedTokens: [],
       valid: true,
       errorMessage: "",
+      sendClicked: false,
+      validTransaction: true,
       addressRules: [
         v =>
           this.burn ||
@@ -158,6 +175,9 @@ export default {
         this.balances.filter(b => b.ids).map(b => b.ids)
       );
       return idsSetDiff(allTokens, this.selectedTokens);
+    },
+    validTransactionProperties() {
+      return [this.selectedTokens, this.address];
     }
   },
   methods: {
@@ -187,23 +207,27 @@ export default {
     },
     confirmTransaction() {
       if (this.$refs.form.validate()) {
-        if (this.burn) {
-          this.$refs.confirmBurnDialog.show();
-        } else {
-          this.$refs.confirmTransactionDialog.show();
+        this.sendClicked = true;
+        // Additional validation rules check
+        if (this.validTransaction) {
+          this.sendClicked = false;
+          if (this.burn) {
+            this.$refs.confirmBurnDialog.show();
+          } else {
+            this.$refs.confirmTransactionDialog.show();
+          }
         }
       }
     },
     async buildTransaction() {
       const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId());
 
-      const idsWithOwner = await Promise.map(this.selectedTokens, id =>
-        this.tokenCli.getNFToken(id.min).then(t => ({ id, owner: t.owner }))
-      );
+      const idsWithOwner = matchOwners(this.balances, this.selectedTokens);
 
+      // Consolidate inputs by owner (address)
       const inputs = groupBy(idsWithOwner, e => e.owner);
 
-      // Get inputs secret keys
+      // Get inputs with secret keys
       const walletd = this.$store.getters["walletd/cli"];
       const inputsSecrets = await Promise.map(
         Object.keys(inputs),
@@ -239,6 +263,21 @@ export default {
         this.burn = false;
         this.selectedTokens = [];
       }
+    }
+  },
+  watch: {
+    validTransactionProperties() {
+      // Validate that the output address is not part of the input addresses
+      const matchedOwners = matchOwners(this.balances, this.selectedTokens);
+      const inputAddresses = new Set(matchedOwners.map(o => o.owner));
+      if (inputAddresses.has(this.address)) {
+        this.validTransaction = false;
+        this.transactionError = "Some of the tokens selected for sending are already owned by the recipient address, you must remove them.";
+        return;
+      }
+
+      this.validTransaction = true;
+      this.transactionError = "";
     }
   },
   filters: {

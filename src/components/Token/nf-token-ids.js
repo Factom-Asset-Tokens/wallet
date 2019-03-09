@@ -74,3 +74,32 @@ function createRange(min, max) {
         min, max
     }
 }
+
+export function matchOwners(balances, tokens) {
+    const leftToFind = new Set(tokens);
+    const result = [];
+
+    for (const balance of balances) {
+        const owner = balance.address;
+        const addressIds = balance.ids;
+
+        if (addressIds) {
+            for (const addressId of addressIds) {
+                const matched = [];
+                // Search for tokens that fit inside the range
+                for (const token of leftToFind) {
+                    if (addressId.min <= token.min && token.max <= addressId.max) {
+                        result.push({ id: token, owner });
+                        matched.push(token);
+                    }
+                }
+                // Clear tokens matched to an address
+                matched.forEach(f => leftToFind.delete(f));
+                if (leftToFind.size === 0) {
+                    return result;
+                }
+            }
+        }
+    }
+    throw new Error(`No owner founds for tokens ${JSON.stringify(leftToFind)}. Searching ${JSON.stringify(tokens)} in ${JSON.stringify(balances)}`);
+}
