@@ -93,6 +93,16 @@ export default {
     };
   },
   computed: {
+    isAddressOk() {
+      return this.addressRules.every(
+        f => typeof f(this.outputAddress) !== "string"
+      );
+    },
+    isAmountsOk() {
+      return this.amountRules.every(
+        f => typeof f(this.outputAmount) !== "string"
+      );
+    },
     factoshiOutputAmount() {
       return this.outputAmount * FACTOSHI_MULTIPLIER;
     },
@@ -116,11 +126,13 @@ export default {
           if (selfAddressBalance) {
             return (
               amount * FACTOSHI_MULTIPLIER <=
-                totalBalance - selfAddressBalance || "Not enough funds"
+                totalBalance - selfAddressBalance ||
+              "Not enough funds available"
             );
           } else {
             return (
-              amount * FACTOSHI_MULTIPLIER <= totalBalance || "Not enough funds"
+              amount * FACTOSHI_MULTIPLIER <= totalBalance ||
+              "Not enough funds available"
             );
           }
         }
@@ -159,10 +171,10 @@ export default {
   },
   watch: {
     async transactionProperties() {
-      if (
-        isValidPublicFctAddress(this.outputAddress) &&
-        typeof this.outputAmount === "number"
-      ) {
+
+      // Unfortunately the value of `valid` is not up to date when reaching this point
+      // so we have to re-compute the validity of inputs manually.
+      if (this.isAddressOk && this.isAmountsOk) {
         const factomd = this.$store.getters["factomd/cli"];
         const ecRate = await factomd.getEntryCreditRate();
 
