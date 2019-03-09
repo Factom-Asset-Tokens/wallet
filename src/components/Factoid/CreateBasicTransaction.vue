@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import NodeCache from "node-cache";
 import { isValidPublicFctAddress } from "factom";
 import {
   buildTransaction,
@@ -91,6 +92,9 @@ export default {
         v => isValidPublicFctAddress(v) || "Invalid public FCT address"
       ]
     };
+  },
+  created() {
+    this.cache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
   },
   computed: {
     isAddressOk() {
@@ -171,12 +175,15 @@ export default {
   },
   watch: {
     async transactionProperties() {
-
       // Unfortunately the value of `valid` is not up to date when reaching this point
       // so we have to re-compute the validity of inputs manually.
       if (this.isAddressOk && this.isAmountsOk) {
-        const factomd = this.$store.getters["factomd/cli"];
-        const ecRate = await factomd.getEntryCreditRate();
+        let ecRate = this.cache.get("ecRate");
+        if (!ecRate) {
+          const factomd = this.$store.getters["factomd/cli"];
+          ecRate = await factomd.getEntryCreditRate();
+          this.cache.set("ecRate", ecRate);
+        }
 
         const tx = getFeeAdjustedTransaction(
           this.balances,
@@ -188,6 +195,9 @@ export default {
         this.fee = tx.feesPaid / FACTOSHI_MULTIPLIER;
       }
     }
+  },
+  beforeDestroy() {
+    this.cache.close();
   }
 };
 </script>
