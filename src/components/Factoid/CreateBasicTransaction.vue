@@ -36,6 +36,7 @@
               <v-icon right>send</v-icon>
             </v-btn>
           </v-flex>
+          <!-- Alerts -->
           <v-flex v-if="valid && outputAddress && fee" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
               An additional transaction fee of
@@ -56,6 +57,7 @@
         </v-layout>
       </v-form>
     </v-flex>
+    <!-- Dialogs -->
     <ConfirmBasicTransactionDialog
       ref="confirmTransactionDialog"
       :address="outputAddress"
@@ -64,7 +66,7 @@
       @confirmed="send"
     ></ConfirmBasicTransactionDialog>
   </v-layout>
-</template>
+</template>lazy
 
 <script>
 import NodeCache from "node-cache";
@@ -150,6 +152,15 @@ export default {
         this.$refs.confirmTransactionDialog.show();
       }
     },
+    async getEcRate() {
+      let ecRate = this.cache.get("ecRate");
+      if (!ecRate) {
+        const factomd = this.$store.getters["factomd/cli"];
+        ecRate = await factomd.getEntryCreditRate();
+        this.cache.set("ecRate", ecRate);
+      }
+      return ecRate;
+    },
     async send() {
       try {
         this.errorMessage = "";
@@ -178,12 +189,7 @@ export default {
       // Unfortunately the value of `valid` is not up to date when reaching this point
       // so we have to re-compute the validity of inputs manually.
       if (this.isAddressOk && this.isAmountsOk) {
-        let ecRate = this.cache.get("ecRate");
-        if (!ecRate) {
-          const factomd = this.$store.getters["factomd/cli"];
-          ecRate = await factomd.getEntryCreditRate();
-          this.cache.set("ecRate", ecRate);
-        }
+        const ecRate = await this.getEcRate();
 
         const tx = getFeeAdjustedTransaction(
           this.balances,

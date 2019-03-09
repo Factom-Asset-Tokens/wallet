@@ -28,6 +28,7 @@
               step="1"
               suffix="EC"
               :rules="amountRules"
+              :error-messages="amountErrors"
               required
               solo
             ></v-text-field>
@@ -37,6 +38,7 @@
               <v-icon right>local_play</v-icon>
             </v-btn>
           </v-flex>
+          <!-- Alerts -->
           <v-flex v-if="valid && outputAddress && fctCost" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
               <strong>{{fctCost}} FCT</strong>
@@ -57,6 +59,7 @@
         </v-layout>
       </v-form>
     </v-flex>
+    <!-- Dialogs -->
     <ConfirmFctToEcConversionDialog
       ref="confirmTransactionDialog"
       :address="outputAddress"
@@ -68,6 +71,7 @@
 </template>
 
 <script>
+import NodeCache from "node-cache";
 import { isValidPublicEcAddress } from "factom";
 import {
   buildTransaction,
@@ -87,6 +91,7 @@ export default {
       rate: 0,
       valid: true,
       errorMessage: "",
+      amountErrors: [],
       transactionSentMessage: "",
       sending: false,
       addressRules: [
@@ -94,11 +99,14 @@ export default {
       ]
     };
   },
+  created() {
+    this.cache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
+  },
   computed: {
     balances() {
       return this.$store.state.address.fctBalances;
     },
-    totalBalance() {
+    totalFctBalance() {
       return Object.values(this.balances).reduce((acc, val) => acc + val, 0);
     },
     amountRules() {
@@ -110,6 +118,16 @@ export default {
     },
     transactionProperties() {
       return [this.outputAmount, this.outputAddress];
+    },
+    isAddressOk() {
+      return this.addressRules.every(
+        f => typeof f(this.outputAddress) !== "string"
+      );
+    },
+    isAmountsOk() {
+      return this.amountRules.every(
+        f => typeof f(this.outputAmount) !== "string"
+      );
     }
   },
   methods: {
@@ -118,6 +136,15 @@ export default {
       if (this.$refs.form.validate()) {
         this.$refs.confirmTransactionDialog.show();
       }
+    },
+    async getEcRate() {
+      let ecRate = this.cache.get("ecRate");
+      if (!ecRate) {
+        const factomd = this.$store.getters["factomd/cli"];
+        ecRate = await factomd.getEntryCreditRate();
+        this.cache.set("ecRate", ecRate);
+      }
+      return ecRate;
     },
     async send() {
       try {
@@ -144,23 +171,43 @@ export default {
   },
   watch: {
     async transactionProperties() {
-      if (
-        isValidPublicEcAddress(this.outputAddress) &&
-        typeof this.outputAmount === "number"
-      ) {
-        const factomd = this.$store.getters["factomd/cli"];
-        const ecRate = await factomd.getEntryCreditRate();
+      // Unfortunately the value of `valid` is not up to date when reaching this point
+      // so we have to re-compute the validity of inputs manually.
+      if (this.isAddressOk && this.isAmountsOk) {
+        const ecRate = await this.getEcRate();
+        const factoshiCost = this.outputAmount * ecRate;
 
-        const tx = getFeeAdjustedTransaction(
-          this.balances,
-          this.outputAddress,
-          this.outputAmount * ecRate,
-          ecRate
-        );
-        this.fctCost = tx.totalInputs / FACTOSHI_MULTIPLIER;
-        this.rate = FACTOSHI_MULTIPLIER / ecRate;
+        // Fast approximation that doesn't take into account fees
+        if (factoshiCost < this.totalFctBalance) {
+          try {
+            const tx = getFeeAdjustedTransaction(
+              this.balances,
+              this.outputAddress,
+              factoshiCost,
+              ecRate
+            );
+
+            this.amountErrors = [];
+            this.fctCost = tx.totalInputs / FACTOSHI_MULTIPLIER;
+            this.rate = FACTOSHI_MULTIPLIER / ecRate;
+          } catch (e) {
+            // In case if the total with fees did exceed the funds available
+            if (e.message.includes("Not enough funds")) {
+              this.amountErrors = ["Not enough FCT availables"];
+            } else {
+              throw e;
+            }
+          }
+        } else {
+          this.amountErrors = ["Not enough FCT availables"];
+        }
+      } else {
+        this.amountErrors = [];
       }
     }
+  },
+  beforeDestroy() {
+    this.cache.close();
   }
 };
 </script>
