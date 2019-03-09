@@ -110,10 +110,10 @@ export default {
         function(amount) {
           if (selfAddress) {
             return (
-              amount <= totalBalance - selfAddress.balance || "Not enough funds"
+              amount <= totalBalance - selfAddress.balance || "Not enough funds available"
             );
           } else {
-            return amount <= totalBalance || "Not enough funds";
+            return amount <= totalBalance || "Not enough funds available";
           }
         }
       ];
@@ -146,6 +146,8 @@ export default {
       const inputs = [];
       let amountToCover = this.amount;
       for (const b of this.balances) {
+        // Output address must be excluded from the choices of inputs
+        // otherwise it would be an invalid transaction as per fat0 standard
         if (b.address !== outputAddress && b.balance > 0) {
           if (amountToCover - b.balance > 0) {
             inputs.push({ address: b.address, amount: b.balance });
