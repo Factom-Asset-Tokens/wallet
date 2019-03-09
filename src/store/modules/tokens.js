@@ -27,7 +27,7 @@ export default {
         },
     },
     actions: {
-        async init({ state, commit, rootGetters }) {
+        async initializeTokenClis({ state, commit, rootGetters }) {
             const cli = rootGetters["fatd/cli"];
 
             return Promise.all(Object.values(state.tracked).map(async function(token) {
