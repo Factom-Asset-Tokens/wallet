@@ -5,7 +5,7 @@
         <div class="display-1 font-weight-bold">Transaction history</div>
       </v-sheet>
     </v-flex>
-    <v-list>
+    <v-list v-if="movements.length > 0">
       <template v-for="(tx, index) in movements">
         <v-list-tile :key="tx.id + tx.address" @click.stop="openDetails(tx.id)">
           <v-layout wrap>
@@ -21,6 +21,11 @@
         <v-divider v-if="index + 1 < movements.length" :key="index"></v-divider>
       </template>
     </v-list>
+    <v-flex v-else text-xs-center xs12>
+      <v-sheet elevation="1">
+        <div class="subheading font-italic no-transaction-padding">No past transactions.</div>
+      </v-sheet>
+    </v-flex>
     <v-flex xs12 text-xs-center mt-3>
       <v-btn id="scrollButton" large color="primary" :loading="loading" @click="loadMoreMovements">
         <v-icon left>arrow_drop_down_circle</v-icon>Load more transactions
@@ -55,7 +60,7 @@ export default {
     }
   },
   created() {
-    this.fetchPage(0);
+    this.initialFetch();
   },
   methods: {
     amountColorClass(sign) {
@@ -78,6 +83,17 @@ export default {
 
       const vuetify = this.$vuetify;
       this.$nextTick(() => vuetify.goTo("#scrollButton"));
+    },
+    async initialFetch() {
+      try {
+        await this.fetchPage(0);
+      } catch (e) {
+        if (e.message.includes("-32803")) {
+          this.page = -1;
+        } else {
+          throw e;
+        }
+      }
     },
     async fetchPage(page) {
       const transactions = await this.tokenCli.getTransactions({
@@ -107,11 +123,14 @@ export default {
       this.movements = [];
       this.transactions = {};
       this.page = 0;
-      this.fetchPage(0);
+      this.initialFetch();
     }
   }
 };
 </script>
 
 <style scoped>
+.no-transaction-padding {
+  padding: 8px;
+}
 </style>
