@@ -49,10 +49,10 @@ export default {
     async submit() {
       if (this.$refs.form.validate()) {
         this.loading = true;
-        const cli = this.$store.getters["fatd/cli"];
-        const tokenCli = await cli.getTokenCLI(this.tokenChainId);
 
         try {
+          const cli = this.$store.getters["fatd/cli"];
+          const tokenCli = await cli.getTokenCLI(this.tokenChainId);
           const issuance = await tokenCli.getIssuance();
 
           const token = {
