@@ -79,6 +79,8 @@ export default class Walletd {
 
 function getExecutableName() {
     switch (process.platform) {
+        case 'win32':
+            return 'factom-walletd.exe'
         default:
             return 'factom-walletd'
     }

@@ -8,6 +8,9 @@ module.exports = {
                 linux: {
                     icon: "public/icons/256x256.png",
                     category: "Utility"
+                },
+                win: {
+                    icon: "public/icons/icon.ico"
                 }
             }
         }
