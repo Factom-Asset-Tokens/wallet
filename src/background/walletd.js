@@ -15,6 +15,10 @@ export default class Walletd {
         this.process = null
     }
 
+    available() {
+        return fs.existsSync(this.asarExecutablePath);
+    }
+
     async launch() {
         try {
             fs.mkdirSync(this.executableFolderPath)

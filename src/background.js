@@ -91,8 +91,11 @@ if (isDevelopment) {
 
 // Walletd binary
 const walletd = new Walletd(app);
-walletd.launch()
-walletd.bootstrap()
+
+if (walletd.available()) {
+  walletd.launch()
+  walletd.bootstrap()
+}
 
 function quitApp() {
   walletd.stop()
