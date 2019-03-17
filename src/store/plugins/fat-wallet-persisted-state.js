@@ -16,7 +16,7 @@ export default createPersistedState({
             "tokens/removeToken",
             "identity/updateIdentities",
             "identity/addIdentity",
-            "identity/removeIdentity"
+            "identity/unlinkIdentity"
         ],
     statePick: (state) => ({
         address: {

@@ -26,21 +26,21 @@
         >{{item.name}}</div>
       </template>
       <template slot="append" slot-scope="{ item, leaf }">
-        <v-icon v-if="!leaf" @click.stop="$refs.deleteIdentityDialog.show(item.name)">delete</v-icon>
+        <v-icon v-if="!leaf" @click.stop="$refs.unlinkIdentityDialog.show(item.name)" title="Unlink identity">link_off</v-icon>
       </template>
     </v-treeview>
     <KeyImportDialog ref="keyImportDialog"></KeyImportDialog>
-    <DeleteIdentityConfirmDialog ref="deleteIdentityDialog"></DeleteIdentityConfirmDialog>
+    <UnlinkIdentityConfirmDialog ref="unlinkIdentityDialog"></UnlinkIdentityConfirmDialog>
   </div>
 </template>
 
 <script>
 import KeyImportDialog from "./KeyImportDialog";
-import DeleteIdentityConfirmDialog from "./DeleteIdentityConfirmDialog";
+import UnlinkIdentityConfirmDialog from "./UnlinkIdentityConfirmDialog";
 import { mapState } from "vuex";
 
 export default {
-  components: { KeyImportDialog, DeleteIdentityConfirmDialog },
+  components: { KeyImportDialog, UnlinkIdentityConfirmDialog },
   data: function() {
     return {};
   },

@@ -21,7 +21,7 @@ export default {
         updateIdentities: (state, identities) => state.identities = identities,
         updateIdentityKeysInWallet: (state, keysInWallet) => state.identityKeysInWallet = new Set(keysInWallet),
         addIdentity: (state, identity) => state.identities = Object.assign(identity, state.identities),
-        removeIdentity(state, identity) {
+        unlinkIdentity(state, identity) {
             const copy = { ...state.identities };
             delete copy[identity];
             state.identities = copy;
