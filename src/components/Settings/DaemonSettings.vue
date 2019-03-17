@@ -17,7 +17,13 @@
           </div>
           <div>
             <h2>FAT Daemon
-              <DaemonStatus :status="fatdStatus" :version="fatdVersion"></DaemonStatus>
+              <DaemonStatus
+                :status="fatdStatus"
+                :version="fatdVersion"
+                :syncing="!fatdSynced"
+                :syncHeight="fatdSyncHeight"
+                :targetHeight="fatdFactomHeight"
+              ></DaemonStatus>
             </h2>
             <v-container>
               <v-layout wrap>
@@ -79,9 +85,14 @@ export default {
       walletdVersion: state => state.walletd.version,
       fatdStatus: state => state.fatd.status,
       fatdVersion: state => state.fatd.version,
+      fatdSyncHeight: state => state.fatd.syncHeight,
+      fatdFactomHeight: state => state.fatd.factomHeight,
       factomdStatus: state => state.factomd.status,
       factomdVersion: state => state.factomd.version
     }),
+    fatdSynced() {
+      return this.$store.getters["fatd/synced"];
+    },
     fatdEndpoint: {
       get() {
         return this.$store.state.fatd.endpoint;

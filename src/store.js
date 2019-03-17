@@ -33,7 +33,8 @@ export default new Vuex.Store({
         snackColor: ""
     },
     getters: {
-        daemonsKo: state => state.fatd.status === 'ko' || state.walletd.status === 'ko' || state.factomd.status === 'ko'
+        daemonsKo: state => state.fatd.status === 'ko' || state.walletd.status === 'ko' || state.factomd.status === 'ko',
+        daemonsSyncing: (state, getters) => (state.fatd.status === 'ok' && !getters['fatd/synced'])
     },
     mutations: {
         updateSnack: (state, value) => state.snack = value,

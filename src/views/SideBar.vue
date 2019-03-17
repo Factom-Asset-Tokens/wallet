@@ -40,6 +40,10 @@
             <span slot="badge">!</span>
             <v-icon large>settings</v-icon>
           </v-badge>
+          <v-badge v-else-if="daemonsSyncing" color="#E8980C" right overlap>
+            <span slot="badge">!</span>
+            <v-icon large>settings</v-icon>
+          </v-badge>
           <v-icon v-else large>settings</v-icon>
         </v-btn>
         <span>Settings</span>
@@ -54,7 +58,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "SideBar",
   computed: {
-    ...mapGetters(["daemonsKo"]),
+    ...mapGetters(["daemonsKo", "daemonsSyncing"]),
     trackedTokens() {
       return Object.values(this.$store.state.tokens.tracked);
     }
