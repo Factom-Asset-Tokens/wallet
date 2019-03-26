@@ -17,9 +17,9 @@
           <v-flex xs2 my-2>Symbol:</v-flex>
           <v-flex xs10 my-2>{{ details.symbol }}</v-flex>
           <v-flex xs2 my-2>Maximum supply:</v-flex>
-          <v-flex xs10 my-2>{{
-            details.infiniteSupply ? 'infinite' : `${details.supply.toLocaleString()} ${details.symbol}`
-          }}</v-flex>
+          <v-flex xs10 my-2>
+            {{ details.infiniteSupply ? 'infinite' : `${details.supply.toLocaleString()} ${details.symbol}` }}
+          </v-flex>
           <v-flex xs2 my-2>Metadata:</v-flex>
           <v-flex xs10 my-2>{{ details.metadata }}</v-flex>
         </template>

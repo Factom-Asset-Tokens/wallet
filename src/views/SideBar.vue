@@ -18,8 +18,9 @@
           class="primary--text font-weight-black title"
           exact
           :to="`/token/${token.chainId}`"
-          >{{ getTokenIcon(token) }}</v-btn
         >
+          {{ getTokenIcon(token) }}
+        </v-btn>
         <span>{{ getTokenTooltip(token) }}</span>
       </v-tooltip>
 

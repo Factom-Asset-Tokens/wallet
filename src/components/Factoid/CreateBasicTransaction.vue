@@ -49,9 +49,9 @@
             <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
           </v-flex>
           <v-flex xs12>
-            <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{
-              transactionSentMessage
-            }}</v-alert>
+            <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+              {{ transactionSentMessage }}
+            </v-alert>
           </v-flex>
         </v-layout>
       </v-form>
@@ -64,8 +64,8 @@
       :fee="fee"
       @confirmed="send"
     ></ConfirmBasicTransactionDialog>
-  </v-layout> </template
->lazy
+  </v-layout>
+</template>
 
 <script>
 import NodeCache from 'node-cache';

@@ -71,11 +71,7 @@
                 </v-edit-dialog>
               </td>
               <td>
-                {{
-                  (props.item.balance / 100000000).toLocaleString(undefined, {
-                    maximumFractionDigits: 8
-                  })
-                }}
+                {{ (props.item.balance / 100000000).toLocaleString(undefined, { maximumFractionDigits: 8 }) }}
               </td>
             </template>
           </v-data-table>

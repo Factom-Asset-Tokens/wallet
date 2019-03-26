@@ -81,9 +81,9 @@
 
             <!-- Extra validation rules errors (not dismissable) -->
             <v-flex xs12>
-              <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>{{
-                transactionError
-              }}</v-alert>
+              <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
+                {{ transactionError }}
+              </v-alert>
             </v-flex>
 
             <!-- Alerts transaction success/failure-->
@@ -91,9 +91,9 @@
               <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
             </v-flex>
             <v-flex xs12>
-              <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{
-                transactionSentMessage
-              }}</v-alert>
+              <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                {{ transactionSentMessage }}
+              </v-alert>
             </v-flex>
           </v-layout>
         </v-container>

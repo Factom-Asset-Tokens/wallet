@@ -51,9 +51,9 @@
             <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
           </v-flex>
           <v-flex xs12>
-            <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{
-              transactionSentMessage
-            }}</v-alert>
+            <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+              {{ transactionSentMessage }}
+            </v-alert>
           </v-flex>
         </v-layout>
       </v-form>
