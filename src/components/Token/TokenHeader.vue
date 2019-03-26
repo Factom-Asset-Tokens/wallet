@@ -3,11 +3,11 @@
     <v-card color="primary">
       <v-card-text>
         <v-layout align-center justify-center wrap>
-          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center mb-3>{{token.tokenId}}</v-flex>
+          <v-flex class="display-1 white--text font-weight-black" xs12 text-xs-center mb-3>{{ token.tokenId }}</v-flex>
           <v-flex xs12 text-xs-center>
             <div class="total-balance">
-              <img class="balance-icon" src="@/assets/img/coin-yellow.png">
-              <div class="secondary--text display-1 font-weight-bold">{{totalBalance}} {{symbol}}</div>
+              <img class="balance-icon" src="@/assets/img/coin-yellow.png" />
+              <div class="secondary--text display-1 font-weight-bold">{{ totalBalance }} {{ symbol }}</div>
             </div>
           </v-flex>
         </v-layout>
@@ -24,9 +24,9 @@
         <v-container>
           <v-layout wrap>
             <v-flex xs2 my-2 class="secondary--text font-weight-bold">Chain ID</v-flex>
-            <v-flex xs10 my-2 pl-3>{{token.chainId}}</v-flex>
+            <v-flex xs10 my-2 pl-3>{{ token.chainId }}</v-flex>
             <v-flex xs2 my-2 class="secondary--text font-weight-bold">Issuer</v-flex>
-            <v-flex xs10 my-2 pl-3>{{token.issuer}}</v-flex>
+            <v-flex xs10 my-2 pl-3>{{ token.issuer }}</v-flex>
 
             <TokenSupplyDetails :chainId="token.chainId" :symbol="symbol"></TokenSupplyDetails>
             <v-flex xs12 text-xs-right>
@@ -40,26 +40,26 @@
 </template>
 
 <script>
-import TokenSupplyDetails from "@/components/TokenSupplyDetails";
+import TokenSupplyDetails from '@/components/TokenSupplyDetails';
 
 export default {
-  name: "TokenHeader",
+  name: 'TokenHeader',
   components: { TokenSupplyDetails },
   data() {
     return {
       showDetails: false
     };
   },
-  props: ["token", "totalBalance"],
+  props: ['token', 'totalBalance'],
   computed: {
     symbol() {
-      return this.token.symbol || "";
+      return this.token.symbol || '';
     }
   },
   methods: {
     untrack() {
-      this.$store.commit("tokens/untrack", this.token.chainId);
-      this.$router.push({ name: "Actions" });
+      this.$store.commit('tokens/untrack', this.token.chainId);
+      this.$router.push({ name: 'Actions' });
     }
   }
 };

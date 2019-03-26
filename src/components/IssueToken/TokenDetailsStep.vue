@@ -4,12 +4,12 @@
 </template>
 
 <script>
-import Fat0TokenDetailsStep from "./Fat0TokenDetailsStep";
-import Fat1TokenDetailsStep from "./Fat1TokenDetailsStep";
+import Fat0TokenDetailsStep from './Fat0TokenDetailsStep';
+import Fat1TokenDetailsStep from './Fat1TokenDetailsStep';
 
 export default {
   components: { Fat0TokenDetailsStep, Fat1TokenDetailsStep },
-  props: ["type"],
+  props: ['type'],
   methods: {
     getDetails() {
       if (this.type === 'fat0') {

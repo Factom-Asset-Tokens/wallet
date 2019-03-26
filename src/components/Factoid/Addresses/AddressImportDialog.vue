@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { isValidPrivateAddress, getPublicAddress } from "factom";
+import { isValidPrivateAddress, getPublicAddress } from 'factom';
 
 export default {
   data: function() {
@@ -47,14 +47,9 @@ export default {
       display: false,
       valid: true,
       showAddress: false,
-      address: "",
-      name: "",
-      addressRules: [
-        v =>
-          !this.display ||
-          isValidPrivateAddress(v) ||
-          "Invalid private FCT or EC address"
-      ]
+      address: '',
+      name: '',
+      addressRules: [v => !this.display || isValidPrivateAddress(v) || 'Invalid private FCT or EC address']
     };
   },
   methods: {
@@ -64,12 +59,12 @@ export default {
     importAddress() {
       if (this.$refs.form.validate()) {
         if (this.name) {
-          this.$store.commit("address/updateAddressNames", {
+          this.$store.commit('address/updateAddressNames', {
             address: getPublicAddress(this.address),
             name: this.name
           });
         }
-        this.$store.dispatch("address/importAddress", this.address);
+        this.$store.dispatch('address/importAddress', this.address);
         this.display = false;
       }
     }
@@ -90,6 +85,4 @@ export default {
 };
 </script>
 
-
-<style scoped>
-</style>
+<style scoped></style>

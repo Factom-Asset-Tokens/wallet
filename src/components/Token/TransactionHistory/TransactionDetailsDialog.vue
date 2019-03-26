@@ -1,22 +1,16 @@
 <template>
-  <v-dialog
-    v-model="display"
-    lazy
-    max-width="1024px"
-    @keydown.esc="display = false"
-    @keydown.enter="display = false"
-  >
+  <v-dialog v-model="display" lazy max-width="1024px" @keydown.esc="display = false" @keydown.enter="display = false">
     <v-card v-if="transaction">
       <v-card-title class="headline primary white--text" primary-title>Transaction details</v-card-title>
       <v-card-text>
         <v-container fluid class="subheading">
           <v-layout wrap>
             <v-flex xs2 class="font-weight-bold secondary--text">Transaction ID</v-flex>
-            <v-flex xs10>{{txId}}</v-flex>
+            <v-flex xs10>{{ txId }}</v-flex>
             <v-flex xs2 class="font-weight-bold secondary--text">Time</v-flex>
-            <v-flex xs10>{{timestamp | formatTimestamp}}</v-flex>
+            <v-flex xs10>{{ timestamp | formatTimestamp }}</v-flex>
             <v-flex xs2 class="font-weight-bold secondary--text">Total</v-flex>
-            <v-flex xs10>{{totalText}} {{symbol}}</v-flex>
+            <v-flex xs10>{{ totalText }} {{ symbol }}</v-flex>
             <v-flex xs12 class="font-weight-bold secondary--text" mt-4>
               <v-icon left color="secondary">fa-sign-in-alt</v-icon>Inputs
             </v-flex>
@@ -27,7 +21,7 @@
             <InoutputDetails :ios="outputs" type="output"></InoutputDetails>
             <template v-if="metadata">
               <v-flex xs12 my-3 class="font-weight-bold secondary--text">Metadata</v-flex>
-              <v-flex xs12 mb-3>{{metadata}}</v-flex>
+              <v-flex xs12 mb-3>{{ metadata }}</v-flex>
             </template>
           </v-layout>
         </v-container>
@@ -41,16 +35,13 @@
 </template>
 
 <script>
-import moment from "moment";
-import InoutputDetails from "./InoutputDetails";
-import {
-  transformInoutputsToArray,
-  getTotalTransaction
-} from "./transaction-history-util.js";
+import moment from 'moment';
+import InoutputDetails from './InoutputDetails';
+import { transformInoutputsToArray, getTotalTransaction } from './transaction-history-util.js';
 
 export default {
   components: { InoutputDetails },
-  props: ["symbol"],
+  props: ['symbol'],
   data() {
     return {
       display: false,
@@ -85,7 +76,7 @@ export default {
   },
   filters: {
     formatTimestamp(timestamp) {
-      return moment(timestamp * 1000).format("LL LT");
+      return moment(timestamp * 1000).format('LL LT');
     }
   }
 };

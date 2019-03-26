@@ -5,21 +5,17 @@
       <CreateBasicTransaction class="section-margin-bottom"></CreateBasicTransaction>
       <ConvertFctToEc></ConvertFctToEc>
     </v-layout>
-    <v-alert
-      v-else
-      value="true"
-      class="title"
-      type="error"
-      outline
-    >The configuration of factomd or walletd is incorrect. Go to the settings to fix them.</v-alert>
+    <v-alert v-else value="true" class="title" type="error" outline
+      >The configuration of factomd or walletd is incorrect. Go to the settings to fix them.</v-alert
+    >
   </v-container>
 </template>
 
 <script>
-import Addresses from "@/components/Factoid/Addresses";
-import CreateBasicTransaction from "@/components/Factoid/CreateBasicTransaction";
-import ConvertFctToEc from "@/components/Factoid/ConvertFctToEc";
-import AvailableFeatures from "@/mixins/AvailableFeatures";
+import Addresses from '@/components/Factoid/Addresses';
+import CreateBasicTransaction from '@/components/Factoid/CreateBasicTransaction';
+import ConvertFctToEc from '@/components/Factoid/ConvertFctToEc';
+import AvailableFeatures from '@/mixins/AvailableFeatures';
 
 export default {
   components: { Addresses, CreateBasicTransaction, ConvertFctToEc },
@@ -31,14 +27,14 @@ export default {
   },
   computed: {
     canManageFactoids() {
-      return this.availableFeatures("factomd", "walletd");
+      return this.availableFeatures('factomd', 'walletd');
     }
   },
   created() {
     if (this.canManageFactoids) {
       const that = this;
       this.intervalId = setInterval(function() {
-        that.$store.dispatch("address/fetchBalances");
+        that.$store.dispatch('address/fetchBalances');
       }, 5000);
     }
   },

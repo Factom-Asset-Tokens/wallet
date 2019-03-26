@@ -5,11 +5,11 @@
       <v-card-text>
         <v-layout wrap>
           <v-flex xs12 text-xs-center class="subheading" my-2>Converting</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" mt-2>{{fctCost}} FCT</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" mt-2>{{ fctCost }} FCT</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ecAmountText}} EC</v-flex>
-                    <v-flex xs12 text-xs-center class="subheading" my-2>sent to</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{address}}</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ ecAmountText }} EC</v-flex>
+          <v-flex xs12 text-xs-center class="subheading" my-2>sent to</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ address }}</v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  props: ["ecAmount", "address", "fctCost"],
+  props: ['ecAmount', 'address', 'fctCost'],
   data() {
     return {
       display: false
@@ -31,16 +31,14 @@ export default {
   },
   computed: {
     ecAmountText() {
-      return typeof this.ecAmount === "number"
-        ? this.ecAmount.toLocaleString()
-        : "";
+      return typeof this.ecAmount === 'number' ? this.ecAmount.toLocaleString() : '';
     },
     fctCostText() {
-      return typeof this.fctCost === "number"
+      return typeof this.fctCost === 'number'
         ? this.fctCost.toLocaleString(undefined, {
             maximumFractionDigits: 8
           })
-        : "";
+        : '';
     }
   },
   methods: {
@@ -51,7 +49,7 @@ export default {
       this.display = false;
     },
     confirm() {
-      this.$emit("confirmed");
+      this.$emit('confirmed');
       this.close();
     }
   }

@@ -34,27 +34,26 @@
             ></v-text-field>
           </v-flex>
           <v-flex xs12 md2 text-xs-right>
-            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">Convert
+            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">
+              Convert
               <v-icon right>local_play</v-icon>
             </v-btn>
           </v-flex>
           <!-- Alerts -->
           <v-flex v-if="valid && outputAddress && fctCost" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
-              <strong>{{fctCost}} FCT</strong>
-              will be converted to entry credits (rate: 1 FCT = {{rate.toLocaleString()}} EC).
+              <strong>{{ fctCost }} FCT</strong>
+              will be converted to entry credits (rate: 1 FCT =
+              {{ rate.toLocaleString() }} EC).
             </v-alert>
           </v-flex>
           <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-            <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
+            <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
           </v-flex>
           <v-flex xs12>
-            <v-alert
-              :value="transactionSentMessage"
-              type="success"
-              outline
-              dismissible
-            >{{transactionSentMessage}}</v-alert>
+            <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{
+              transactionSentMessage
+            }}</v-alert>
           </v-flex>
         </v-layout>
       </v-form>
@@ -71,13 +70,10 @@
 </template>
 
 <script>
-import NodeCache from "node-cache";
-import { isValidPublicEcAddress } from "factom";
-import {
-  buildTransaction,
-  getFeeAdjustedTransaction
-} from "./TransactionHelper";
-import ConfirmFctToEcConversionDialog from "./ConvertFctToEc/ConfirmFctToEcConversionDialog";
+import NodeCache from 'node-cache';
+import { isValidPublicEcAddress } from 'factom';
+import { buildTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
+import ConfirmFctToEcConversionDialog from './ConvertFctToEc/ConfirmFctToEcConversionDialog';
 
 const FACTOSHI_MULTIPLIER = 100000000;
 
@@ -85,18 +81,16 @@ export default {
   components: { ConfirmFctToEcConversionDialog },
   data() {
     return {
-      outputAddress: "",
+      outputAddress: '',
       outputAmount: 0,
       fctCost: 0,
       rate: 0,
       valid: true,
-      errorMessage: "",
+      errorMessage: '',
       amountErrors: [],
-      transactionSentMessage: "",
+      transactionSentMessage: '',
       sending: false,
-      addressRules: [
-        v => isValidPublicEcAddress(v) || "Invalid public EC address"
-      ]
+      addressRules: [v => isValidPublicEcAddress(v) || 'Invalid public EC address']
     };
   },
   created() {
@@ -110,56 +104,43 @@ export default {
       return Object.values(this.balances).reduce((acc, val) => acc + val, 0);
     },
     amountRules() {
-      return [
-        amount =>
-          (Number.isInteger(amount) && amount > 0) ||
-          "Amount must be strictly positive integer"
-      ];
+      return [amount => (Number.isInteger(amount) && amount > 0) || 'Amount must be strictly positive integer'];
     },
     transactionProperties() {
       return [this.outputAmount, this.outputAddress];
     },
     isAddressOk() {
-      return this.addressRules.every(
-        f => typeof f(this.outputAddress) !== "string"
-      );
+      return this.addressRules.every(f => typeof f(this.outputAddress) !== 'string');
     },
     isAmountsOk() {
-      return this.amountRules.every(
-        f => typeof f(this.outputAmount) !== "string"
-      );
+      return this.amountRules.every(f => typeof f(this.outputAmount) !== 'string');
     }
   },
   methods: {
     async confirmTransaction() {
-      this.transactionSentMessage = "";
+      this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
         this.$refs.confirmTransactionDialog.show();
       }
     },
     async getEcRate() {
-      let ecRate = this.cache.get("ecRate");
+      let ecRate = this.cache.get('ecRate');
       if (!ecRate) {
-        const factomd = this.$store.getters["factomd/cli"];
+        const factomd = this.$store.getters['factomd/cli'];
         ecRate = await factomd.getEntryCreditRate();
-        this.cache.set("ecRate", ecRate);
+        this.cache.set('ecRate', ecRate);
       }
       return ecRate;
     },
     async send() {
       try {
-        this.errorMessage = "";
+        this.errorMessage = '';
         this.sending = true;
-        const tx = await buildTransaction(
-          this.$store,
-          this.balances,
-          this.outputAddress,
-          this.outputAmount
-        );
-        const cli = this.$store.getters["factomd/cli"];
+        const tx = await buildTransaction(this.$store, this.balances, this.outputAddress, this.outputAmount);
+        const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 10 });
-        this.$store.dispatch("address/fetchFctBalances");
-        this.$store.dispatch("address/fetchEcBalances");
+        this.$store.dispatch('address/fetchFctBalances');
+        this.$store.dispatch('address/fetchEcBalances');
         this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
         this.$refs.form.reset();
       } catch (e) {
@@ -180,26 +161,21 @@ export default {
         // Fast approximation that doesn't take into account fees
         if (factoshiCost < this.totalFctBalance) {
           try {
-            const tx = getFeeAdjustedTransaction(
-              this.balances,
-              this.outputAddress,
-              factoshiCost,
-              ecRate
-            );
+            const tx = getFeeAdjustedTransaction(this.balances, this.outputAddress, factoshiCost, ecRate);
 
             this.amountErrors = [];
             this.fctCost = tx.totalInputs / FACTOSHI_MULTIPLIER;
             this.rate = FACTOSHI_MULTIPLIER / ecRate;
           } catch (e) {
             // In case if the total with fees did exceed the funds available
-            if (e.message.includes("Not enough funds")) {
-              this.amountErrors = ["Not enough FCT availables"];
+            if (e.message.includes('Not enough funds')) {
+              this.amountErrors = ['Not enough FCT availables'];
             } else {
               throw e;
             }
           }
         } else {
-          this.amountErrors = ["Not enough FCT availables"];
+          this.amountErrors = ['Not enough FCT availables'];
         }
       } else {
         this.amountErrors = [];
@@ -212,5 +188,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

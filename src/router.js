@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import TrackToken from './views/TrackToken.vue'
-import Settings from './views/Settings.vue'
-import Token from './views/Token.vue'
-import IssueToken from './views/IssueToken.vue'
-import CoinbaseTransaction from './views/CoinbaseTransaction.vue'
-import Actions from './views/Actions.vue'
-import Factoid from './views/Factoid.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import TrackToken from './views/TrackToken.vue';
+import Settings from './views/Settings.vue';
+import Token from './views/Token.vue';
+import IssueToken from './views/IssueToken.vue';
+import CoinbaseTransaction from './views/CoinbaseTransaction.vue';
+import Actions from './views/Actions.vue';
+import Factoid from './views/Factoid.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -51,4 +51,4 @@ export default new Router({
       component: CoinbaseTransaction
     }
   ]
-})
+});

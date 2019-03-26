@@ -15,17 +15,17 @@
         </v-btn>
       </v-flex>
     </template>
-    <v-flex xs12>Owner: {{data.owner}}</v-flex>
+    <v-flex xs12>Owner: {{ data.owner }}</v-flex>
   </v-layout>
 </template>
 
 <script>
 export default {
-  props: ["min", "max", "tokenCli"],
+  props: ['min', 'max', 'tokenCli'],
   data() {
     return {
       id: this.min,
-      data: ""
+      data: ''
     };
   },
   computed: {},

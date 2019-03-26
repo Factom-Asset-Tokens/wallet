@@ -5,9 +5,9 @@
       <v-card-text>
         <v-layout wrap>
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{amountText}} {{symbol}}</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ amountText }} {{ symbol }}</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{address}}</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ address }}</v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  props: ["amount", "address", "symbol"],
+  props: ['amount', 'address', 'symbol'],
   data() {
     return {
       display: false
@@ -29,11 +29,11 @@ export default {
   },
   computed: {
     amountText() {
-      return typeof this.amount === "number"
+      return typeof this.amount === 'number'
         ? this.amount.toLocaleString(undefined, {
             maximumFractionDigits: 10
           })
-        : "";
+        : '';
     }
   },
   methods: {
@@ -44,7 +44,7 @@ export default {
       this.display = false;
     },
     confirm() {
-      this.$emit("confirmed");
+      this.$emit('confirmed');
       this.close();
     }
   }

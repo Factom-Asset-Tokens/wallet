@@ -13,7 +13,7 @@
         solo
       ></v-text-field>
     </v-flex>
-    <v-flex xs12 sm3 :class="{'pl-0': $vuetify.breakpoint.xs, 'pl-4': $vuetify.breakpoint.smAndUp}">
+    <v-flex xs12 sm3 :class="{ 'pl-0': $vuetify.breakpoint.xs, 'pl-4': $vuetify.breakpoint.smAndUp }">
       <v-checkbox label="Infinite max supply" :value="infiniteSupply" @change="setInfiniteSupply"></v-checkbox>
     </v-flex>
     <v-flex xs12 sm2 offset-sm3>
@@ -39,22 +39,22 @@ export default {
   data: () => ({
     infiniteSupply: false,
     supply: null,
-    symbol: "",
-    metadata: "",
-    symbolRules: [v => SYMBOL_REGEX.test(v) || "Invalid symbol"]
+    symbol: '',
+    metadata: '',
+    symbolRules: [v => SYMBOL_REGEX.test(v) || 'Invalid symbol']
   }),
   computed: {
     supplyRules: function() {
       const infiniteSupply = this.infiniteSupply;
-      return [v => infiniteSupply || (v && v > 0) || "Invalid supply"];
+      return [v => infiniteSupply || (v && v > 0) || 'Invalid supply'];
     },
     details() {
       return {
         infiniteSupply: this.infiniteSupply,
         supply: this.supply,
         symbol: this.symbol,
-        metadata: this.metadata,
-      }
+        metadata: this.metadata
+      };
     }
   },
   methods: {

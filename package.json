@@ -8,6 +8,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "format": "prettier --write \"src/**/*.{js,vue}\"",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "start": "npm run electron:serve"
@@ -30,13 +31,16 @@
     "eslint-plugin-vue": "^5.2.2",
     "factom": "1.0.0",
     "factom-identity-lib": "^0.2.0-rc4",
+    "husky": "^1.3.1",
     "jsoneditor": "^5.30.0",
+    "lint-staged": "^8.1.5",
     "lodash.debounce": "^4.0.8",
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
     "material-design-icons-iconfont": "^4.0.5",
     "moment": "^2.24.0",
     "node-cache": "^4.2.0",
+    "prettier": "^1.16.4",
     "roboto-fontface": "*",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
@@ -49,5 +53,17 @@
     "vuetify-loader": "^1.2.1",
     "vuex": "^3.1.0"
   },
-  "main": "background.js"
+  "main": "background.js",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  }
 }

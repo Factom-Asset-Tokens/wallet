@@ -3,7 +3,7 @@
     <v-flex xs12 my-3>
       <v-text-field
         v-model="tokenId"
-        @input="$emit('input', {tokenId, issuerId})"
+        @input="$emit('input', { tokenId, issuerId })"
         :rules="nameRules"
         label="Choose a name for your token"
         solo
@@ -15,7 +15,7 @@
         no-data-text="No identity available (go to settings to create a new one)."
         :rules="identityRules"
         v-model="issuerId"
-        @input="$emit('input', {tokenId, issuerId})"
+        @input="$emit('input', { tokenId, issuerId })"
         label="Select the issuing identity"
         solo
       ></v-select>
@@ -26,8 +26,8 @@
 <script>
 export default {
   data: () => ({
-    tokenId: "",
-    issuerId: ""
+    tokenId: '',
+    issuerId: ''
   }),
   computed: {
     identities() {
@@ -37,16 +37,11 @@ export default {
       const identityStore = this.$store.state.identity;
 
       return [
-        v => !!v || "Select an issuing identity",
+        v => !!v || 'Select an issuing identity',
         function(v) {
           if (v) {
-            const availableKeys = identityStore.identities[v].filter(k =>
-              identityStore.identityKeysInWallet.has(k)
-            );
-            return (
-              availableKeys.length > 0 ||
-              "No identity keys available in the wallet for this identity."
-            );
+            const availableKeys = identityStore.identities[v].filter(k => identityStore.identityKeysInWallet.has(k));
+            return availableKeys.length > 0 || 'No identity keys available in the wallet for this identity.';
           } else {
             return true;
           }
@@ -54,7 +49,7 @@ export default {
       ];
     },
     nameRules() {
-      return [v => !!v || "Give a name to your token"];
+      return [v => !!v || 'Give a name to your token'];
     }
   }
 };

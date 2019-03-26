@@ -3,8 +3,14 @@
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>Unlink Identity</v-card-title>
       <v-card-text class="subheading">
-        <p>You are about to unlink the identity <span class="primary--text">{{identity}}</span> from the wallet.</p>
-        <p>Associated keys will remain stored so that they will be available if you restore this identity at a later time.</p>
+        <p>
+          You are about to unlink the identity
+          <span class="primary--text">{{ identity }}</span> from the wallet.
+        </p>
+        <p>
+          Associated keys will remain stored so that they will be available if you restore this identity at a later
+          time.
+        </p>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -15,13 +21,12 @@
   </v-dialog>
 </template>
 
-
 <script>
 export default {
   data: function() {
     return {
       display: false,
-      identity: ""
+      identity: ''
     };
   },
   methods: {
@@ -30,11 +35,9 @@ export default {
       this.display = true;
     },
     unlinkIdentity() {
-      this.$store.commit("identity/unlinkIdentity", this.identity);
+      this.$store.commit('identity/unlinkIdentity', this.identity);
       this.display = false;
     }
   }
 };
 </script>
-
-

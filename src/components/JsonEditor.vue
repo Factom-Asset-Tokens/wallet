@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import JSONEditor from "jsoneditor";
+import JSONEditor from 'jsoneditor';
 
 export default {
   props: {
@@ -43,23 +43,19 @@ export default {
     onChange() {
       try {
         const value = this.jsoneditor.get();
-        this.$emit("input", value);
+        this.$emit('input', value);
         // eslint-disable-next-line
       } catch (e) {
       } finally {
-        this.$emit("onChange");
+        this.$emit('onChange');
       }
     },
     onError(error) {
-      this.$emit("error", error);
+      this.$emit('error', error);
     }
   },
   mounted() {
-    this.jsoneditor = new JSONEditor(
-      document.getElementById("jsoneditor"),
-      this.getOptions(),
-      this.value
-    );
+    this.jsoneditor = new JSONEditor(document.getElementById('jsoneditor'), this.getOptions(), this.value);
 
     this.onChange();
   },
@@ -71,6 +67,6 @@ export default {
 </script>
 
 <style scoped>
-@import "../../node_modules/jsoneditor/dist/jsoneditor.min.css";
-@import "../assets/css/jsoneditor-theme.css";
+@import '../../node_modules/jsoneditor/dist/jsoneditor.min.css';
+@import '../assets/css/jsoneditor-theme.css';
 </style>

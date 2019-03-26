@@ -31,17 +31,17 @@
 
 <script>
 const HEX_REGEXP = /^[0-9a-fA-F]+$/;
-import { tryParseApiErrorCode } from "@/components/common";
+import { tryParseApiErrorCode } from '@/components/common';
 
 export default {
   data: () => ({
     valid: true,
     loading: false,
-    tokenChainId: "",
+    tokenChainId: '',
     tokenChainIdRules: [
-      v => !!v || "Token chain ID is required",
-      v => (v && v.length === 64) || "Token chain ID must be 64 characters",
-      v => (v && HEX_REGEXP.test(v)) || "Invalid characters"
+      v => !!v || 'Token chain ID is required',
+      v => (v && v.length === 64) || 'Token chain ID must be 64 characters',
+      v => (v && HEX_REGEXP.test(v)) || 'Invalid characters'
     ]
   }),
 
@@ -51,7 +51,7 @@ export default {
         this.loading = true;
 
         try {
-          const cli = this.$store.getters["fatd/cli"];
+          const cli = this.$store.getters['fatd/cli'];
           const tokenCli = await cli.getTokenCLI(this.tokenChainId);
           const issuance = await tokenCli.getIssuance();
 
@@ -66,14 +66,14 @@ export default {
             supply: issuance.getSupply()
           };
 
-          this.$store.dispatch("tokens/track", { token, cli: tokenCli });
+          this.$store.dispatch('tokens/track', { token, cli: tokenCli });
           this.$router.push({ path: `/token/${this.tokenChainId}` });
         } catch (e) {
           const code = tryParseApiErrorCode(e);
           if (code === -32800) {
-            this.$store.commit("snackError", "Token not found.");
+            this.$store.commit('snackError', 'Token not found.');
           } else {
-            this.$store.commit("snackError", "Unknown error encountered.");
+            this.$store.commit('snackError', 'Unknown error encountered.');
             console.error(e);
           }
         } finally {
@@ -88,5 +88,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

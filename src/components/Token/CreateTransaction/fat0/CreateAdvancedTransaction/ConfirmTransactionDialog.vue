@@ -5,11 +5,11 @@
       <v-card-text>
         <v-layout wrap>
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{amountText}} {{symbol}}</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ amountText }} {{ symbol }}</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
           <v-layout v-for="output in outputs" :key="output.id">
-            <v-flex xs10 class="title secondary--text" my-2>{{output.address}}</v-flex>
-            <v-flex xs2 class="title secondary--text" text-xs-right my-2>{{output.amount}} {{symbol}}</v-flex>
+            <v-flex xs10 class="title secondary--text" my-2>{{ output.address }}</v-flex>
+            <v-flex xs2 class="title secondary--text" text-xs-right my-2>{{ output.amount }} {{ symbol }}</v-flex>
           </v-layout>
         </v-layout>
       </v-card-text>
@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  props: ["outputs", "symbol"],
+  props: ['outputs', 'symbol'],
   data() {
     return {
       display: false
@@ -34,7 +34,7 @@ export default {
     amountText() {
       const amount = this.outputs
         .map(o => o.amount)
-        .filter(a => typeof a === "number")
+        .filter(a => typeof a === 'number')
         .reduce((a, b) => a + b, 0);
       return amount.toLocaleString(undefined, {
         maximumFractionDigits: 10
@@ -49,7 +49,7 @@ export default {
       this.display = false;
     },
     confirm() {
-      this.$emit("confirmed");
+      this.$emit('confirmed');
       this.close();
     }
   }

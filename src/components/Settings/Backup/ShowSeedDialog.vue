@@ -1,16 +1,10 @@
 <template>
-  <v-dialog
-    v-model="display"
-    lazy
-    max-width="400px"
-    @keydown.esc="display = false"
-    @keydown.enter="display = false"
-  >
+  <v-dialog v-model="display" lazy max-width="400px" @keydown.esc="display = false" @keydown.enter="display = false">
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>Your Wallet Seed</v-card-title>
       <v-card-text class="headline font-weight-bold">
         <v-layout wrap>
-          <v-flex xs12 text-xs-center v-for="word in seed" :key="word">{{word}}</v-flex>
+          <v-flex xs12 text-xs-center v-for="word in seed" :key="word">{{ word }}</v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -40,7 +34,7 @@ export default {
       if (!this.display) {
         // Erase seed from memory
         const that = this;
-        setTimeout(() => (that.seed = ""), 300);
+        setTimeout(() => (that.seed = ''), 300);
       }
     }
   }

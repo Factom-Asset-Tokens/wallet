@@ -26,12 +26,7 @@
                       ></v-text-field>
                     </v-flex>
                     <v-flex xs12 mt-4>
-                      <v-alert
-                        :value="loadingError"
-                        color="error"
-                        icon="warning"
-                        outline
-                      >{{loadingError}}</v-alert>
+                      <v-alert :value="loadingError" color="error" icon="warning" outline>{{ loadingError }}</v-alert>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -43,7 +38,8 @@
                   :loading="loadingActiveKeys"
                   :disabled="!validStep1 || loadingActiveKeys"
                   type="submit"
-                >Continue</v-btn>
+                  >Continue</v-btn
+                >
               </v-card-actions>
             </v-form>
           </v-card>
@@ -56,11 +52,7 @@
                 <v-list subheader>
                   <v-subheader inset>Associated identity keys</v-subheader>
 
-                  <v-list-tile
-                    v-for="identityPublicKey in identityActivePublicKeys"
-                    :key="identityPublicKey"
-                    avatar
-                  >
+                  <v-list-tile v-for="identityPublicKey in identityActivePublicKeys" :key="identityPublicKey" avatar>
                     <v-list-tile-avatar>
                       <v-icon v-if="importedPublicKeys.has(identityPublicKey)" color="green">vpn_key</v-icon>
                       <v-icon v-else color="grey">vpn_key</v-icon>
@@ -73,8 +65,8 @@
                 </v-list>
                 <div v-if="missingIdentityKeys.size !== 0">
                   <p class="bold">
-                    {{missingIdentityKeys.size}}/{{identityActivePublicKeys.length}} identity keys are not stored in the wallet.
-                    <br>You can import the corresponding secret identity keys below.
+                    {{ missingIdentityKeys.size }}/{{ identityActivePublicKeys.length }} identity keys are not stored in
+                    the wallet. <br />You can import the corresponding secret identity keys below.
                   </p>
                   <SecretKeyInput
                     v-for="(privateKey, index) in addedPrivateKeys"
@@ -98,8 +90,8 @@
 </template>
 
 <script>
-import SecretKeyInput from "./SecretKeyInput";
-import { digital } from "factom-identity-lib";
+import SecretKeyInput from './SecretKeyInput';
+import { digital } from 'factom-identity-lib';
 const { getPublicIdentityKey, isValidSecretIdentityKey } = digital;
 
 export default {
@@ -110,10 +102,10 @@ export default {
       step: 1,
       // Step 1
       loadingActiveKeys: false,
-      loadingError: "",
-      identityChainId: "",
+      loadingError: '',
+      identityChainId: '',
       validStep1: true,
-      chainIdRules: [v => (v && v.length === 64) || "Invalid chain id"],
+      chainIdRules: [v => (v && v.length === 64) || 'Invalid chain id'],
       // Step 2
       validStep2: true,
       identityActivePublicKeys: [],
@@ -122,26 +114,21 @@ export default {
   },
   computed: {
     importedPublicKeys() {
-      const addedPublicKeys = this.addedPrivateKeys
-        .filter(isValidSecretIdentityKey)
-        .map(getPublicIdentityKey);
+      const addedPublicKeys = this.addedPrivateKeys.filter(isValidSecretIdentityKey).map(getPublicIdentityKey);
       const keysInWallet = this.$store.state.identity.identityKeysInWallet;
       return new Set([...keysInWallet, ...addedPublicKeys]);
     },
     missingIdentityKeys() {
       const keysInWallet = this.$store.state.identity.identityKeysInWallet;
-      return new Set(
-        this.identityActivePublicKeys.filter(k => !keysInWallet.has(k))
-      );
+      return new Set(this.identityActivePublicKeys.filter(k => !keysInWallet.has(k)));
     },
     secretKeyValidationRules() {
       const missingKeys = this.missingIdentityKeys;
       return [
         v =>
           !v ||
-          (isValidSecretIdentityKey(v) &&
-            missingKeys.has(getPublicIdentityKey(v))) ||
-          "Not a secret key missing for this identity"
+          (isValidSecretIdentityKey(v) && missingKeys.has(getPublicIdentityKey(v))) ||
+          'Not a secret key missing for this identity'
       ];
     }
   },
@@ -157,17 +144,14 @@ export default {
     async nextStep() {
       if (this.$refs.formStep1.validate()) {
         this.loadingActiveKeys = true;
-        this.loadingError = "";
+        this.loadingError = '';
         try {
-          const manager = this.$store.getters["identity/manager"];
-          this.identityActivePublicKeys = await manager.getActivePublicIdentityKeys(
-            this.identityChainId
-          );
-          this.addedPrivateKeys = Array(this.missingIdentityKeys.size).fill("");
+          const manager = this.$store.getters['identity/manager'];
+          this.identityActivePublicKeys = await manager.getActivePublicIdentityKeys(this.identityChainId);
+          this.addedPrivateKeys = Array(this.missingIdentityKeys.size).fill('');
           this.step = 2;
         } catch (e) {
-          this.loadingError =
-            "Failed to retrieve identity information. Is it an identity chain?";
+          this.loadingError = 'Failed to retrieve identity information. Is it an identity chain?';
         } finally {
           this.loadingActiveKeys = false;
         }
@@ -177,9 +161,9 @@ export default {
       if (this.$refs.formStep2.validate()) {
         const identity = {};
         identity[this.identityChainId] = this.identityActivePublicKeys.slice();
-        this.$store.commit("identity/addIdentity", identity);
+        this.$store.commit('identity/addIdentity', identity);
         const keysToImport = this.addedPrivateKeys.filter(pk => pk);
-        this.$store.dispatch("identity/importIdentityKeys", keysToImport);
+        this.$store.dispatch('identity/importIdentityKeys', keysToImport);
         this.display = false;
       }
     }
@@ -194,7 +178,7 @@ export default {
         if (this.$refs.formStep2) {
           this.$refs.formStep2.reset();
         }
-        this.loadingError = "";
+        this.loadingError = '';
         this.identityActivePublicKeys = [];
         if (this.$refs.identityChainId) {
           this.$nextTick(this.$refs.identityChainId.focus);
@@ -204,7 +188,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .bold {

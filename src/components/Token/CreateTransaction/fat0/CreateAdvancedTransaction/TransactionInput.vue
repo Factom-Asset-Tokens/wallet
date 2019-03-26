@@ -6,7 +6,7 @@
         label="Address"
         solo
         v-model="address"
-        @input="$emit('input', {address, amount, id: value.id})"
+        @input="$emit('input', { address, amount, id: value.id })"
         dense
       ></v-select>
     </v-flex>
@@ -21,7 +21,7 @@
         :max="balance"
         label="Amount"
         ref="amountInput"
-        @input="$emit('input', {address, amount, id: value.id})"
+        @input="$emit('input', { address, amount, id: value.id })"
         required
       ></v-text-field>
     </v-flex>
@@ -39,31 +39,22 @@ export default {
       amount: this.value.amount
     };
   },
-  props: ["value", "first", "balances", "alreadySelectedAddresses", "symbol"],
+  props: ['value', 'first', 'balances', 'alreadySelectedAddresses', 'symbol'],
   computed: {
     balance() {
-      return this.address
-        ? this.balances.find(b => b.address === this.address).balance
-        : 0;
+      return this.address ? this.balances.find(b => b.address === this.address).balance : 0;
     },
     amountRules() {
       const maxAmount = this.balance;
       return [
-        amount =>
-          (typeof amount === "number" && amount > 0) ||
-          "Amount must be strictly positive",
+        amount => (typeof amount === 'number' && amount > 0) || 'Amount must be strictly positive',
         amount => amount <= maxAmount || "Address doesn't hold enough funds"
       ];
     },
     availableAddresses() {
       const that = this;
       return this.balances
-        .filter(
-          b =>
-            b.balance > 0 &&
-            (!this.alreadySelectedAddresses.has(b.address) ||
-              b.address === that.address)
-        )
+        .filter(b => b.balance > 0 && (!this.alreadySelectedAddresses.has(b.address) || b.address === that.address))
         .map(b => ({
           value: b.address,
           text: `${b.name || b.address} (${b.balance} ${that.symbol})`
@@ -73,5 +64,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

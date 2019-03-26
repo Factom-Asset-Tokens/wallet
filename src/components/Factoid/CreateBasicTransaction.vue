@@ -32,7 +32,8 @@
             ></v-text-field>
           </v-flex>
           <v-flex xs12 md2 text-xs-right>
-            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">Send
+            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
+              >Send
               <v-icon right>send</v-icon>
             </v-btn>
           </v-flex>
@@ -40,19 +41,17 @@
           <v-flex v-if="valid && outputAddress && fee" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
               An additional transaction fee of
-              <strong>{{fee.toLocaleString(undefined, {maximumFractionDigits:8})}} FCT</strong> will be deducted.
+              <strong>{{ fee.toLocaleString(undefined, { maximumFractionDigits: 8 }) }} FCT</strong>
+              will be deducted.
             </v-alert>
           </v-flex>
           <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-            <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
+            <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
           </v-flex>
           <v-flex xs12>
-            <v-alert
-              :value="transactionSentMessage"
-              type="success"
-              outline
-              dismissible
-            >{{transactionSentMessage}}</v-alert>
+            <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{
+              transactionSentMessage
+            }}</v-alert>
           </v-flex>
         </v-layout>
       </v-form>
@@ -65,17 +64,14 @@
       :fee="fee"
       @confirmed="send"
     ></ConfirmBasicTransactionDialog>
-  </v-layout>
-</template>lazy
+  </v-layout> </template
+>lazy
 
 <script>
-import NodeCache from "node-cache";
-import { isValidPublicFctAddress } from "factom";
-import {
-  buildTransaction,
-  getFeeAdjustedTransaction
-} from "./TransactionHelper";
-import ConfirmBasicTransactionDialog from "./CreateBasicTransaction/ConfirmBasicTransactionDialog";
+import NodeCache from 'node-cache';
+import { isValidPublicFctAddress } from 'factom';
+import { buildTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
+import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
 
 const FACTOSHI_MULTIPLIER = 100000000;
 
@@ -83,16 +79,14 @@ export default {
   components: { ConfirmBasicTransactionDialog },
   data() {
     return {
-      outputAddress: "",
+      outputAddress: '',
       outputAmount: 0,
       fee: 0,
       valid: true,
-      errorMessage: "",
-      transactionSentMessage: "",
+      errorMessage: '',
+      transactionSentMessage: '',
       sending: false,
-      addressRules: [
-        v => isValidPublicFctAddress(v) || "Invalid public FCT address"
-      ]
+      addressRules: [v => isValidPublicFctAddress(v) || 'Invalid public FCT address']
     };
   },
   created() {
@@ -100,14 +94,10 @@ export default {
   },
   computed: {
     isAddressOk() {
-      return this.addressRules.every(
-        f => typeof f(this.outputAddress) !== "string"
-      );
+      return this.addressRules.every(f => typeof f(this.outputAddress) !== 'string');
     },
     isAmountsOk() {
-      return this.amountRules.every(
-        f => typeof f(this.outputAmount) !== "string"
-      );
+      return this.amountRules.every(f => typeof f(this.outputAmount) !== 'string');
     },
     factoshiOutputAmount() {
       return this.outputAmount * FACTOSHI_MULTIPLIER;
@@ -125,21 +115,12 @@ export default {
       const totalBalance = this.totalBalance;
       const selfAddressBalance = this.balances[this.outputAddress] || 0;
       return [
-        amount =>
-          (typeof amount === "number" && amount > 0) ||
-          "Amount must be strictly positive",
+        amount => (typeof amount === 'number' && amount > 0) || 'Amount must be strictly positive',
         function(amount) {
           if (selfAddressBalance) {
-            return (
-              amount * FACTOSHI_MULTIPLIER <=
-                totalBalance - selfAddressBalance ||
-              "Not enough funds available"
-            );
+            return amount * FACTOSHI_MULTIPLIER <= totalBalance - selfAddressBalance || 'Not enough funds available';
           } else {
-            return (
-              amount * FACTOSHI_MULTIPLIER <= totalBalance ||
-              "Not enough funds available"
-            );
+            return amount * FACTOSHI_MULTIPLIER <= totalBalance || 'Not enough funds available';
           }
         }
       ];
@@ -147,34 +128,29 @@ export default {
   },
   methods: {
     async confirmTransaction() {
-      this.transactionSentMessage = "";
+      this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
         this.$refs.confirmTransactionDialog.show();
       }
     },
     async getEcRate() {
-      let ecRate = this.cache.get("ecRate");
+      let ecRate = this.cache.get('ecRate');
       if (!ecRate) {
-        const factomd = this.$store.getters["factomd/cli"];
+        const factomd = this.$store.getters['factomd/cli'];
         ecRate = await factomd.getEntryCreditRate();
-        this.cache.set("ecRate", ecRate);
+        this.cache.set('ecRate', ecRate);
       }
       return ecRate;
     },
     async send() {
       try {
-        this.errorMessage = "";
+        this.errorMessage = '';
         this.sending = true;
-        const tx = await buildTransaction(
-          this.$store,
-          this.balances,
-          this.outputAddress,
-          this.factoshiOutputAmount
-        );
-        const cli = this.$store.getters["factomd/cli"];
+        const tx = await buildTransaction(this.$store, this.balances, this.outputAddress, this.factoshiOutputAmount);
+        const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 1 });
-        this.$store.dispatch("address/fetchFctBalances");
-        this.$store.dispatch("address/fetchEcBalances");
+        this.$store.dispatch('address/fetchFctBalances');
+        this.$store.dispatch('address/fetchEcBalances');
         this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
         this.$refs.form.reset();
       } catch (e) {
@@ -191,12 +167,7 @@ export default {
       if (this.isAddressOk && this.isAmountsOk) {
         const ecRate = await this.getEcRate();
 
-        const tx = getFeeAdjustedTransaction(
-          this.balances,
-          this.outputAddress,
-          this.factoshiOutputAmount,
-          ecRate
-        );
+        const tx = getFeeAdjustedTransaction(this.balances, this.outputAddress, this.factoshiOutputAmount, ecRate);
 
         this.fee = tx.feesPaid / FACTOSHI_MULTIPLIER;
       }
@@ -208,5 +179,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

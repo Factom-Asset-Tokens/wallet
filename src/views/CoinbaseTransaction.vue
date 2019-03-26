@@ -18,8 +18,8 @@
                 <v-flex xs12>
                   <v-alert :value="!canEmitCoinbaseTransaction" type="error" outline>
                     Issuing identity
-                    <strong>{{token.issuer}}</strong> is not in your wallet.
-                    <br>It needs to be imported if you want to make a coinbase transaction for this token.
+                    <strong>{{ token.issuer }}</strong> is not in your wallet. <br />It needs to be imported if you want
+                    to make a coinbase transaction for this token.
                   </v-alert>
                 </v-flex>
               </template>
@@ -37,21 +37,23 @@
               <JsonEditor
                 ref="jsonEditor"
                 v-model="recipients"
-                :options="{mode: 'code', modes: ['code', 'tree'], enableSort: false, enableTransform: false, schema: recipientsSchema}"
+                :options="{
+                  mode: 'code',
+                  modes: ['code', 'tree'],
+                  enableSort: false,
+                  enableTransform: false,
+                  schema: recipientsSchema
+                }"
                 @onChange="onJsonChange"
               ></JsonEditor>
             </v-flex>
             <v-flex xs12 my-4>
-              <v-alert :value="error" type="error" outline>{{error}}</v-alert>
+              <v-alert :value="error" type="error" outline>{{ error }}</v-alert>
             </v-flex>
 
             <v-flex xs12 text-xs-center my-4>
-              <v-btn
-                large
-                :disabled="error !== ''"
-                @click="send"
-                color="primary"
-              >send coinbase transaction
+              <v-btn large :disabled="error !== ''" @click="send" color="primary"
+                >send coinbase transaction
                 <v-icon right>send</v-icon>
               </v-btn>
             </v-flex>
@@ -63,11 +65,11 @@
 </template>
 
 <script>
-import TokenSupplyDetails from "@/components/TokenSupplyDetails";
-import JsonEditor from "@/components/JsonEditor";
-import recipientsSchema from "@/json-schemas/coinbase-recipients.json";
-import { isValidPublicFctAddress } from "factom";
-import Ajv from "ajv";
+import TokenSupplyDetails from '@/components/TokenSupplyDetails';
+import JsonEditor from '@/components/JsonEditor';
+import recipientsSchema from '@/json-schemas/coinbase-recipients.json';
+import { isValidPublicFctAddress } from 'factom';
+import Ajv from 'ajv';
 const ajv = new Ajv();
 const validateRecipientsJson = ajv.compile(recipientsSchema);
 
@@ -76,8 +78,8 @@ export default {
   data() {
     return {
       recipientsSchema,
-      tokenChainId: "",
-      error: "",
+      tokenChainId: '',
+      error: '',
       recipients: {
         FA24PAtyZWWVAPm95ZCVpwyY6RYHeCMTiZt2v4VQAY8aBXMUZyeF: 1
       },
@@ -101,20 +103,18 @@ export default {
       if (!this.$store.state.walletd.identitySupport) {
         return false;
       }
-      const identities = new Set(
-        Object.keys(this.$store.state.identity.identities)
-      );
+      const identities = new Set(Object.keys(this.$store.state.identity.identities));
       return this.tokenChainId && identities.has(this.token.issuer);
     }
   },
   methods: {
     onJsonChange() {
-      this.error = "";
+      this.error = '';
       this.validate();
     },
     send() {
       if (this.validate()) {
-        console.log("SEND", this.$refs.jsonEditor.get());
+        console.log('SEND', this.$refs.jsonEditor.get());
       }
     },
     validate() {
@@ -124,7 +124,7 @@ export default {
         json = JSON.parse(text);
         // eslint-disable-next-line
       } catch (e) {
-        this.error = "The JSON is not well formed.";
+        this.error = 'The JSON is not well formed.';
         return;
       }
 
@@ -139,17 +139,12 @@ export default {
           }
         }
 
-        if (
-          this.remainingSupply === -1 ||
-          totalAmount <= this.remainingSupply
-        ) {
+        if (this.remainingSupply === -1 || totalAmount <= this.remainingSupply) {
           return true;
         } else {
           this.error = `Total coinbase transaction amount (${totalAmount.toLocaleString()} ${
             this.symbol
-          }) is above remaining supply (${this.remainingSupply.toLocaleString()} ${
-            this.symbol
-          }).`;
+          }) is above remaining supply (${this.remainingSupply.toLocaleString()} ${this.symbol}).`;
           return false;
         }
       } else {
@@ -172,5 +167,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

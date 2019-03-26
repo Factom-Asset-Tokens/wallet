@@ -13,21 +13,20 @@
 </template>
 
 <script>
-import { digital } from "factom-identity-lib";
+import { digital } from 'factom-identity-lib';
 const { isValidSecretIdentityKey } = digital;
 
 export default {
-  props: ["validationRules"],
+  props: ['validationRules'],
   data: () => ({
     show: false,
-    secretKey: ""
+    secretKey: ''
   }),
   computed: {
     rules: function() {
-      return [
-        v =>
-          !v || isValidSecretIdentityKey(v) || "Not a valid secret identity key"
-      ].concat(this.validationRules || []);
+      return [v => !v || isValidSecretIdentityKey(v) || 'Not a valid secret identity key'].concat(
+        this.validationRules || []
+      );
     }
   },
   methods: {
@@ -38,5 +37,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

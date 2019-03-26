@@ -9,15 +9,14 @@
 </template>
 
 <script>
-import Fat0AddressesBalances from "./AddressesBalances/Fat0AddressesBalances";
-import Fat1AddressesBalances from "./AddressesBalances/Fat1AddressesBalances";
+import Fat0AddressesBalances from './AddressesBalances/Fat0AddressesBalances';
+import Fat1AddressesBalances from './AddressesBalances/Fat1AddressesBalances';
 
 export default {
-  name: "AddressesBalances",
+  name: 'AddressesBalances',
   components: { Fat0AddressesBalances, Fat1AddressesBalances },
-  props: ["type", "balances", "symbol", "tokenCli"]
+  props: ['type', 'balances', 'symbol', 'tokenCli']
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

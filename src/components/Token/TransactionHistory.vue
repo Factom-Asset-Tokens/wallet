@@ -9,12 +9,13 @@
       <template v-for="(tx, index) in movements">
         <v-list-tile :key="tx.id + tx.address" @click.stop="openDetails(tx.id)">
           <v-layout wrap>
-            <v-flex xs2>{{tx.timestamp | formatTimestamp}}</v-flex>
-            <v-flex xs6 class="font-italic">{{tx.address}}</v-flex>
+            <v-flex xs2>{{ tx.timestamp | formatTimestamp }}</v-flex>
+            <v-flex xs6 class="font-italic">{{ tx.address }}</v-flex>
             <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
               <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
               <v-icon v-if="tx.burn" color="secondary" title="Burn" left>fas fa-fire-alt</v-icon>
-              {{tx.sign}} {{tx.amount.toLocaleString(undefined, {maximumFractionDigits:8})}}
+              {{ tx.sign }}
+              {{ tx.amount.toLocaleString(undefined, { maximumFractionDigits: 8 }) }}
             </v-flex>
           </v-layout>
         </v-list-tile>
@@ -36,14 +37,14 @@
 </template>
 
 <script>
-import { buildTransactionsMovements } from "./TransactionHistory/transaction-history-util.js";
-import TransactionDetailsDialog from "./TransactionHistory/TransactionDetailsDialog";
-import moment from "moment";
+import { buildTransactionsMovements } from './TransactionHistory/transaction-history-util.js';
+import TransactionDetailsDialog from './TransactionHistory/TransactionDetailsDialog';
+import moment from 'moment';
 
 const PAGINATION_LIMIT = 10;
 
 export default {
-  name: "TransactionHistory",
+  name: 'TransactionHistory',
   components: { TransactionDetailsDialog },
   data() {
     return {
@@ -53,7 +54,7 @@ export default {
       loading: false
     };
   },
-  props: ["tokenCli", "symbol"],
+  props: ['tokenCli', 'symbol'],
   computed: {
     addresses() {
       return this.$store.state.address.fctAddresses;
@@ -64,7 +65,7 @@ export default {
   },
   methods: {
     amountColorClass(sign) {
-      return sign === "+" ? "green--text" : "red--text";
+      return sign === '+' ? 'green--text' : 'red--text';
     },
     async loadMoreMovements() {
       try {
@@ -72,23 +73,23 @@ export default {
         await this.fetchPage(this.page + 1);
         this.page++;
       } catch (e) {
-        if (e.message.includes("-32803")) {
-          this.$store.commit("snackInfo", "No more transaction");
+        if (e.message.includes('-32803')) {
+          this.$store.commit('snackInfo', 'No more transaction');
         } else {
-          this.$store.commit("snackError", e.message);
+          this.$store.commit('snackError', e.message);
         }
       } finally {
         this.loading = false;
       }
 
       const vuetify = this.$vuetify;
-      this.$nextTick(() => vuetify.goTo("#scrollButton"));
+      this.$nextTick(() => vuetify.goTo('#scrollButton'));
     },
     async initialFetch() {
       try {
         await this.fetchPage(0);
       } catch (e) {
-        if (e.message.includes("-32803")) {
+        if (e.message.includes('-32803')) {
           this.page = -1;
         } else {
           throw e;
@@ -98,16 +99,14 @@ export default {
     async fetchPage(page) {
       const transactions = await this.tokenCli.getTransactions({
         addresses: this.addresses,
-        order: "desc",
+        order: 'desc',
         page: page,
         limit: PAGINATION_LIMIT
       });
 
       transactions.forEach(tx => (this.transactions[tx.getEntryhash()] = tx));
 
-      this.movements = this.movements.concat(
-        buildTransactionsMovements(transactions, this.addresses)
-      );
+      this.movements = this.movements.concat(buildTransactionsMovements(transactions, this.addresses));
     },
     openDetails(txId) {
       this.$refs.transactionDetailsDialog.show(this.transactions[txId]);
@@ -115,7 +114,7 @@ export default {
   },
   filters: {
     formatTimestamp(timestamp) {
-      return moment(timestamp * 1000).format("L LT");
+      return moment(timestamp * 1000).format('L LT');
     }
   },
   watch: {

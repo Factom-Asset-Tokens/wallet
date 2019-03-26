@@ -4,7 +4,8 @@
       <v-layout>
         <v-flex xs12>
           <div>
-            <h2>Factom Daemon
+            <h2>
+              Factom Daemon
               <DaemonStatus :status="factomdStatus" :version="factomdVersion"></DaemonStatus>
             </h2>
             <v-container>
@@ -16,7 +17,8 @@
             </v-container>
           </div>
           <div>
-            <h2>FAT Daemon
+            <h2>
+              FAT Daemon
               <DaemonStatus
                 :status="fatdStatus"
                 :version="fatdVersion"
@@ -34,7 +36,8 @@
             </v-container>
           </div>
           <div>
-            <h2>Wallet Daemon
+            <h2>
+              Wallet Daemon
               <DaemonStatus :status="walletdStatus" :version="walletdVersion"></DaemonStatus>
             </h2>
             <v-container>
@@ -52,32 +55,23 @@
 </template>
 
 <script>
-import debounce from "lodash.debounce";
-import DaemonStatus from "./DaemonSettings/DaemonStatus.vue";
-import { mapState } from "vuex";
-import { URL } from "url";
+import debounce from 'lodash.debounce';
+import DaemonStatus from './DaemonSettings/DaemonStatus.vue';
+import { mapState } from 'vuex';
+import { URL } from 'url';
 
 export default {
-  name: "DaemonSettings",
+  name: 'DaemonSettings',
   components: { DaemonStatus },
   data: function() {
     return {
-      urlRules: [v => isValidUrl(v) || "Invalid URL scheme"]
+      urlRules: [v => isValidUrl(v) || 'Invalid URL scheme']
     };
   },
   created: function() {
-    this.debouncedUpdateFatd = debounce(
-      this.$store.dispatch.bind(this, "fatd/update"),
-      600
-    );
-    this.debouncedUpdateWalletd = debounce(
-      this.$store.dispatch.bind(this, "walletd/update"),
-      600
-    );
-    this.debouncedUpdateFactomd = debounce(
-      this.$store.dispatch.bind(this, "factomd/update"),
-      600
-    );
+    this.debouncedUpdateFatd = debounce(this.$store.dispatch.bind(this, 'fatd/update'), 600);
+    this.debouncedUpdateWalletd = debounce(this.$store.dispatch.bind(this, 'walletd/update'), 600);
+    this.debouncedUpdateFactomd = debounce(this.$store.dispatch.bind(this, 'factomd/update'), 600);
   },
   computed: {
     ...mapState({
@@ -91,7 +85,7 @@ export default {
       factomdVersion: state => state.factomd.version
     }),
     fatdSynced() {
-      return this.$store.getters["fatd/synced"];
+      return this.$store.getters['fatd/synced'];
     },
     fatdEndpoint: {
       get() {
@@ -130,6 +124,4 @@ function isValidUrl(url) {
 }
 </script>
 
-
-<style scoped>
-</style>
+<style scoped></style>

@@ -5,12 +5,11 @@
 </template>
 
 <script>
-import IssuanceSteps from "@/components/IssueToken/IssuanceSteps";
+import IssuanceSteps from '@/components/IssueToken/IssuanceSteps';
 
 export default {
   components: { IssuanceSteps }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

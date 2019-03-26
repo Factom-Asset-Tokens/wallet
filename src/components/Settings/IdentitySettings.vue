@@ -4,7 +4,8 @@
       <v-card>
         <v-toolbar card color="primary">
           <v-icon large>fingerprint</v-icon>
-          <v-toolbar-title>Digital Identities
+          <v-toolbar-title
+            >Digital Identities
             <v-btn flat icon color="white" @click="identityInfoDialog = true">
               <v-icon>help_outline</v-icon>
             </v-btn>
@@ -13,31 +14,26 @@
           <v-spacer></v-spacer>
 
           <v-toolbar-items>
-            <v-btn
-              flat
-              :disabled="disableIdentityOperations"
-              @click.stop="$refs.createIdentityDialog.show()"
-            >Create</v-btn>
-            <v-btn
-              flat
-              :disabled="disableIdentityOperations"
-              @click.stop="$refs.identityImportDialog.show()"
-            >Import</v-btn>
+            <v-btn flat :disabled="disableIdentityOperations" @click.stop="$refs.createIdentityDialog.show()"
+              >Create</v-btn
+            >
+            <v-btn flat :disabled="disableIdentityOperations" @click.stop="$refs.identityImportDialog.show()"
+              >Import</v-btn
+            >
           </v-toolbar-items>
         </v-toolbar>
 
         <v-container fluid>
           <v-layout>
             <v-flex xs12>
-              <div
-                v-if="!identitySupport"
-                class="font-italic subheading"
-              >The version of factom-walletd you are connected to does not support digital identities.</div>
+              <div v-if="!identitySupport" class="font-italic subheading">
+                The version of factom-walletd you are connected to does not support digital identities.
+              </div>
               <IdentityTree v-else-if="hasIdentity"></IdentityTree>
-              <div
-                v-else
-                class="font-italic subheading"
-              >No digital identity currently saved in the wallet. You only need an identity if you wish to create or manage your own tokens.</div>
+              <div v-else class="font-italic subheading">
+                No digital identity currently saved in the wallet. You only need an identity if you wish to create or
+                manage your own tokens.
+              </div>
             </v-flex>
           </v-layout>
         </v-container>
@@ -53,16 +49,16 @@
       @keydown.enter="identityInfoDialog = false"
     >
       <v-card>
-        <v-card-title
-          class="headline primary white--text"
-          primary-title
-        >What are digital identities?</v-card-title>
+        <v-card-title class="headline primary white--text" primary-title>What are digital identities?</v-card-title>
         <v-card-text class="subheading">
           <div>
-            Digital identities are identities registered on the Factom blockchain and referenced by their chain ID. A set of ed25519 key pairs is associated with an identities.
-            Those keys can be used to sign and authenticate data.
+            Digital identities are identities registered on the Factom blockchain and referenced by their chain ID. A
+            set of ed25519 key pairs is associated with an identities. Those keys can be used to sign and authenticate
+            data.
           </div>
-          <div>Digital identities are used in the FAT protocol context to issue new tokens and manage tokens supply.</div>
+          <div>
+            Digital identities are used in the FAT protocol context to issue new tokens and manage tokens supply.
+          </div>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -74,11 +70,11 @@
 </template>
 
 <script>
-import IdentityImportDialog from "./IdentitySettings/IdentityImportDialog";
-import CreateIdentityDialog from "./IdentitySettings/CreateIdentityDialog";
-import IdentityTree from "./IdentitySettings/IdentityTree";
-import { mapState } from "vuex";
-import AvailableFeatures from "@/mixins/AvailableFeatures";
+import IdentityImportDialog from './IdentitySettings/IdentityImportDialog';
+import CreateIdentityDialog from './IdentitySettings/CreateIdentityDialog';
+import IdentityTree from './IdentitySettings/IdentityTree';
+import { mapState } from 'vuex';
+import AvailableFeatures from '@/mixins/AvailableFeatures';
 
 export default {
   components: { IdentityImportDialog, CreateIdentityDialog, IdentityTree },
@@ -89,7 +85,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("identity/init");
+    this.$store.dispatch('identity/init');
   },
   computed: {
     ...mapState({
@@ -106,6 +102,4 @@ export default {
 };
 </script>
 
-
-<style scoped>
-</style>
+<style scoped></style>

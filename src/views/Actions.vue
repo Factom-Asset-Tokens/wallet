@@ -8,20 +8,20 @@
             <div class="display-2 font-weight-light">Factom Asset Token Wallet</div>
           </v-flex>
           <v-flex xs12 text-xs-center mb-5>
-            <img src="@/assets/img/fat-icon.png" width="100px">
+            <img src="@/assets/img/fat-icon.png" width="100px" />
           </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
-            <v-btn color="primary" large block :to="{name: 'TrackToken'}" class="subheading">
+            <v-btn color="primary" large block :to="{ name: 'TrackToken' }" class="subheading">
               <v-icon left>track_changes</v-icon>Track an existing token
             </v-btn>
           </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
-            <v-btn color="primary" large block :to="{name: 'IssueToken'}" class="subheading">
+            <v-btn color="primary" large block :to="{ name: 'IssueToken' }" class="subheading">
               <v-icon left>create</v-icon>Issue a new token
             </v-btn>
           </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
-            <v-btn color="primary" large block :to="{name: 'CoinbaseTransaction'}" class="subheading">
+            <v-btn color="primary" large block :to="{ name: 'CoinbaseTransaction' }" class="subheading">
               <v-icon left>send</v-icon>Create a coinbase transaction
             </v-btn>
           </v-flex>
@@ -35,10 +35,9 @@
 export default {
   mounted() {
     // TODO: should be done once at the startup of the whole application
-    this.$store.dispatch("init");
+    this.$store.dispatch('init');
   }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

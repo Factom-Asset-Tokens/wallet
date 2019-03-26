@@ -9,7 +9,7 @@
           <v-layout wrap>
             <v-flex xs12 class="subheading">
               Import the secret key matching
-              <strong class="primary--text">{{publicKey}}</strong>
+              <strong class="primary--text">{{ publicKey }}</strong>
             </v-flex>
             <v-flex xs12>
               <SecretKeyInput
@@ -31,31 +31,30 @@
 </template>
 
 <script>
-import SecretKeyInput from "./SecretKeyInput";
-import { digital } from "factom-identity-lib";
+import SecretKeyInput from './SecretKeyInput';
+import { digital } from 'factom-identity-lib';
 const { getPublicIdentityKey, isValidSecretIdentityKey } = digital;
 
 export default {
   components: { SecretKeyInput },
   data: function() {
     return {
-      publicKey: "",
+      publicKey: '',
       display: false,
       valid: true,
       importLoading: false,
-      secretKey: ""
+      secretKey: ''
     };
   },
   computed: {
     secretKeyValidationRules() {
       const publicKey = this.publicKey;
       return [
-        v => !!v || "Must not be empty",
+        v => !!v || 'Must not be empty',
         v =>
           !v ||
-          (isValidSecretIdentityKey(v) &&
-            getPublicIdentityKey(v) === publicKey) ||
-          "Secret key does not match the public key"
+          (isValidSecretIdentityKey(v) && getPublicIdentityKey(v) === publicKey) ||
+          'Secret key does not match the public key'
       ];
     }
   },
@@ -66,7 +65,7 @@ export default {
     },
     importKey() {
       if (this.$refs.form.validate()) {
-        this.$store.dispatch("identity/importIdentityKeys", [this.secretKey]);
+        this.$store.dispatch('identity/importIdentityKeys', [this.secretKey]);
         this.display = false;
       }
     }

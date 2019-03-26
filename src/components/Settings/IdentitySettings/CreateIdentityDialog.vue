@@ -23,14 +23,10 @@
                 ></v-combobox>
               </v-flex>
               <v-flex xs12>
-                <v-select
-                  v-model="numberOfKeys"
-                  :items="numberOfKeysSelect"
-                  label="Number of identity keys"
-                ></v-select>
+                <v-select v-model="numberOfKeys" :items="numberOfKeysSelect" label="Number of identity keys"></v-select>
               </v-flex>
               <v-flex>
-                <v-alert :value="createError" color="error" icon="warning" outline>{{createError}}</v-alert>
+                <v-alert :value="createError" color="error" icon="warning" outline>{{ createError }}</v-alert>
               </v-flex>
             </v-layout>
           </v-form>
@@ -39,12 +35,9 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary" flat outline @click="display = false">Close</v-btn>
-        <v-btn
-          color="primary"
-          @click="create"
-          :disabled="!valid || createLoading"
-          :loading="createLoading"
-        >Create</v-btn>
+        <v-btn color="primary" @click="create" :disabled="!valid || createLoading" :loading="createLoading"
+          >Create</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -57,11 +50,11 @@ export default {
       display: false,
       valid: true,
       createLoading: false,
-      tags: ["FAT"],
+      tags: ['FAT'],
       numberOfKeysSelect: [2, 3, 4, 5, 6, 7, 8, 9, 10],
       numberOfKeys: 3,
-      createError: "",
-      tagRules: [v => v.length > 0 || "At least one tag is required"]
+      createError: '',
+      tagRules: [v => v.length > 0 || 'At least one tag is required']
     };
   },
   methods: {
@@ -71,34 +64,27 @@ export default {
     async create() {
       if (this.$refs.form.validate()) {
         this.createLoading = true;
-        this.createError = "";
+        this.createError = '';
         try {
-          const manager = this.$store.getters["identity/manager"];
-          const payingEcAddress = this.$store.getters[
-            "address/payingEcAddress"
-          ];
+          const manager = this.$store.getters['identity/manager'];
+          const payingEcAddress = this.$store.getters['address/payingEcAddress'];
 
           if (!payingEcAddress) {
-            throw new Error(
-              "No Entry Credit available to pay for the transaction."
-            );
+            throw new Error('No Entry Credit available to pay for the transaction.');
           }
-          const created = await manager.createIdentity(
-            this.tags,
-            this.numberOfKeys,
-            payingEcAddress,
-            { fromWalletSeed: true }
-          );
+          const created = await manager.createIdentity(this.tags, this.numberOfKeys, payingEcAddress, {
+            fromWalletSeed: true
+          });
 
           const identity = {};
           identity[created.chainId] = created.identityKeys.map(k => k.public);
-          await this.$store.dispatch("identity/fetchIdentityKeysFromWalletd");
-          this.$store.commit("identity/addIdentity", identity);
+          await this.$store.dispatch('identity/fetchIdentityKeysFromWalletd');
+          this.$store.commit('identity/addIdentity', identity);
 
           this.display = false;
         } catch (e) {
-          this.createError = e.message.includes("already exists")
-            ? "An identity chain already exists with those tags."
+          this.createError = e.message.includes('already exists')
+            ? 'An identity chain already exists with those tags.'
             : e.message;
         } finally {
           this.createLoading = false;
@@ -110,9 +96,9 @@ export default {
     display() {
       if (this.display) {
         this.createLoading = false;
-        this.tags = ["FAT"];
+        this.tags = ['FAT'];
         this.numberOfKeys = 3;
-        this.createError = "";
+        this.createError = '';
         if (this.$refs.tags) {
           this.$nextTick(this.$refs.tags.focus);
         }
@@ -124,6 +110,4 @@ export default {
 };
 </script>
 
-
-<style scoped>
-</style>
+<style scoped></style>

@@ -1,18 +1,12 @@
 <template>
-  <v-form
-    id="advancedTxForm"
-    v-model="validForm"
-    ref="form"
-    @submit.prevent="confirmTransaction"
-    lazy-validation
-  >
+  <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
         <v-toolbar class="elevation-1">
           <v-toolbar-title>Inputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
-          <div class="total-amount">{{totalInputs}} {{symbol}}</div>
+          <div class="total-amount">{{ totalInputs }} {{ symbol }}</div>
           <v-toolbar-items>
             <v-btn flat @click="add('inputs')">
               <v-icon>add_circle_outline</v-icon>
@@ -35,7 +29,7 @@
           <v-toolbar-title>Outputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
-          <div class="total-amount">{{totalOutputs}} {{symbol}}</div>
+          <div class="total-amount">{{ totalOutputs }} {{ symbol }}</div>
           <v-toolbar-items>
             <v-btn flat @click="add('outputs')">
               <v-icon>add_circle_outline</v-icon>
@@ -75,32 +69,26 @@
 
       <v-layout align-center wrap>
         <v-flex xs12 sm10>
-          <v-alert
-            v-if="sendClicked"
-            :value="!validTransaction"
-            color="error"
-            icon="warning"
-            outline
-          >{{transactionError}}</v-alert>
+          <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>{{
+            transactionError
+          }}</v-alert>
         </v-flex>
 
         <v-flex xs12 sm2 text-xs-right>
-          <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending">Send
+          <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
+            >Send
             <v-icon right>send</v-icon>
           </v-btn>
         </v-flex>
 
         <!-- Alerts transaction success/failure-->
         <v-flex v-if="errorMessage" xs12>
-          <v-alert :value="true" type="error" outline dismissible>{{errorMessage}}</v-alert>
+          <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
         </v-flex>
         <v-flex xs12>
-          <v-alert
-            :value="transactionSentMessage"
-            type="success"
-            outline
-            dismissible
-          >{{transactionSentMessage}}</v-alert>
+          <v-alert :value="transactionSentMessage" type="success" outline dismissible>{{
+            transactionSentMessage
+          }}</v-alert>
         </v-flex>
       </v-layout>
     </v-layout>
@@ -116,12 +104,12 @@
 </template>
 
 <script>
-import Promise from "bluebird";
-import { isValidPublicFctAddress } from "factom";
-import SendTransaction from "@/mixins/SendTransaction";
-import TransactionInput from "./CreateAdvancedTransaction/TransactionInput";
-import ConfirmTransactionDialog from "./CreateAdvancedTransaction/ConfirmTransactionDialog";
-import { FAT0 } from "@fat-token/fat-js";
+import Promise from 'bluebird';
+import { isValidPublicFctAddress } from 'factom';
+import SendTransaction from '@/mixins/SendTransaction';
+import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
+import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
+import { FAT0 } from '@fat-token/fat-js';
 const {
   Transaction: { TransactionBuilder }
 } = FAT0;
@@ -129,7 +117,7 @@ const {
 const newInoutput = (function() {
   let i = 0;
   return function() {
-    return { id: i++, address: "", amount: 0 };
+    return { id: i++, address: '', amount: 0 };
   };
 })();
 
@@ -141,16 +129,16 @@ export default {
       sendClicked: false,
       validForm: true,
       validTransaction: true,
-      transactionError: "",
+      transactionError: '',
       inputs: [],
       outputs: [],
-      errorMessage: ""
+      errorMessage: ''
     };
   },
-  props: ["balances", "symbol", "tokenCli"],
+  props: ['balances', 'symbol', 'tokenCli'],
   created() {
-    this.add("inputs");
-    this.add("outputs");
+    this.add('inputs');
+    this.add('outputs');
   },
   computed: {
     selectedInputAddresses() {
@@ -163,24 +151,21 @@ export default {
       }, {});
     },
     outputAddressRules() {
-      return [
-        address =>
-          isValidPublicFctAddress(address) || "Invalid public FCT address"
-      ];
+      return [address => isValidPublicFctAddress(address) || 'Invalid public FCT address'];
     },
     outputAmountRules() {
-      return [v => v > 0 || "Amount must be strictly positive"];
+      return [v => v > 0 || 'Amount must be strictly positive'];
     },
     totalInputs() {
       return this.inputs
         .map(o => o.amount)
-        .filter(a => typeof a === "number")
+        .filter(a => typeof a === 'number')
         .reduce((a, b) => a + b, 0);
     },
     totalOutputs() {
       return this.outputs
         .map(o => o.amount)
-        .filter(a => typeof a === "number")
+        .filter(a => typeof a === 'number')
         .reduce((a, b) => a + b, 0);
     },
     validTransactionProperties() {
@@ -195,7 +180,7 @@ export default {
       this[type] = this[type].filter(v => v.id !== id);
     },
     confirmTransaction() {
-      this.transactionSentMessage = "";
+      this.transactionSentMessage = '';
 
       if (this.$refs.form.validate()) {
         this.sendClicked = true;
@@ -216,11 +201,9 @@ export default {
       const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId());
 
       // Get inputs secret keys
-      const walletd = this.$store.getters["walletd/cli"];
-      const inputsSecrets = await Promise.map(this.inputs, async function(
-        input
-      ) {
-        const { secret } = await walletd.call("address", {
+      const walletd = this.$store.getters['walletd/cli'];
+      const inputsSecrets = await Promise.map(this.inputs, async function(input) {
+        const { secret } = await walletd.call('address', {
           address: input.address
         });
         return { secret, amount: input.amount };
@@ -249,19 +232,19 @@ export default {
       // Total inputs and outputs must be equal
       if (this.totalInputs !== this.totalOutputs) {
         this.validTransaction = false;
-        this.transactionError = "The sum of inputs and outputs must be equal.";
+        this.transactionError = 'The sum of inputs and outputs must be equal.';
         return;
       }
 
       // The amount transfered has to be greater than 0
       if (this.totalInputs === 0) {
         this.validTransaction = false;
-        this.transactionError = "The amount transfered cannot be 0.";
+        this.transactionError = 'The amount transfered cannot be 0.';
         return;
       }
 
       this.validTransaction = true;
-      this.transactionError = "";
+      this.transactionError = '';
     }
   }
 };

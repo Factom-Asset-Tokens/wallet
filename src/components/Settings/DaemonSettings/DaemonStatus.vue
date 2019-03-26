@@ -2,12 +2,12 @@
   <div v-if="status === 'ok'" class="d-inline">
     <template v-if="syncing">
       <v-icon color="#E8980C">warning</v-icon>
-      <span class="syncing subheading version-text">(Syncing... {{syncHeight}} / {{targetHeight}})</span>
-      <span class="subheading version-text font-italic">v{{version}}</span>
+      <span class="syncing subheading version-text">(Syncing... {{ syncHeight }} / {{ targetHeight }})</span>
+      <span class="subheading version-text font-italic">v{{ version }}</span>
     </template>
     <template v-else>
       <v-icon color="#AECC6F">check_circle</v-icon>
-      <span class="subheading version-text font-italic">v{{version}}</span>
+      <span class="subheading version-text font-italic">v{{ version }}</span>
     </template>
   </div>
   <v-icon v-else-if="status === 'ko'" color="error">cancel</v-icon>
@@ -16,11 +16,10 @@
 
 <script>
 export default {
-  name: "DaemonStatus",
-  props: ["status", "version", "syncing", "syncHeight", "targetHeight"]
+  name: 'DaemonStatus',
+  props: ['status', 'version', 'syncing', 'syncHeight', 'targetHeight']
 };
 </script>
-
 
 <style scoped>
 .syncing {

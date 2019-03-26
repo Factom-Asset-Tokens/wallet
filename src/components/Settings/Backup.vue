@@ -15,30 +15,39 @@
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
-          <v-btn
-            color="secondary"
-            class="font-italic subheading text-none"
-            flat
-            @click="toggleSeedInfo"
-          >Wait, what is a recovery seed?</v-btn>
+          <v-btn color="secondary" class="font-italic subheading text-none" flat @click="toggleSeedInfo"
+            >Wait, what is a recovery seed?</v-btn
+          >
           <v-slide-y-transition>
             <v-sheet id="seedInfo" v-show="showSeedInfo" elevation="10">
               <v-container text-xs-left>
                 <v-layout wrap>
                   <v-flex xs12 class="subheading">
                     <p class="font-weight-black">
-                      The recovery seed is a "master access key" made of 12 simple and rememberable words.
-                      From this seed it is possible to "grow" back your wallet. This is why it is critically important to keep a copy of that seed secret and safe.
-                      Any malicious actor gaining access to it would be able to steal your funds and identities.
+                      The recovery seed is a "master access key" made of 12 simple and rememberable words. From this
+                      seed it is possible to "grow" back your wallet. This is why it is critically important to keep a
+                      copy of that seed secret and safe. Any malicious actor gaining access to it would be able to steal
+                      your funds and identities.
                     </p>
-                    <p>Important note: some aspects of the wallet cannot be recovered solely from the seed:</p>
+                    <p>
+                      Important note: some aspects of the wallet cannot be recovered solely from the seed:
+                    </p>
                     <ul class="margin-bottom">
-                      <li>All Factoid and Entry Credit addresses manually imported (addresses not generated from within the FAT wallet).</li>
-                      <li>All the identity keys manually imported (i.e. identity keys not associated with an identity that was generated from within the FAT wallet).</li>
+                      <li>
+                        All Factoid and Entry Credit addresses manually imported (addresses not generated from within
+                        the FAT wallet).
+                      </li>
+                      <li>
+                        All the identity keys manually imported (i.e. identity keys not associated with an identity that
+                        was generated from within the FAT wallet).
+                      </li>
                       <li>Nicknames attached to your addresses.</li>
                       <li>List of your identities chain ids.</li>
                     </ul>
-                    <p>Point 1 and 2 are the most important to be aware of. If you are looking for a full backup of the wallet use the "save backup file" option.</p>
+                    <p>
+                      Point 1 and 2 are the most important to be aware of. If you are looking for a full backup of the
+                      wallet use the "save backup file" option.
+                    </p>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -46,34 +55,29 @@
           </v-slide-y-transition>
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn
-            color="primary"
-            large
-            class="subheading"
-            :disabled="!walletdOk"
-            @click="saveBackupFile"
-          >
+          <v-btn color="primary" large class="subheading" :disabled="!walletdOk" @click="saveBackupFile">
             <v-icon left>far fa-save</v-icon>save backup file
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
-          <v-btn
-            color="secondary"
-            class="font-italic subheading text-none"
-            flat
-            @click="toggleBackupFileInfo"
-          >Wait, what is a backup file?</v-btn>
+          <v-btn color="secondary" class="font-italic subheading text-none" flat @click="toggleBackupFileInfo"
+            >Wait, what is a backup file?</v-btn
+          >
           <v-slide-y-transition>
             <v-sheet id="backupFileInfo" v-show="showBackupFileInfo" elevation="10">
               <v-container text-xs-left>
                 <v-layout wrap>
                   <v-flex xs12 class="subheading">
                     <p>
-                      A backup file is a file containing everything needed to fully restore the wallet to its current state.
-                      It contains all the access keys to your funds and identities this is why it is critically important that this backup file is kept secret and safe.
-                      Any malicious actor gaining access to it would be able to steal your funds and identities.
+                      A backup file is a file containing everything needed to fully restore the wallet to its current
+                      state. It contains all the access keys to your funds and identities this is why it is critically
+                      important that this backup file is kept secret and safe. Any malicious actor gaining access to it
+                      would be able to steal your funds and identities.
                     </p>
-                    <p>It is a super-set of the recovery seed and will include everything that is not covered by the seed.</p>
+                    <p>
+                      It is a super-set of the recovery seed and will include everything that is not covered by the
+                      seed.
+                    </p>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -87,12 +91,12 @@
 </template>
 
 <script>
-import ShowSeedDialog from "./Backup/ShowSeedDialog.vue";
-const { dialog } = require("electron").remote;
-const { writeFile } = require("fs");
+import ShowSeedDialog from './Backup/ShowSeedDialog.vue';
+const { dialog } = require('electron').remote;
+const { writeFile } = require('fs');
 
 export default {
-  name: "Backup",
+  name: 'Backup',
   components: { ShowSeedDialog },
   data: function() {
     return {
@@ -103,7 +107,7 @@ export default {
   },
   computed: {
     walletdOk() {
-      return this.$store.state.walletd.status === "ok";
+      return this.$store.state.walletd.status === 'ok';
     }
   },
   methods: {
@@ -111,15 +115,12 @@ export default {
       const store = this.$store;
 
       try {
-        const backup = await store.dispatch("backup");
+        const backup = await store.dispatch('backup');
         const data = JSON.stringify(backup, null, 4);
 
-        dialog.showSaveDialog(
-          { defaultPath: "fat-wallet.backup.json" },
-          this.writeBackupFile.bind(null, data)
-        );
+        dialog.showSaveDialog({ defaultPath: 'fat-wallet.backup.json' }, this.writeBackupFile.bind(null, data));
       } catch (e) {
-        store.commit("snackError", e.message);
+        store.commit('snackError', e.message);
       }
     },
     async writeBackupFile(data, filename) {
@@ -127,9 +128,9 @@ export default {
       if (filename) {
         writeFile(filename, data, err => {
           if (err) {
-            store.commit("snackError", err.message);
+            store.commit('snackError', err.message);
           } else {
-            store.commit("snackSuccess", `File saved at ${filename}`);
+            store.commit('snackSuccess', `File saved at ${filename}`);
           }
         });
       }
@@ -137,9 +138,9 @@ export default {
     async showSeed() {
       this.loadingSeed = true;
       try {
-        const walletd = this.$store.getters["walletd/cli"];
-        const result = await walletd.call("wallet-backup");
-        const seed = result["wallet-seed"].split(" ");
+        const walletd = this.$store.getters['walletd/cli'];
+        const result = await walletd.call('wallet-backup');
+        const seed = result['wallet-seed'].split(' ');
         this.$refs.showSeedDialog.show(seed);
       } catch (e) {
         console.error(e);
@@ -151,20 +152,19 @@ export default {
       this.showSeedInfo = !this.showSeedInfo;
       if (this.showSeedInfo) {
         const vuetify = this.$vuetify;
-        this.$nextTick(() => vuetify.goTo("#seedInfo"));
+        this.$nextTick(() => vuetify.goTo('#seedInfo'));
       }
     },
     toggleBackupFileInfo() {
       this.showBackupFileInfo = !this.showBackupFileInfo;
       if (this.showBackupFileInfo) {
         const vuetify = this.$vuetify;
-        this.$nextTick(() => vuetify.goTo("#backupFileInfo"));
+        this.$nextTick(() => vuetify.goTo('#backupFileInfo'));
       }
     }
   }
 };
 </script>
-
 
 <style scoped>
 .margin-bottom {

@@ -8,7 +8,7 @@
     @keydown.right="increment"
   >
     <v-card>
-      <v-card-title class="headline primary white--text" primary-title>{{symbol}} {{title}}</v-card-title>
+      <v-card-title class="headline primary white--text" primary-title>{{ symbol }} {{ title }}</v-card-title>
       <v-card-text>
         <NfTokenDetails ref="rangeDetails" :tokenCli="tokenCli" :min="id.min" :max="id.max"></NfTokenDetails>
       </v-card-text>
@@ -21,11 +21,11 @@
 </template>
 
 <script>
-import NfTokenDetails from "./NfTokenDetailsDialog/NfTokenDetails";
+import NfTokenDetails from './NfTokenDetailsDialog/NfTokenDetails';
 
 export default {
   components: { NfTokenDetails },
-  props: ["symbol", "tokenCli"],
+  props: ['symbol', 'tokenCli'],
   data() {
     return {
       display: false,
@@ -34,9 +34,7 @@ export default {
   },
   computed: {
     title() {
-      return this.id.min === this.id.max
-        ? `#${this.id.min}`
-        : `#${this.id.min} to #${this.id.max}`;
+      return this.id.min === this.id.max ? `#${this.id.min}` : `#${this.id.min} to #${this.id.max}`;
     }
   },
   methods: {

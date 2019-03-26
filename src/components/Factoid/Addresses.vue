@@ -5,16 +5,16 @@
         <v-flex xs12 md6>
           <v-sheet class="white--text display-1 font-weight-medium" color="primary">
             <div class="total-balance" :title="`${totalFctBalanceText.exact} FCT`">
-              <img class="balance-icon" src="@/assets/img/coin-white.png">
-              <div>{{totalFctBalanceText.rounded}} FCT</div>
+              <img class="balance-icon" src="@/assets/img/coin-white.png" />
+              <div>{{ totalFctBalanceText.rounded }} FCT</div>
             </div>
           </v-sheet>
         </v-flex>
         <v-flex xs12 md6>
           <v-sheet color="secondary" class="white--text display-1 font-weight-medium">
             <div class="total-balance" :title="`${totalEcBalanceText} EC`">
-              <img class="balance-icon" src="@/assets/img/entry-credit.png">
-              <div>{{totalEcBalanceText}} EC</div>
+              <img class="balance-icon" src="@/assets/img/entry-credit.png" />
+              <div>{{ totalEcBalanceText }} EC</div>
             </div>
           </v-sheet>
         </v-flex>
@@ -44,7 +44,12 @@
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-data-table
-            :headers="[{text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}, , {text: 'Balance', value: 'balance'}]"
+            :headers="[
+              { text: 'Address', value: 'address' },
+              { text: 'Name', value: 'name' },
+              ,
+              { text: 'Balance', value: 'balance' }
+            ]"
             :items="fctAddresses"
             item-key="address"
             disable-initial-sort
@@ -55,7 +60,7 @@
               <td>{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog :return-value.sync="props.item.name" lazy>
-                  {{ props.item.name}}
+                  {{ props.item.name }}
                   <v-text-field
                     slot="input"
                     :value="props.item.name"
@@ -65,13 +70,24 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
-              <td>{{ (props.item.balance / 100000000).toLocaleString(undefined, {maximumFractionDigits:8}) }}</td>
+              <td>
+                {{
+                  (props.item.balance / 100000000).toLocaleString(undefined, {
+                    maximumFractionDigits: 8
+                  })
+                }}
+              </td>
             </template>
           </v-data-table>
         </v-tab-item>
         <v-tab-item>
           <v-data-table
-            :headers="[{text: '', value: 'prefered', sortable: false}, {text: 'Address', value: 'address'}, {text: 'Name', value: 'name'}, {text: 'Balance', value: 'balance'}]"
+            :headers="[
+              { text: '', value: 'prefered', sortable: false },
+              { text: 'Address', value: 'address' },
+              { text: 'Name', value: 'name' },
+              { text: 'Balance', value: 'balance' }
+            ]"
             :items="ecAddresses"
             item-key="address"
             disable-initial-sort
@@ -85,7 +101,7 @@
               <td>{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog lazy>
-                  {{ props.item.name}}
+                  {{ props.item.name }}
                   <v-text-field
                     slot="input"
                     :value="props.item.name"
@@ -106,7 +122,7 @@
 </template>
 
 <script>
-import AddressImportDialog from "./Addresses/AddressImportDialog";
+import AddressImportDialog from './Addresses/AddressImportDialog';
 
 export default {
   components: { AddressImportDialog },
@@ -119,7 +135,7 @@ export default {
   async mounted() {
     this.loading = true;
     try {
-      await this.$store.dispatch("address/init");
+      await this.$store.dispatch('address/init');
     } finally {
       this.loading = false;
     }
@@ -127,8 +143,7 @@ export default {
   computed: {
     totalFctBalanceText() {
       const balances = this.$store.state.address.fctBalances;
-      const fctSum =
-        Object.values(balances).reduce((acc, val) => acc + val, 0) / 100000000;
+      const fctSum = Object.values(balances).reduce((acc, val) => acc + val, 0) / 100000000;
       return {
         rounded: fctSum.toLocaleString(),
         exact: fctSum.toLocaleString(undefined, {
@@ -147,7 +162,7 @@ export default {
     },
     fctAddresses() {
       const balances = this.$store.state.address.fctBalances;
-      return this.$store.getters["address/fctAddressesWithNames"].map(o =>
+      return this.$store.getters['address/fctAddressesWithNames'].map(o =>
         Object.assign(
           {
             balance: balances[o.address] || 0
@@ -158,7 +173,7 @@ export default {
     },
     ecAddresses() {
       const balances = this.$store.state.address.ecBalances;
-      return this.$store.getters["address/ecAddressesWithNames"].map(o =>
+      return this.$store.getters['address/ecAddressesWithNames'].map(o =>
         Object.assign(
           {
             preferred: o.address === this.preferredEcAddress,
@@ -169,41 +184,40 @@ export default {
       );
     },
     walletdOk() {
-      return this.$store.state.walletd.status === "ok";
+      return this.$store.state.walletd.status === 'ok';
     },
     selectedAddressType() {
       switch (this.tab) {
         case 0:
-          return "factoid";
+          return 'factoid';
         case 1:
-          return "ec";
+          return 'ec';
         default:
-          throw new Error("unknown tab");
+          throw new Error('unknown tab');
       }
     }
   },
   methods: {
     async generateAddress() {
-      const cli = this.$store.getters["walletd/cli"];
+      const cli = this.$store.getters['walletd/cli'];
       try {
         await cli.call(`generate-${this.selectedAddressType}-address`);
-        await this.$store.dispatch("address/init");
+        await this.$store.dispatch('address/init');
         const message = `New ${this.selectedAddressType} address generated`;
-        this.$store.commit("snackSuccess", message);
+        this.$store.commit('snackSuccess', message);
       } catch (e) {
-        this.$store.commit("snackError", e.message);
+        this.$store.commit('snackError', e.message);
       }
     },
     updateAddressName(address, name) {
-      this.$store.commit("address/updateAddressNames", { address, name });
+      this.$store.commit('address/updateAddressNames', { address, name });
     },
     setPreferredEcAddress(address) {
-      this.$store.commit("address/setPreferredEcAddress", address);
+      this.$store.commit('address/setPreferredEcAddress', address);
     }
   }
 };
 </script>
-
 
 <style scoped>
 .balance-icon {

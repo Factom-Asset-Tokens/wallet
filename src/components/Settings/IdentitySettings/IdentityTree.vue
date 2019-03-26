@@ -3,30 +3,33 @@
     <v-treeview :items="identityTreeItems" item-key="name">
       <template slot="prepend" slot-scope="{ item, leaf }">
         <v-icon v-if="!leaf">person</v-icon>
-        <v-icon
-          v-else-if="leaf && item.available"
-          color="green"
-          title="Secret key available in the wallet"
-        >vpn_key</v-icon>
+        <v-icon v-else-if="leaf && item.available" color="green" title="Secret key available in the wallet"
+          >vpn_key</v-icon
+        >
         <v-icon
           v-else
           color="grey"
           title="Secret key NOT available in the wallet"
           @click.stop="$refs.keyImportDialog.show(item.name)"
-        >vpn_key</v-icon>
+          >vpn_key</v-icon
+        >
       </template>
       <template slot="label" slot-scope="{ item, leaf }">
-        <div v-if="!leaf">({{item.availableKeys}}/{{item.totalKeys}}) {{item.name}}</div>
-        <div v-else-if="leaf && item.available">{{item.name}}</div>
+        <div v-if="!leaf">({{ item.availableKeys }}/{{ item.totalKeys }}) {{ item.name }}</div>
+        <div v-else-if="leaf && item.available">{{ item.name }}</div>
         <div
           v-else
           class="grey--text pointer"
           title="Secret key NOT available in the wallet"
           @click.stop="$refs.keyImportDialog.show(item.name)"
-        >{{item.name}}</div>
+        >
+          {{ item.name }}
+        </div>
       </template>
       <template slot="append" slot-scope="{ item, leaf }">
-        <v-icon v-if="!leaf" @click.stop="$refs.unlinkIdentityDialog.show(item.name)" title="Unlink identity">link_off</v-icon>
+        <v-icon v-if="!leaf" @click.stop="$refs.unlinkIdentityDialog.show(item.name)" title="Unlink identity"
+          >link_off</v-icon
+        >
       </template>
     </v-treeview>
     <KeyImportDialog ref="keyImportDialog"></KeyImportDialog>
@@ -35,9 +38,9 @@
 </template>
 
 <script>
-import KeyImportDialog from "./KeyImportDialog";
-import UnlinkIdentityConfirmDialog from "./UnlinkIdentityConfirmDialog";
-import { mapState } from "vuex";
+import KeyImportDialog from './KeyImportDialog';
+import UnlinkIdentityConfirmDialog from './UnlinkIdentityConfirmDialog';
+import { mapState } from 'vuex';
 
 export default {
   components: { KeyImportDialog, UnlinkIdentityConfirmDialog },
@@ -45,7 +48,7 @@ export default {
     return {};
   },
   mounted() {
-    this.$store.dispatch("identity/init");
+    this.$store.dispatch('identity/init');
   },
   computed: {
     ...mapState({
@@ -75,7 +78,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .pointer {

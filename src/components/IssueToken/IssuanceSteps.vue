@@ -74,10 +74,10 @@
 </template>
 
 <script>
-import TokenTypeStep from "./TokenTypeStep";
-import IssuerAndNameStep from "./IssuerAndNameStep";
-import TokenDetailsStep from "./TokenDetailsStep";
-import TokenSummaryStep from "./TokenSummaryStep";
+import TokenTypeStep from './TokenTypeStep';
+import IssuerAndNameStep from './IssuerAndNameStep';
+import TokenDetailsStep from './TokenDetailsStep';
+import TokenSummaryStep from './TokenSummaryStep';
 
 export default {
   components: { TokenTypeStep, IssuerAndNameStep, TokenDetailsStep, TokenSummaryStep },
@@ -85,9 +85,9 @@ export default {
     step: 1,
     validFormStep2: true,
     validFormStep3: true,
-    type: "fat0",
-    tokenId: "",
-    issuerId: "",
+    type: 'fat0',
+    tokenId: '',
+    issuerId: '',
     tokenDetails: {}
   }),
   methods: {
@@ -112,11 +112,10 @@ export default {
     },
     issue() {
       // TODO
-      console.log("issue");
+      console.log('issue');
     }
   }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

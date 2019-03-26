@@ -3,17 +3,12 @@
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
         <v-btn fab depressed large slot="activator" color="white" exact :to="`/fct`">
-          <img class="token-icon" src="@/assets/img/fct.png">
+          <img class="token-icon" src="@/assets/img/fct.png" />
         </v-btn>
         <span>Factoid (FCT)</span>
       </v-tooltip>
 
-      <v-tooltip
-        class="token-margin"
-        right
-        v-for="token in trackedTokens"
-        v-bind:key="token.chainId"
-      >
+      <v-tooltip class="token-margin" right v-for="token in trackedTokens" v-bind:key="token.chainId">
         <v-btn
           fab
           depressed
@@ -23,12 +18,13 @@
           class="primary--text font-weight-black title"
           exact
           :to="`/token/${token.chainId}`"
-        >{{getTokenIcon(token)}}</v-btn>
-        <span>{{getTokenTooltip(token)}}</span>
+          >{{ getTokenIcon(token) }}</v-btn
+        >
+        <span>{{ getTokenTooltip(token) }}</span>
       </v-tooltip>
 
       <v-tooltip class="token-margin" right>
-        <v-btn fab outline large slot="activator" color="white" exact :to="{name: 'Actions'}">
+        <v-btn fab outline large slot="activator" color="white" exact :to="{ name: 'Actions' }">
           <v-icon class="fab-button-icon-fix">more_horiz</v-icon>
         </v-btn>
         <span>Actions</span>
@@ -53,12 +49,12 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
-  name: "SideBar",
+  name: 'SideBar',
   computed: {
-    ...mapGetters(["daemonsKo", "daemonsSyncing"]),
+    ...mapGetters(['daemonsKo', 'daemonsSyncing']),
     trackedTokens() {
       return Object.values(this.$store.state.tokens.tracked);
     }
@@ -68,9 +64,7 @@ export default {
       return token.symbol || token.tokenId[0];
     },
     getTokenTooltip(token) {
-      return token.symbol
-        ? `${token.tokenId} (${token.symbol})`
-        : token.tokenId;
+      return token.symbol ? `${token.tokenId} (${token.symbol})` : token.tokenId;
     }
   }
 };
