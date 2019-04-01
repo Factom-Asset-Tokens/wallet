@@ -7,11 +7,9 @@ export async function buildTransaction(store, balances, outputAddress, amount) {
 
   const tx = getFeeAdjustedTransaction(balances, outputAddress, outputAmount, ecRate);
   // Get inputs secret keys
-  const walletd = store.getters['walletd/cli'];
-  const inputsSecrets = await Promise.map(tx.inputs, async function(input) {
-    const { secret } = await walletd.call('address', {
-      address: input.address
-    });
+  const keystore = store.state.keystore.store;
+  const inputsSecrets = await Promise.map(tx.inputs, function(input) {
+    const secret = keystore.getSecretKey(input.address);
     return { secret, amount: input.amount };
   });
 

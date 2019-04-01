@@ -6,7 +6,7 @@
       <ConvertFctToEc></ConvertFctToEc>
     </v-layout>
     <v-alert v-else value="true" class="title" type="error" outline
-      >The configuration of factomd or walletd is incorrect. Go to the settings to fix them.</v-alert
+      >The configuration of factomd is incorrect. Go to the settings to fix them.</v-alert
     >
   </v-container>
 </template>
@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     canManageFactoids() {
-      return this.availableFeatures('factomd', 'walletd');
+      return this.availableFeatures('factomd');
     }
   },
   created() {

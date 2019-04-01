@@ -1,6 +1,5 @@
 'use strict';
 
-import Walletd from './background/walletd';
 import { app, protocol, BrowserWindow } from 'electron';
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib';
 import Store from 'electron-store';
@@ -44,7 +43,7 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    quitApp();
+    app.quit();
   }
 });
 
@@ -76,25 +75,12 @@ if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', data => {
       if (data === 'graceful-exit') {
-        quitApp();
+        app.quit();
       }
     });
   } else {
     process.on('SIGTERM', () => {
-      quitApp();
+      app.quit();
     });
   }
-}
-
-// Walletd binary
-const walletd = new Walletd(app);
-
-if (walletd.available()) {
-  walletd.launch();
-  walletd.bootstrap();
-}
-
-function quitApp() {
-  walletd.stop();
-  app.quit();
 }

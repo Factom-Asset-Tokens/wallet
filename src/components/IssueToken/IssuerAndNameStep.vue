@@ -31,7 +31,7 @@ export default {
   }),
   computed: {
     identities() {
-      return this.$store.state.walletd.identitySupport ? Object.keys(this.$store.state.identity.identities).sort() : [];
+      return Object.keys(this.$store.state.identity.identities).sort();
     },
     identityRules() {
       const identityStore = this.$store.state.identity;

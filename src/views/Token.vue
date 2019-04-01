@@ -24,7 +24,7 @@
     <v-layout v-else-if="!canManageFatTokens">
       <v-flex xs12>
         <v-alert value="true" type="error" class="title" outline
-          >The configuration of fatd, factomd or walletd is incorrect. Go to the settings to fix them.</v-alert
+          >The configuration of fatd or factomd is incorrect. Go to the settings to fix them.</v-alert
         >
       </v-flex>
     </v-layout>
@@ -66,7 +66,7 @@ export default {
       return this.balances.map(v => v.address);
     },
     canManageFatTokens() {
-      return this.availableFeatures('fatd', 'factomd', 'walletd');
+      return this.availableFeatures('fatd', 'factomd');
     },
     chainId() {
       return this.$route.params.chainid;

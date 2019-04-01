@@ -35,19 +35,6 @@
               </v-layout>
             </v-container>
           </div>
-          <div>
-            <h2>
-              Wallet Daemon
-              <DaemonStatus :status="walletdStatus" :version="walletdVersion"></DaemonStatus>
-            </h2>
-            <v-container>
-              <v-layout row wrap>
-                <v-flex xs12>
-                  <v-text-field label="Endpoint" v-model.trim="walletdEndpoint" :rules="urlRules"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </div>
         </v-flex>
       </v-layout>
     </v-container>
@@ -70,13 +57,10 @@ export default {
   },
   created: function() {
     this.debouncedUpdateFatd = debounce(this.$store.dispatch.bind(this, 'fatd/update'), 600);
-    this.debouncedUpdateWalletd = debounce(this.$store.dispatch.bind(this, 'walletd/update'), 600);
     this.debouncedUpdateFactomd = debounce(this.$store.dispatch.bind(this, 'factomd/update'), 600);
   },
   computed: {
     ...mapState({
-      walletdStatus: state => state.walletd.status,
-      walletdVersion: state => state.walletd.version,
       fatdStatus: state => state.fatd.status,
       fatdVersion: state => state.fatd.version,
       fatdSyncHeight: state => state.fatd.syncHeight,
@@ -93,14 +77,6 @@ export default {
       },
       set(value) {
         this.debouncedUpdateFatd(value);
-      }
-    },
-    walletdEndpoint: {
-      get() {
-        return this.$store.state.walletd.endpoint;
-      },
-      set(value) {
-        this.debouncedUpdateWalletd(value);
       }
     },
     factomdEndpoint: {

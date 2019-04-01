@@ -91,8 +91,8 @@
 
 <script>
 import SecretKeyInput from './SecretKeyInput';
-import { digital } from 'factom-identity-lib';
-const { getPublicIdentityKey, isValidSecretIdentityKey } = digital;
+import { app } from 'factom-identity-lib';
+const { getPublicIdentityKey, isValidSecretIdentityKey } = app;
 
 export default {
   components: { SecretKeyInput },

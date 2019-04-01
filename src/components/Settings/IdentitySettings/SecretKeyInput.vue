@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import { digital } from 'factom-identity-lib';
-const { isValidSecretIdentityKey } = digital;
+import { app } from 'factom-identity-lib';
+const { isValidSecretIdentityKey } = app;
 
 export default {
   props: ['validationRules'],

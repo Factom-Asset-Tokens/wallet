@@ -15,14 +15,19 @@ export default {
   getters: {
     fctAddressesWithNames: state => mapNames(state.fctAddresses, state.names),
     ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names),
-    payingEcAddress: function(state) {
+    payingEcAddress: function(state, getters, rootState) {
       if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress]) {
-        return state.preferredEcAddress;
+        return rootState.keystore.store.getSecretKey(state.preferredEcAddress);
       }
-      return state.ecAddresses.find(address => state.ecBalances[address]);
+      const found = state.ecAddresses.find(address => state.ecBalances[address]);
+      if (found) {
+        return rootState.keystore.store.getSecretKey(found);
+      }
     }
   },
   mutations: {
+    addEcAddress: (state, address) => state.ecAddresses.push(address),
+    addFctAddress: (state, address) => state.fctAddresses.push(address),
     updateEcAddresses: (state, addresses) => (state.ecAddresses = addresses),
     updateEcBalances: (state, balances) => (state.ecBalances = balances),
     updateFctAddresses: (state, addresses) => (state.fctAddresses = addresses),
@@ -39,15 +44,10 @@ export default {
   },
   actions: {
     async init({ rootState, dispatch }) {
-      if (rootState.walletd.status === 'ok') {
-        await dispatch('fetchAddresses');
-        if (rootState.factomd.status === 'ok') {
-          await dispatch('fetchBalances');
-        } else {
-          dispatch('clearBalances');
-        }
+      await dispatch('fetchAddresses');
+      if (rootState.factomd.status === 'ok') {
+        await dispatch('fetchBalances');
       } else {
-        dispatch('clearAddresses');
         dispatch('clearBalances');
       }
     },
@@ -59,24 +59,9 @@ export default {
       commit('updateFctBalances', {});
       commit('updateEcBalances', {});
     },
-    async fetchAddresses({ commit, rootGetters }) {
-      const cli = rootGetters['walletd/cli'];
-      const data = await cli.call('all-addresses');
-      if (Array.isArray(data.addresses)) {
-        const ec = [],
-          fct = [];
-        data.addresses
-          .map(a => a.public)
-          .forEach(function(address) {
-            if (address[0] === 'E') {
-              ec.push(address);
-            } else {
-              fct.push(address);
-            }
-          });
-        commit('updateEcAddresses', ec);
-        commit('updateFctAddresses', fct);
-      }
+    async fetchAddresses({ rootState, commit }) {
+      commit('updateFctAddresses', rootState.keystore.store.getAllFactoidAddresses());
+      commit('updateEcAddresses', rootState.keystore.store.getAllEntryCreditAddresses());
     },
     async fetchBalances({ dispatch }) {
       await Promise.all([dispatch('fetchFctBalances'), dispatch('fetchEcBalances')]);
@@ -103,10 +88,29 @@ export default {
       }
       commit('updateEcBalances', ecBalances);
     },
-    async importAddress({ rootGetters, dispatch }, address) {
-      const cli = rootGetters['walletd/cli'];
-      await cli.call('import-addresses', { addresses: [{ secret: address }] });
+    async importAddress({ rootState, dispatch }, address) {
+      await rootState.keystore.store.import(address);
       await dispatch('init');
+    },
+    async generateAddress({ dispatch }, type) {
+      switch (type) {
+        case 'factoid':
+          dispatch('generateFctAddress');
+          break;
+        case 'ec':
+          dispatch('generateEcAddress');
+          break;
+      }
+    },
+    async generateFctAddress({ rootState, commit, dispatch }) {
+      const { public: fctPub } = await rootState.keystore.store.generateFactoidAddress();
+      commit('addFctAddress', fctPub);
+      await dispatch('fetchFctBalances');
+    },
+    async generateEcAddress({ rootState, commit, dispatch }) {
+      const { public: ecPub } = await rootState.keystore.store.generateEntryCreditAddress();
+      commit('addEcAddress', ecPub);
+      await dispatch('fetchEcBalances');
     }
   }
 };

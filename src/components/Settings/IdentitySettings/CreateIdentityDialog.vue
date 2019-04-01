@@ -35,9 +35,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary" flat outline @click="display = false">Close</v-btn>
-        <v-btn color="primary" @click="create" :disabled="!valid || createLoading" :loading="createLoading"
-          >Create</v-btn
-        >
+        <v-btn color="primary" @click="create" :disabled="!valid" :loading="createLoading">Create</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -66,21 +64,23 @@ export default {
         this.createLoading = true;
         this.createError = '';
         try {
-          const manager = this.$store.getters['identity/manager'];
           const payingEcAddress = this.$store.getters['address/payingEcAddress'];
 
           if (!payingEcAddress) {
             throw new Error('No Entry Credit available to pay for the transaction.');
           }
-          const created = await manager.createIdentity(this.tags, this.numberOfKeys, payingEcAddress, {
-            fromWalletSeed: true
-          });
+
+          const manager = this.$store.getters['identity/manager'];
+          const keystore = this.$store.state.keystore.store;
+          const keys = await keystore.generateIdentityKey(this.numberOfKeys);
+          const publicKeys = keys.map(k => k.public);
+          const created = await manager.createIdentity(this.tags, publicKeys, payingEcAddress);
+
+          await this.$store.dispatch('identity/fetchIdentityKeysFromKeyStore');
 
           const identity = {};
-          identity[created.chainId] = created.identityKeys.map(k => k.public);
-          await this.$store.dispatch('identity/fetchIdentityKeysFromWalletd');
+          identity[created.chainId] = publicKeys;
           this.$store.commit('identity/addIdentity', identity);
-
           this.display = false;
         } catch (e) {
           this.createError = e.message.includes('already exists')

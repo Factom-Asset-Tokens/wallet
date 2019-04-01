@@ -147,11 +147,9 @@ export default {
       }
 
       // Get inputs secret keys
-      const walletd = this.$store.getters['walletd/cli'];
+      const keystore = this.$store.state.keystore.store;
       const inputsSecrets = await Promise.map(inputs, async function(input) {
-        const { secret } = await walletd.call('address', {
-          address: input.address
-        });
+        const secret = keystore.getSecretKey(input.address);
         return { secret, amount: input.amount };
       });
 

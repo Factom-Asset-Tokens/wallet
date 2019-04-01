@@ -24,13 +24,8 @@ export default {
         return;
       }
     },
-    cli: (state, getters, rootState, rootGetters) => {
-      return getters.config
-        ? new FactomCli({
-            factomd: getters.config,
-            walletd: rootGetters['walletd/config']
-          })
-        : undefined;
+    cli: (state, getters) => {
+      return getters.config ? new FactomCli(getters.config) : undefined;
     }
   },
   mutations: {

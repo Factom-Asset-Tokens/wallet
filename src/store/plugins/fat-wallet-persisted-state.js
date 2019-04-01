@@ -10,12 +10,12 @@ export default createPersistedState({
     'address/setPreferredEcAddress',
     'fatd/updateEndpoint',
     'factomd/updateEndpoint',
-    'walletd/updateEndpoint',
     'tokens/addToken',
     'tokens/removeToken',
     'identity/updateIdentities',
     'identity/addIdentity',
-    'identity/unlinkIdentity'
+    'identity/unlinkIdentity',
+    'keystore/updateFilename'
   ],
   statePick: state => ({
     address: {
@@ -28,14 +28,14 @@ export default createPersistedState({
     factomd: {
       endpoint: state.factomd.endpoint
     },
-    walletd: {
-      endpoint: state.walletd.endpoint
-    },
     tokens: {
       tracked: state.tokens.tracked
     },
     identity: {
       identities: state.identity.identities
+    },
+    keystore: {
+      filename: state.keystore.filename
     }
   })
 });

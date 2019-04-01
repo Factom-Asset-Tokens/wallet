@@ -1,5 +1,15 @@
-import { digital } from 'factom-identity-lib';
-const { FactomIdentityManager } = digital;
+import Promise from 'bluebird';
+const electron = require('electron').remote;
+import path from 'path';
+import { app } from 'factom-identity-lib';
+import fs from 'fs';
+import { promisify } from 'util';
+const writeFile = promisify(fs.writeFile);
+const { FactomIdentityManager } = app;
+
+const CACHE_FILE_PATH = path.join(electron.app.getPath('appData'), 'fat-wallet', 'identity-cache.json');
+
+const save = data => writeFile(CACHE_FILE_PATH, JSON.stringify(data));
 
 export default {
   namespaced: true,
@@ -10,11 +20,19 @@ export default {
   getters: {
     manager: function(state, getters, rootState, rootGetters) {
       const config = {
-        factomd: rootGetters['factomd/config'],
-        walletd: rootGetters['walletd/config']
+        factomd: rootGetters['factomd/config']
       };
+      let initialCacheData;
+      try {
+        initialCacheData = JSON.parse(fs.readFileSync(CACHE_FILE_PATH, 'utf8'));
+      } catch (e) {
+        initialCacheData = null;
+      }
 
-      return new FactomIdentityManager(config);
+      return new FactomIdentityManager(config, {
+        save,
+        initialCacheData
+      });
     }
   },
   mutations: {
@@ -28,20 +46,13 @@ export default {
     }
   },
   actions: {
-    async init({ commit, dispatch, rootState }) {
-      if (rootState.walletd.status === 'ok' && rootState.walletd.identitySupport) {
-        await dispatch('fetchIdentityKeysFromWalletd');
-        await dispatch('refreshIdentities');
-      } else {
-        commit('updateIdentityKeysInWallet', []);
-      }
+    async init({ dispatch }) {
+      await dispatch('fetchIdentityKeysFromKeyStore');
+      await dispatch('refreshIdentities');
     },
-    async fetchIdentityKeysFromWalletd({ commit, getters }) {
-      const manager = getters.manager;
-
-      const identityKeys = await manager.getAllIdentityKeys();
-      const publicIdentityKeys = (identityKeys || []).map(k => k.public);
-      commit('updateIdentityKeysInWallet', publicIdentityKeys);
+    async fetchIdentityKeysFromKeyStore({ commit, rootState }) {
+      const identityKeys = rootState.keystore.store.getAllIdentityKeys();
+      commit('updateIdentityKeysInWallet', identityKeys);
     },
     async refreshIdentities({ state, getters, commit }) {
       const manager = getters.manager;
@@ -61,11 +72,11 @@ export default {
 
       commit('updateIdentities', identities);
     },
-    async importIdentityKeys({ getters, dispatch }, idKeys) {
+    async importIdentityKeys({ rootState, dispatch }, idKeys) {
       if (idKeys.length > 0) {
-        const manager = getters.manager;
-        await manager.importIdentityKeys(idKeys);
-        await dispatch('fetchIdentityKeysFromWalletd');
+        const keystore = rootState.keystore.store;
+        await Promise.map(idKeys, key => keystore.import(key), { concurrency: 1 });
+        await dispatch('fetchIdentityKeysFromKeyStore');
       }
     }
   }

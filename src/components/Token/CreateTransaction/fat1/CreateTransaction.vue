@@ -209,11 +209,9 @@ export default {
       const inputs = groupBy(idsWithOwner, e => e.owner);
 
       // Get inputs with secret keys
-      const walletd = this.$store.getters['walletd/cli'];
+      const keystore = this.$store.state.keystore.store;
       const inputsSecrets = await Promise.map(Object.keys(inputs), async function(address) {
-        const { secret } = await walletd.call('address', {
-          address: address
-        });
+        const secret = keystore.getSecretKey(address);
         const ids = inputs[address].map(i => (i.id.min === i.id.max ? i.id.min : i.id));
         return { secret, ids };
       });

@@ -26,10 +26,7 @@
         <v-container fluid>
           <v-layout>
             <v-flex xs12>
-              <div v-if="!identitySupport" class="font-italic subheading">
-                The version of factom-walletd you are connected to does not support digital identities.
-              </div>
-              <IdentityTree v-else-if="hasIdentity"></IdentityTree>
+              <IdentityTree v-if="hasIdentity"></IdentityTree>
               <div v-else class="font-italic subheading">
                 No digital identity currently saved in the wallet. You only need an identity if you wish to create or
                 manage your own tokens.
@@ -89,11 +86,10 @@ export default {
   },
   computed: {
     ...mapState({
-      identitySupport: state => state.walletd.identitySupport,
       identities: state => state.identity.identities
     }),
     disableIdentityOperations() {
-      return !this.availableFeatures('identity', 'factomd');
+      return !this.availableFeatures('factomd');
     },
     hasIdentity() {
       return Object.keys(this.identities).length > 0;

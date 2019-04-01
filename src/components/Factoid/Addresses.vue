@@ -29,8 +29,8 @@
         <v-spacer></v-spacer>
 
         <v-toolbar-items>
-          <v-btn flat :disabled="!walletdOk" @click="generateAddress()">Generate</v-btn>
-          <v-btn flat :disabled="!walletdOk" @click.stop="$refs.addressImportDialog.show()">Import</v-btn>
+          <v-btn flat @click="generateAddress()">Generate</v-btn>
+          <v-btn flat @click.stop="$refs.addressImportDialog.show()">Import</v-btn>
         </v-toolbar-items>
 
         <v-tabs slot="extension" v-model="tab" grow color="primary">
@@ -179,9 +179,6 @@ export default {
         )
       );
     },
-    walletdOk() {
-      return this.$store.state.walletd.status === 'ok';
-    },
     selectedAddressType() {
       switch (this.tab) {
         case 0:
@@ -195,11 +192,10 @@ export default {
   },
   methods: {
     async generateAddress() {
-      const cli = this.$store.getters['walletd/cli'];
       try {
-        await cli.call(`generate-${this.selectedAddressType}-address`);
-        await this.$store.dispatch('address/init');
-        const message = `New ${this.selectedAddressType} address generated`;
+        const type = this.selectedAddressType;
+        await this.$store.dispatch('address/generateAddress', type);
+        const message = `New ${type} address generated`;
         this.$store.commit('snackSuccess', message);
       } catch (e) {
         this.$store.commit('snackError', e.message);
