@@ -1,33 +1,41 @@
+<!-- Note: This component makes an unorthodox use of v-treeview -->
 <template>
   <div>
-    <v-treeview :items="identityTreeItems" item-key="name">
+    <v-treeview :items="identityTreeItems" item-key="id">
       <template slot="prepend" slot-scope="{ item, leaf }">
         <v-icon v-if="!leaf">person</v-icon>
-        <v-icon v-else-if="leaf && item.available" color="green" title="Secret key available in the wallet"
-          >vpn_key</v-icon
-        >
-        <v-icon
-          v-else
-          color="grey"
-          title="Secret key NOT available in the wallet"
-          @click.stop="$refs.keyImportDialog.show(item.name)"
-          >vpn_key</v-icon
-        >
+        <span v-else-if="item.type === 'chainid'" class="font-italic subheading">Chain ID:</span>
+        <template v-else>
+          <v-icon v-if="item.available" color="green" title="Secret key available in the wallet">vpn_key</v-icon>
+          <v-icon
+            v-else
+            color="grey"
+            title="Secret key NOT available in the wallet"
+            @click.stop="$refs.keyImportDialog.show(item.id)"
+            >vpn_key</v-icon
+          >
+        </template>
       </template>
       <template slot="label" slot-scope="{ item, leaf }">
-        <div v-if="!leaf">({{ item.availableKeys }}/{{ item.totalKeys }}) {{ item.name }}</div>
-        <div v-else-if="leaf && item.available">{{ item.name }}</div>
-        <div
-          v-else
-          class="grey--text pointer"
-          title="Secret key NOT available in the wallet"
-          @click.stop="$refs.keyImportDialog.show(item.name)"
-        >
-          {{ item.name }}
+        <div v-if="!leaf">
+          <span class="">{{ item.keyCount }}</span>
+          <span class="font-weight-bold secondary--text name-left-margin">{{ item.name }}</span>
         </div>
+        <div v-else-if="item.type === 'chainid'" class="font-italic subheading">{{ item.id }}</div>
+        <template v-else>
+          <div v-if="item.available">{{ item.id }}</div>
+          <div
+            v-else
+            class="grey--text pointer"
+            title="Secret key NOT available in the wallet"
+            @click.stop="$refs.keyImportDialog.show(item.id)"
+          >
+            {{ item.id }}
+          </div>
+        </template>
       </template>
       <template slot="append" slot-scope="{ item, leaf }">
-        <v-icon v-if="!leaf" @click.stop="$refs.unlinkIdentityDialog.show(item.name)" title="Unlink identity"
+        <v-icon v-if="!leaf" @click.stop="$refs.unlinkIdentityDialog.show(item.id)" title="Unlink identity"
           >link_off</v-icon
         >
       </template>
@@ -47,9 +55,6 @@ export default {
   data: function() {
     return {};
   },
-  mounted() {
-    this.$store.dispatch('identity/init');
-  },
   computed: {
     ...mapState({
       identities: state => state.identity.identities,
@@ -60,18 +65,22 @@ export default {
       return Object.keys(this.identities)
         .sort()
         .map(function(chainId) {
-          const keys = that.identities[chainId].map(key => ({
-            name: key,
+          const keys = that.identities[chainId].keys.map(key => ({
+            id: key,
+            type: 'key',
             available: that.identityKeysInWallet.has(key)
           }));
+          const children = [{ id: chainId, type: 'chainid' }].concat(keys);
 
           const totalKeys = keys.length;
           const availableKeys = keys.filter(k => k.available).length;
+          const keyCount = `(${availableKeys}/${totalKeys})`;
+          const name = that.identities[chainId].name.join(' ');
           return {
-            name: `${chainId}`,
-            totalKeys,
-            availableKeys,
-            children: keys
+            id: chainId,
+            name,
+            keyCount,
+            children
           };
         });
     }
@@ -82,5 +91,8 @@ export default {
 <style scoped>
 .pointer {
   cursor: pointer;
+}
+.name-left-margin {
+  margin-left: 10px;
 }
 </style>

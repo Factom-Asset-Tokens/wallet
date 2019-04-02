@@ -40,7 +40,9 @@ export default {
         v => !!v || 'Select an issuing identity',
         function(v) {
           if (v) {
-            const availableKeys = identityStore.identities[v].filter(k => identityStore.identityKeysInWallet.has(k));
+            const availableKeys = identityStore.identities[v].keys.filter(k =>
+              identityStore.identityKeysInWallet.has(k)
+            );
             return availableKeys.length > 0 || 'No identity keys available in the wallet for this identity.';
           } else {
             return true;

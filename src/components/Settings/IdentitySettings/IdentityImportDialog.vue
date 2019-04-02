@@ -109,6 +109,7 @@ export default {
       // Step 2
       validStep2: true,
       identityActivePublicKeys: [],
+      identityName: [],
       addedPrivateKeys: []
     };
   },
@@ -148,6 +149,9 @@ export default {
         try {
           const manager = this.$store.getters['identity/manager'];
           this.identityActivePublicKeys = await manager.getActivePublicIdentityKeys(this.identityChainId);
+          this.identityName = await manager
+            .getIdentityName(this.identityChainId)
+            .then(name => name.map(n => n.toString()));
           this.addedPrivateKeys = Array(this.missingIdentityKeys.size).fill('');
           this.step = 2;
         } catch (e) {
@@ -160,7 +164,9 @@ export default {
     importIdentity() {
       if (this.$refs.formStep2.validate()) {
         const identity = {};
-        identity[this.identityChainId] = this.identityActivePublicKeys.slice();
+        identity[this.identityChainId] = {};
+        identity[this.identityChainId].keys = [...this.identityActivePublicKeys];
+        identity[this.identityChainId].name = [...this.identityName];
         this.$store.commit('identity/addIdentity', identity);
         const keysToImport = this.addedPrivateKeys.filter(pk => pk);
         this.$store.dispatch('identity/importIdentityKeys', keysToImport);

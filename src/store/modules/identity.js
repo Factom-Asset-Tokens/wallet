@@ -57,17 +57,25 @@ export default {
     async refreshIdentities({ state, getters, commit }) {
       const manager = getters.manager;
 
-      const identities = {};
+      const identityChainIds = Object.keys(state.identities);
+      const identities = identityChainIds.reduce((acc, val) => {
+        acc[val] = {};
+        return acc;
+      }, {});
+
       await Promise.all(
-        Object.keys(state.identities).map(chainId =>
-          manager
-            .getActivePublicIdentityKeys(chainId)
-            .then(keys => (identities[chainId] = keys))
-            .catch(e => {
-              console.error(e.message);
-              identities[chainId] = [];
-            })
-        )
+        identityChainIds.map(async function(chainId) {
+          try {
+            const keys = await manager.getActivePublicIdentityKeys(chainId);
+            const name = await manager.getIdentityName(chainId);
+            identities[chainId].keys = keys;
+            identities[chainId].name = name.map(n => n.toString());
+          } catch (e) {
+            console.error(e.message);
+            identities[chainId].keys = [];
+            identities[chainId].name = [];
+          }
+        })
       );
 
       commit('updateIdentities', identities);

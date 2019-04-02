@@ -49,7 +49,7 @@ export default {
       valid: true,
       createLoading: false,
       tags: ['FAT'],
-      numberOfKeysSelect: [2, 3, 4, 5, 6, 7, 8, 9, 10],
+      numberOfKeysSelect: [2, 3, 4, 5, 6, 7, 8, 9],
       numberOfKeys: 3,
       createError: '',
       tagRules: [v => v.length > 0 || 'At least one tag is required']
@@ -79,7 +79,9 @@ export default {
           await this.$store.dispatch('identity/fetchIdentityKeysFromKeyStore');
 
           const identity = {};
-          identity[created.chainId] = publicKeys;
+          identity[created.chainId] = {};
+          identity[created.chainId].keys = publicKeys;
+          identity[created.chainId].name = [...this.tags];
           this.$store.commit('identity/addIdentity', identity);
           this.display = false;
         } catch (e) {
