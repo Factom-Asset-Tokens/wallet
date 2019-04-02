@@ -68,23 +68,25 @@ export default {
     },
     async fetchFctBalances({ state, commit, rootGetters }) {
       const cli = rootGetters['factomd/cli'];
+      const fctAddresses = state.fctAddresses;
       const { balances } = await cli.factomdApi('multiple-fct-balances', {
-        addresses: state.fctAddresses
+        addresses: fctAddresses
       });
       const fctBalances = {};
-      for (let i = 0; i < state.fctAddresses.length; ++i) {
-        fctBalances[state.fctAddresses[i]] = balances[i].ack;
+      for (let i = 0; i < fctAddresses.length; ++i) {
+        fctBalances[fctAddresses[i]] = balances[i].ack;
       }
       commit('updateFctBalances', fctBalances);
     },
     async fetchEcBalances({ state, commit, rootGetters }) {
       const cli = rootGetters['factomd/cli'];
+      const ecAddresses = state.ecAddresses;
       const { balances } = await cli.factomdApi('multiple-ec-balances', {
-        addresses: state.ecAddresses
+        addresses: ecAddresses
       });
       const ecBalances = {};
-      for (let i = 0; i < state.ecAddresses.length; ++i) {
-        ecBalances[state.ecAddresses[i]] = balances[i].ack;
+      for (let i = 0; i < ecAddresses.length; ++i) {
+        ecBalances[ecAddresses[i]] = balances[i].ack;
       }
       commit('updateEcBalances', ecBalances);
     },
