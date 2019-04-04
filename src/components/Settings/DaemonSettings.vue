@@ -39,6 +39,9 @@
         <v-flex xs12 text-xs-center>
           <v-btn class="primary" @click="resetEndpoints">Reset to default endpoints</v-btn>
         </v-flex>
+        <v-flex xs12 text-xs-center>
+          <v-btn class="primary" @click="setLocalHostEndpoints">DEV: localhost</v-btn>
+        </v-flex>
       </v-layout>
     </v-container>
   </v-sheet>
@@ -95,6 +98,10 @@ export default {
     resetEndpoints() {
       this.$store.dispatch('fatd/update', 'http://0.testnet.fat.dbgrow.com:8078');
       this.$store.dispatch('factomd/update', 'https://dev.factomd.net/v2');
+    },
+    setLocalHostEndpoints() {
+      this.$store.dispatch('fatd/update', 'http://localhost:8078');
+      this.$store.dispatch('factomd/update', 'http://localhost:8088/v2');
     }
   }
 };
