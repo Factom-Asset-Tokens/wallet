@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { displayIds, sortIds, standardizeId } from '@/components/Token/nf-token-ids.js';
+import { displayIds, sortIds, standardizeId } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
   props: ['ios', 'type'],

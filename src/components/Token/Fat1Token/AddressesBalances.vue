@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { displayIds, sortIds } from '@/components/Token/nf-token-ids.js';
-import NfTokenDetailsDialog from '@/components/Token/NfTokenDetailsDialog';
+import { displayIds, sortIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
+import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDialog';
 
 export default {
   components: { NfTokenDetailsDialog },

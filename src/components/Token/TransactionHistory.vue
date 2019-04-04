@@ -1,10 +1,5 @@
 <template>
   <div>
-    <v-flex text-xs-center xs12 my-4>
-      <v-sheet class="white--text" color="primary" elevation="1">
-        <div class="display-1 font-weight-bold">Transaction history</div>
-      </v-sheet>
-    </v-flex>
     <v-list v-if="movements.length > 0">
       <template v-for="(tx, index) in movements">
         <v-list-tile :key="tx.id + tx.address" @click.stop="openDetails(tx.id)">

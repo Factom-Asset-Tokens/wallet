@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer width="120" class="grad" permanent app>
+  <v-navigation-drawer width="120" class="grad" permanent app floating>
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
         <v-btn fab depressed large slot="activator" color="white" exact :to="`/fct`">

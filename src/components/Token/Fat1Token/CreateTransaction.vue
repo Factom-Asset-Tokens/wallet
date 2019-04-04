@@ -1,15 +1,10 @@
 <template>
   <v-layout wrap>
-    <v-flex text-xs-center xs12 mt-5>
-      <v-sheet class="white--text" color="primary" elevation="1">
-        <div class="display-1 font-weight-bold">Send transaction</div>
-      </v-sheet>
-    </v-flex>
     <v-flex>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
         <v-container fluid>
           <v-layout wrap align-baseline>
-            <v-flex xs12 mt-3>
+            <v-flex xs12>
               <div class="headline">Available Tokens</div>
             </v-flex>
             <v-flex xs12>
@@ -47,7 +42,7 @@
                   {{ id | displayIds }}
                 </v-chip>
               </div>
-              <div v-else class="font-italic subheading">
+              <div v-else class="font-italic subheading primary--text">
                 Start selecting tokens from the "Available Tokens" section.
               </div>
             </v-flex>
@@ -120,13 +115,13 @@ import flatmap from 'lodash.flatmap';
 import groupBy from 'lodash.groupby';
 import { isValidPublicFctAddress } from 'factom';
 import { TransactionBuilder } from '@fat-token/fat-js/1/Transaction';
-import { displayIds, idsSetDiff, matchOwners } from '@/components/Token/nf-token-ids.js';
+import { displayIds, idsSetDiff, matchOwners } from '@/components/Token/Fat1Token/nf-token-ids.js';
 import SendTransaction from '@/mixins/SendTransaction';
 // Components
-import SelectIdRangeDialog from './SelectIdRangeDialog';
-import ConfirmTransactionDialog from './ConfirmTransactionDialog';
-import ConfirmBurnDialog from './ConfirmBurnDialog';
-import NfTokenDetailsDialog from '@/components/Token/NfTokenDetailsDialog';
+import SelectIdRangeDialog from './CreateTransaction/SelectIdRangeDialog';
+import ConfirmTransactionDialog from './CreateTransaction/ConfirmTransactionDialog';
+import ConfirmBurnDialog from './CreateTransaction/ConfirmBurnDialog';
+import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDialog';
 
 export default {
   props: ['symbol', 'tokenCli', 'balances'],

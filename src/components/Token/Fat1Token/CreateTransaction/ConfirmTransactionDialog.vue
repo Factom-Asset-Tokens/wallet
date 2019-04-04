@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { displayIds } from '@/components/Token/nf-token-ids.js';
+import { displayIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
   props: ['selectedTokens', 'address'],
