@@ -1,7 +1,7 @@
 <template>
   <v-sheet elevation="1">
     <v-container>
-      <v-layout>
+      <v-layout wrap>
         <v-flex xs12>
           <div>
             <h2>
@@ -35,6 +35,9 @@
               </v-layout>
             </v-container>
           </div>
+        </v-flex>
+        <v-flex xs12 text-xs-center>
+          <v-btn class="primary" @click="resetEndpoints">Reset to default endpoints</v-btn>
         </v-flex>
       </v-layout>
     </v-container>
@@ -86,6 +89,12 @@ export default {
       set(value) {
         this.debouncedUpdateFactomd(value);
       }
+    }
+  },
+  methods: {
+    resetEndpoints() {
+      this.$store.dispatch('fatd/update', 'http://0.testnet.fat.dbgrow.com:8078');
+      this.$store.dispatch('factomd/update', 'https://dev.factomd.net/v2');
     }
   }
 };
