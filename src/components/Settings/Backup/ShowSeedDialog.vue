@@ -4,7 +4,7 @@
       <v-card-title class="headline primary white--text" primary-title>Your Wallet Seed</v-card-title>
       <v-card-text class="headline font-weight-bold">
         <v-layout wrap>
-          <v-flex xs12 text-xs-center v-for="word in seed" :key="word">{{ word }}</v-flex>
+          <v-flex xs12 text-xs-center v-for="(word, index) in seed" :key="word + index">{{ word }}</v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
