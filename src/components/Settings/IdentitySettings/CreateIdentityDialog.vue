@@ -25,6 +25,9 @@
               <v-flex xs12>
                 <v-select v-model="numberOfKeys" :items="numberOfKeysSelect" label="Number of identity keys"></v-select>
               </v-flex>
+              <v-flex xs12 mt-1>
+                <v-alert :value="true" type="info" outline>Creating an identity costs 11 Entry Credits.</v-alert>
+              </v-flex>
               <v-flex>
                 <v-alert :value="createError" color="error" icon="warning" outline>{{ createError }}</v-alert>
               </v-flex>
