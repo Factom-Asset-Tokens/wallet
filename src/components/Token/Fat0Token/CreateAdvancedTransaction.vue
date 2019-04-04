@@ -2,8 +2,8 @@
   <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
     <v-layout row wrap>
       <v-flex xs12 pb-4>
-        <v-toolbar class="elevation-1">
-          <v-toolbar-title>Inputs</v-toolbar-title>
+        <v-toolbar class="elevation-1" color="primary">
+          <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
           <div class="total-amount">{{ totalInputs }} {{ symbol }}</div>
@@ -24,9 +24,9 @@
           :alreadySelectedAddresses="selectedInputAddresses"
         ></TransactionInput>
       </v-flex>
-      <v-flex xs12 pb-4>
-        <v-toolbar class="elevation-1">
-          <v-toolbar-title>Outputs</v-toolbar-title>
+      <v-flex xs12 pt-5 pb-4>
+        <v-toolbar class="elevation-1" color="primary">
+          <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
 
           <v-spacer></v-spacer>
           <div class="total-amount">{{ totalOutputs }} {{ symbol }}</div>
@@ -74,7 +74,7 @@
           </v-alert>
         </v-flex>
 
-        <v-flex xs12 sm2 text-xs-right>
+        <v-flex xs12 sm2 text-xs-right pt-5>
           <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
             >Send
             <v-icon right>send</v-icon>
