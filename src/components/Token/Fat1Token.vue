@@ -20,7 +20,7 @@
         :symbol="token.symbol"
       ></TransactionHistory>
     </v-container>
-    <SideBar @show="showComponent = $event" :tokenId="token.tokenId"></SideBar>
+    <NavigationDrawer @show="showComponent = $event" :tokenId="token.tokenId"></NavigationDrawer>
   </div>
 </template>
 
@@ -30,7 +30,7 @@ import TransactionHistory from './TransactionHistory';
 
 import AddressesBalances from './Fat1Token/AddressesBalances';
 import CreateTransaction from './Fat1Token/CreateTransaction';
-import SideBar from './Fat1Token/SideBar';
+import NavigationDrawer from './Fat1Token/NavigationDrawer';
 
 import Promise from 'bluebird';
 import { standardizeId } from './Fat1Token/nf-token-ids.js';
@@ -42,7 +42,7 @@ export default {
     AddressesBalances,
     CreateTransaction,
     TransactionHistory,
-    SideBar
+    NavigationDrawer
   },
   props: ['token', 'tokenCli'],
   data() {

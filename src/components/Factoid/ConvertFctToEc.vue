@@ -1,10 +1,5 @@
 <template>
   <v-layout wrap>
-    <v-flex text-xs-center xs12 my-4>
-      <v-sheet class="white--text" color="primary" elevation="1">
-        <h1>Convert Factoids to Entry Credits</h1>
-      </v-sheet>
-    </v-flex>
     <v-flex xs12>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
         <v-layout row wrap align-baseline>

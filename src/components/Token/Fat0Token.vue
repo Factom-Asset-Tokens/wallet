@@ -25,7 +25,7 @@
         :symbol="token.symbol"
       ></TransactionHistory>
     </v-container>
-    <SideBar @show="showComponent = $event" :tokenId="token.tokenId"></SideBar>
+    <NavigationDrawer @show="showComponent = $event" :tokenId="token.tokenId"></NavigationDrawer>
   </div>
 </template>
 
@@ -36,7 +36,7 @@ import TransactionHistory from './TransactionHistory';
 import AddressesBalances from './Fat0Token/AddressesBalances';
 import CreateBasicTransaction from './Fat0Token/CreateBasicTransaction';
 import CreateAdvancedTransaction from './Fat0Token/CreateAdvancedTransaction';
-import SideBar from './Fat0Token/SideBar';
+import NavigationDrawer from './Fat0Token/NavigationDrawer';
 
 import Promise from 'bluebird';
 
@@ -48,7 +48,7 @@ export default {
     CreateBasicTransaction,
     CreateAdvancedTransaction,
     TransactionHistory,
-    SideBar
+    NavigationDrawer
   },
   props: ['token', 'tokenCli'],
   data() {
