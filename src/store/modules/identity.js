@@ -48,13 +48,13 @@ export default {
   actions: {
     async init({ dispatch }) {
       await dispatch('fetchIdentityKeysFromKeyStore');
-      await dispatch('refreshIdentities');
+      await dispatch('refreshIdentitiesActiveKeys');
     },
     async fetchIdentityKeysFromKeyStore({ commit, rootState }) {
       const identityKeys = rootState.keystore.store.getAllIdentityKeys();
       commit('updateIdentityKeysInWallet', identityKeys);
     },
-    async refreshIdentities({ state, getters, commit }) {
+    async refreshIdentitiesActiveKeys({ state, getters, commit }) {
       const manager = getters.manager;
 
       const identityChainIds = Object.keys(state.identities);
@@ -71,9 +71,13 @@ export default {
             identities[chainId].keys = keys;
             identities[chainId].name = name.map(n => n.toString());
           } catch (e) {
-            console.error(e.message);
-            identities[chainId].keys = [];
-            identities[chainId].name = [];
+            if (e.message === 'Chain not yet included in a Directory Block') {
+              identities[chainId] = Object.assign({}, state.identities[chainId]);
+            } else {
+              console.error(e);
+              identities[chainId].keys = [];
+              identities[chainId].name = [];
+            }
           }
         })
       );
@@ -86,6 +90,20 @@ export default {
         await Promise.map(idKeys, key => keystore.import(key), { concurrency: 1 });
         await dispatch('fetchIdentityKeysFromKeyStore');
       }
+    },
+    async generateIdentity({ commit, getters, rootState, dispatch }, { numberOfKeys, payingEcAddress, name }) {
+      const manager = getters.manager;
+      const keys = await rootState.keystore.store.generateIdentityKey(numberOfKeys);
+      const publicKeys = keys.map(k => k.public);
+      const created = await manager.createIdentity(name, publicKeys, payingEcAddress);
+
+      await dispatch('fetchIdentityKeysFromKeyStore');
+
+      const identity = {};
+      identity[created.chainId] = {};
+      identity[created.chainId].keys = publicKeys;
+      identity[created.chainId].name = [...name];
+      commit('addIdentity', identity);
     }
   }
 };

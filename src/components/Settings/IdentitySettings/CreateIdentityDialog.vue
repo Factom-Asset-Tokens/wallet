@@ -73,19 +73,12 @@ export default {
             throw new Error('No Entry Credit available to pay for the transaction.');
           }
 
-          const manager = this.$store.getters['identity/manager'];
-          const keystore = this.$store.state.keystore.store;
-          const keys = await keystore.generateIdentityKey(this.numberOfKeys);
-          const publicKeys = keys.map(k => k.public);
-          const created = await manager.createIdentity(this.tags, publicKeys, payingEcAddress);
+          await this.$store.dispatch('identity/generateIdentity', {
+            numberOfKeys: this.numberOfKeys,
+            payingEcAddress,
+            name: this.tags
+          });
 
-          await this.$store.dispatch('identity/fetchIdentityKeysFromKeyStore');
-
-          const identity = {};
-          identity[created.chainId] = {};
-          identity[created.chainId].keys = publicKeys;
-          identity[created.chainId].name = [...this.tags];
-          this.$store.commit('identity/addIdentity', identity);
           this.display = false;
         } catch (e) {
           this.createError = e.message.includes('already exists')

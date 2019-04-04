@@ -82,7 +82,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch('identity/init');
+    this.$store.dispatch('identity/refreshIdentitiesActiveKeys');
   },
   computed: {
     ...mapState({

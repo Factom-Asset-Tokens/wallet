@@ -22,9 +22,6 @@ export default {
     return {
       showComponent: 'identity'
     };
-  },
-  mounted() {
-    this.$store.dispatch('init');
   }
 };
 </script>
