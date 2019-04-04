@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="1024px" @keydown.esc="display = false" @keydown.enter="display = false">
+  <v-dialog v-model="display" max-width="1024px" @keydown.esc="display = false" @keydown.enter="display = false">
     <v-card v-if="transaction">
       <v-card-title class="headline primary white--text" primary-title>Transaction details</v-card-title>
       <v-card-text>
