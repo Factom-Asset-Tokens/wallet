@@ -131,7 +131,7 @@ export default {
   async mounted() {
     this.loading = true;
     try {
-      await this.$store.dispatch('address/init');
+      await this.$store.dispatch('address/fetchBalances');
     } finally {
       this.loading = false;
     }

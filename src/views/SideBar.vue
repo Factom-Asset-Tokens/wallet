@@ -2,7 +2,7 @@
   <v-navigation-drawer width="120" class="grad" permanent app floating>
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
-        <v-btn fab depressed large slot="activator" color="white" exact :to="`/fct`">
+        <v-btn fab depressed active-class="secondary--text" large slot="activator" color="white" exact :to="`/fct`">
           <img class="token-icon" src="@/assets/img/fct.png" />
         </v-btn>
         <span>Factoid (FCT)</span>
@@ -10,12 +10,14 @@
 
       <v-tooltip class="token-margin" right v-for="token in trackedTokens" v-bind:key="token.chainId">
         <v-btn
+          slot="activator"
           fab
           depressed
           large
-          slot="activator"
+          active-class="secondary--text"
+          outline
           color="white"
-          class="primary--text font-weight-black title"
+          class="white--text font-weight-medium title"
           exact
           :to="`/token/${token.chainId}`"
         >
@@ -25,14 +27,23 @@
       </v-tooltip>
 
       <v-tooltip class="token-margin" right>
-        <v-btn fab outline large slot="activator" color="white" exact :to="{ name: 'Actions' }">
+        <v-btn
+          fab
+          outline
+          large
+          slot="activator"
+          active-class="secondary--text"
+          color="white"
+          exact
+          :to="{ name: 'Actions' }"
+        >
           <v-icon class="fab-button-icon-fix">more_horiz</v-icon>
         </v-btn>
         <span>Actions</span>
       </v-tooltip>
 
       <v-tooltip id="settings-link" right>
-        <v-btn icon flat large slot="activator" color="white" exact to="/settings">
+        <v-btn icon active-class="secondary--text" flat large slot="activator" color="white" exact to="/settings">
           <v-badge v-if="daemonsKo" color="error" right overlap>
             <span slot="badge">!</span>
             <v-icon large>settings</v-icon>
