@@ -24,7 +24,7 @@
       <v-toolbar tabs card color="primary">
         <v-icon large>list</v-icon>
 
-        <v-toolbar-title>Addresses</v-toolbar-title>
+        <v-toolbar-title>Manage Addresses</v-toolbar-title>
 
         <v-spacer></v-spacer>
 

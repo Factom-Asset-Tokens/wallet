@@ -1,26 +1,26 @@
 <template>
-  <v-container>
-    <IdentitySettings class="section-margin-bottom"></IdentitySettings>
-    <DaemonSettings class="section-margin-bottom"></DaemonSettings>
-    <Backup></Backup>
-    <v-layout>
-      <v-flex xs12 mt-5 text-xs-center>FAT Wallet v{{ version }}</v-flex>
-    </v-layout>
-  </v-container>
+  <div>
+    <v-container>
+      <IdentitySettings v-if="showComponent === 'identity'" class="section-margin-bottom"></IdentitySettings>
+      <DaemonSettings v-else-if="showComponent === 'connection'" class="section-margin-bottom"></DaemonSettings>
+      <Backup v-if="showComponent === 'backup'"></Backup>
+    </v-container>
+    <NavigationDrawer @show="showComponent = $event"></NavigationDrawer>
+  </div>
 </template>
 
 <script>
 import DaemonSettings from '@/components/Settings/DaemonSettings';
 import IdentitySettings from '@/components/Settings/IdentitySettings';
 import Backup from '@/components/Settings/Backup';
-import { version } from '@/../package.json';
+import NavigationDrawer from '@/components/Settings/NavigationDrawer';
 
 export default {
   name: 'Settings',
-  components: { DaemonSettings, IdentitySettings, Backup },
+  components: { DaemonSettings, IdentitySettings, Backup, NavigationDrawer },
   data() {
     return {
-      version: version
+      showComponent: 'identity'
     };
   },
   mounted() {
