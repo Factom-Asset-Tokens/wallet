@@ -1,8 +1,8 @@
 <template>
-  <v-layout wrap>
-    <v-flex xs12>
+  <v-sheet class="elevation-1">
+    <v-container>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-        <v-layout row wrap align-baseline>
+        <v-layout wrap>
           <v-flex xs12 md8 offset-md2>
             <v-text-field
               v-model="outputAddress"
@@ -11,7 +11,7 @@
               :rules="addressRules"
               clearable
               required
-              solo
+              box
             ></v-text-field>
           </v-flex>
           <v-flex xs12 md6 offset-md2>
@@ -25,7 +25,7 @@
               :rules="amountRules"
               :error-messages="amountErrors"
               required
-              solo
+              box
             ></v-text-field>
           </v-flex>
           <v-flex xs12 md2 text-xs-right>
@@ -51,17 +51,17 @@
             </v-alert>
           </v-flex>
         </v-layout>
+        <!-- Dialogs -->
+        <ConfirmFctToEcConversionDialog
+          ref="confirmTransactionDialog"
+          :address="outputAddress"
+          :ecAmount="outputAmount"
+          :fctCost="fctCost"
+          @confirmed="send"
+        ></ConfirmFctToEcConversionDialog>
       </v-form>
-    </v-flex>
-    <!-- Dialogs -->
-    <ConfirmFctToEcConversionDialog
-      ref="confirmTransactionDialog"
-      :address="outputAddress"
-      :ecAmount="outputAmount"
-      :fctCost="fctCost"
-      @confirmed="send"
-    ></ConfirmFctToEcConversionDialog>
-  </v-layout>
+    </v-container>
+  </v-sheet>
 </template>
 
 <script>

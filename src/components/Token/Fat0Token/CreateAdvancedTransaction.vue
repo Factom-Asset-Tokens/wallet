@@ -1,106 +1,111 @@
 <template>
-  <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-    <v-layout row wrap>
-      <v-flex xs12 pb-4>
-        <v-toolbar class="elevation-1" color="primary">
-          <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
+  <v-sheet class="elevation-1">
+    <v-container>
+      <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+        <v-layout row wrap>
+          <v-flex xs12 pb-4>
+            <v-toolbar flat color="primary">
+              <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
 
-          <v-spacer></v-spacer>
-          <div class="total-amount">{{ totalInputs }} {{ symbol }}</div>
-          <v-toolbar-items>
-            <v-btn flat @click="add('inputs')">
-              <v-icon>add_circle_outline</v-icon>
-            </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-      </v-flex>
-      <v-flex xs12 v-for="(input, index) in inputs" :key="'input-' + input.id">
-        <TransactionInput
-          v-model="inputs[index]"
-          @delete="deleteInoutput('inputs', input.id)"
-          :balances="balances"
-          :first="index === 0"
-          :symbol="symbol"
-          :alreadySelectedAddresses="selectedInputAddresses"
-        ></TransactionInput>
-      </v-flex>
-      <v-flex xs12 pt-5 pb-4>
-        <v-toolbar class="elevation-1" color="primary">
-          <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <div class="total-amount">{{ totalInputs }} {{ symbol }}</div>
+              <v-toolbar-items>
+                <v-btn flat @click="add('inputs')">
+                  <v-icon>add_circle_outline</v-icon>
+                </v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+          </v-flex>
+          <v-flex xs12 v-for="(input, index) in inputs" :key="'input-' + input.id">
+            <TransactionInput
+              v-model="inputs[index]"
+              @delete="deleteInoutput('inputs', input.id)"
+              :balances="balances"
+              :first="index === 0"
+              :symbol="symbol"
+              :alreadySelectedAddresses="selectedInputAddresses"
+            ></TransactionInput>
+          </v-flex>
+          <v-flex xs12 pt-5 pb-4>
+            <v-toolbar flat color="primary">
+              <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
 
-          <v-spacer></v-spacer>
-          <div class="total-amount">{{ totalOutputs }} {{ symbol }}</div>
-          <v-toolbar-items>
-            <v-btn flat @click="add('outputs')">
-              <v-icon>add_circle_outline</v-icon>
-            </v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-      </v-flex>
+              <v-spacer></v-spacer>
+              <div class="total-amount">{{ totalOutputs }} {{ symbol }}</div>
+              <v-toolbar-items>
+                <v-btn flat @click="add('outputs')">
+                  <v-icon>add_circle_outline</v-icon>
+                </v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+          </v-flex>
 
-      <v-flex xs12 v-for="(output, index) in outputs" :key="'output-' + output.id">
-        <v-layout row wrap align-baseline justify-center>
-          <v-flex xs12 md8 pr-4>
-            <v-text-field
-              label="Address"
-              v-model.trim="output.address"
-              :rules="outputAddressRules"
-              size="50"
-              solo
-              required
-            ></v-text-field>
+          <v-flex xs12 v-for="(output, index) in outputs" :key="'output-' + output.id">
+            <v-layout row wrap align-baseline justify-center>
+              <v-flex xs12 md8 pr-4>
+                <v-text-field
+                  label="Address"
+                  v-model.trim="output.address"
+                  :rules="outputAddressRules"
+                  size="50"
+                  box
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs11 md3>
+                <v-text-field
+                  v-model.number="output.amount"
+                  type="number"
+                  :suffix="symbol"
+                  :rules="outputAmountRules"
+                  min="0"
+                  label="Amount"
+                  box
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs1 text-xs-center>
+                <v-icon v-if="index !== 0" @click="deleteInoutput('outputs', output.id)">delete</v-icon>
+              </v-flex>
+            </v-layout>
           </v-flex>
-          <v-flex xs11 md3>
-            <v-text-field
-              v-model.number="output.amount"
-              type="number"
-              :suffix="symbol"
-              :rules="outputAmountRules"
-              min="0"
-              label="Amount"
-              required
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs1 text-xs-center>
-            <v-icon v-if="index !== 0" @click="deleteInoutput('outputs', output.id)">delete</v-icon>
-          </v-flex>
+
+          <v-layout align-center wrap>
+            <v-flex xs12 sm10>
+              <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
+                {{ transactionError }}
+              </v-alert>
+            </v-flex>
+
+            <v-flex xs12 sm2 text-xs-right pt-5>
+              <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
+                >Send
+                <v-icon right>send</v-icon>
+              </v-btn>
+            </v-flex>
+
+            <!-- Alerts transaction success/failure-->
+            <v-flex v-if="errorMessage" xs12>
+              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+            </v-flex>
+            <v-flex xs12>
+              <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                {{ transactionSentMessage }}
+              </v-alert>
+            </v-flex>
+          </v-layout>
         </v-layout>
-      </v-flex>
 
-      <v-layout align-center wrap>
-        <v-flex xs12 sm10>
-          <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
-            {{ transactionError }}
-          </v-alert>
-        </v-flex>
-
-        <v-flex xs12 sm2 text-xs-right pt-5>
-          <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
-            >Send
-            <v-icon right>send</v-icon>
-          </v-btn>
-        </v-flex>
-
-        <!-- Alerts transaction success/failure-->
-        <v-flex v-if="errorMessage" xs12>
-          <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-        </v-flex>
-        <v-flex xs12>
-          <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-            {{ transactionSentMessage }}
-          </v-alert>
-        </v-flex>
-      </v-layout>
-    </v-layout>
-
-    <!-- Dialogs -->
-    <ConfirmTransactionDialog
-      ref="confirmTransactionDialog"
-      :outputs="outputs"
-      :symbol="symbol"
-      @confirmed="send"
-    ></ConfirmTransactionDialog>
-  </v-form>
+        <!-- Dialogs -->
+        <ConfirmTransactionDialog
+          ref="confirmTransactionDialog"
+          :outputs="outputs"
+          :symbol="symbol"
+          @confirmed="send"
+        ></ConfirmTransactionDialog>
+      </v-form>
+    </v-container>
+  </v-sheet>
 </template>
 
 <script>

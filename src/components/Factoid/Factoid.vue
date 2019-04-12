@@ -1,11 +1,9 @@
 <template>
   <div>
     <v-container>
-      <v-layout wrap>
-        <Addresses v-if="view === 'addresses'"></Addresses>
-        <CreateBasicTransaction v-else-if="view === 'send'"></CreateBasicTransaction>
-        <ConvertFctToEc v-else-if="view === 'convert'"></ConvertFctToEc>
-      </v-layout>
+      <Addresses v-if="view === 'addresses'"></Addresses>
+      <CreateBasicTransaction v-else-if="view === 'send'"></CreateBasicTransaction>
+      <ConvertFctToEc v-else-if="view === 'convert'"></ConvertFctToEc>
     </v-container>
     <NavigationDrawer></NavigationDrawer>
   </div>

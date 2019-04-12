@@ -1,98 +1,100 @@
 <template>
   <v-layout wrap>
     <v-flex>
-      <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-        <v-container fluid>
-          <v-layout wrap align-baseline>
-            <v-flex xs12>
-              <div class="headline">Available Tokens</div>
-            </v-flex>
-            <v-flex xs12>
-              <v-chip
-                v-for="id in availableTokens"
-                :key="id.min"
-                outline
-                color="secondary"
-                class="font-weight-bold subheading"
-                @click="selectToken(id)"
-              >
-                <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
-                  <v-icon>info_outline</v-icon>
-                </v-avatar>
-                {{ id | displayIds }}
-              </v-chip>
-            </v-flex>
-            <v-flex xs12 mt-4>
-              <div class="headline">Tokens to send</div>
-            </v-flex>
-            <v-flex xs12>
-              <div v-if="selectedTokens.length > 0">
+      <v-sheet class="elevation-1">
+        <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+          <v-container fluid>
+            <v-layout wrap align-baseline>
+              <v-flex xs12>
+                <div class="headline">Available Tokens</div>
+              </v-flex>
+              <v-flex xs12>
                 <v-chip
-                  v-for="id in selectedTokens"
+                  v-for="id in availableTokens"
                   :key="id.min"
                   outline
                   color="secondary"
                   class="font-weight-bold subheading"
-                  close
-                  @input="unselectToken(id)"
+                  @click="selectToken(id)"
                 >
                   <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
                     <v-icon>info_outline</v-icon>
                   </v-avatar>
                   {{ id | displayIds }}
                 </v-chip>
-              </div>
-              <div v-else class="font-italic subheading primary--text">
-                Start selecting tokens from the "Available Tokens" section.
-              </div>
-            </v-flex>
-            <v-flex md9 mt-4>
-              <v-text-field
-                v-model="address"
-                label="Recipient address"
-                counter="52"
-                :rules="addressRules"
-                :disabled="burn"
-                clearable
-                required
-                solo
-              ></v-text-field>
-            </v-flex>
-            <v-flex md1 mt-4 text-xs-left>
-              <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
-            </v-flex>
+              </v-flex>
+              <v-flex xs12 mt-4>
+                <div class="headline">Tokens to send</div>
+              </v-flex>
+              <v-flex xs12>
+                <div v-if="selectedTokens.length > 0">
+                  <v-chip
+                    v-for="id in selectedTokens"
+                    :key="id.min"
+                    outline
+                    color="secondary"
+                    class="font-weight-bold subheading"
+                    close
+                    @input="unselectToken(id)"
+                  >
+                    <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
+                      <v-icon>info_outline</v-icon>
+                    </v-avatar>
+                    {{ id | displayIds }}
+                  </v-chip>
+                </div>
+                <div v-else class="font-italic subheading">
+                  Start selecting tokens from the "Available Tokens" section.
+                </div>
+              </v-flex>
+              <v-flex md9 mt-4>
+                <v-text-field
+                  v-model="address"
+                  label="Recipient address"
+                  counter="52"
+                  :rules="addressRules"
+                  :disabled="burn"
+                  clearable
+                  required
+                  box
+                ></v-text-field>
+              </v-flex>
+              <v-flex md1 mt-4 text-xs-left>
+                <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
+              </v-flex>
 
-            <v-flex md2 text-xs-right mt-4>
-              <v-btn
-                color="primary"
-                large
-                :disabled="!valid || selectedTokens.length === 0"
-                type="submit"
-                :loading="sending"
-                >Send
-                <v-icon right>send</v-icon>
-              </v-btn>
-            </v-flex>
+              <v-flex md2 text-xs-right mt-4>
+                <v-btn
+                  color="primary"
+                  large
+                  :disabled="!valid || selectedTokens.length === 0"
+                  type="submit"
+                  :loading="sending"
+                  >Send
+                  <v-icon right>send</v-icon>
+                </v-btn>
+              </v-flex>
 
-            <!-- Extra validation rules errors (not dismissable) -->
-            <v-flex xs12>
-              <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
-                {{ transactionError }}
-              </v-alert>
-            </v-flex>
+              <!-- Extra validation rules errors (not dismissable) -->
+              <v-flex xs12>
+                <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
+                  {{ transactionError }}
+                </v-alert>
+              </v-flex>
 
-            <!-- Alerts transaction success/failure-->
-            <v-flex v-if="errorMessage" xs12>
-              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-            </v-flex>
-            <v-flex xs12>
-              <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-                {{ transactionSentMessage }}
-              </v-alert>
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-form>
+              <!-- Alerts transaction success/failure-->
+              <v-flex v-if="errorMessage" xs12>
+                <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+              </v-flex>
+              <v-flex xs12>
+                <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                  {{ transactionSentMessage }}
+                </v-alert>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-form>
+      </v-sheet>
     </v-flex>
 
     <!-- Dialogs -->

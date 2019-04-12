@@ -1,61 +1,70 @@
 <template>
-  <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-    <v-layout row wrap align-baseline>
-      <v-flex xs11 md7 offset-md2>
-        <v-text-field
-          v-model="address"
-          label="Recipient address"
-          counter="52"
-          :rules="addressRules"
-          :disabled="burn"
-          clearable
-          required
-          solo
-        ></v-text-field>
-      </v-flex>
-      <v-flex xs1 md1 text-xs-center>
-        <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
-      </v-flex>
-      <v-flex xs12 md6 offset-md2>
-        <v-text-field
-          placeholder="Amount"
-          type="number"
-          v-model.number="amount"
-          min="0"
-          :suffix="symbol"
-          :rules="amountRules"
-          required
-          solo
-        ></v-text-field>
-      </v-flex>
-      <v-flex xs12 md2 text-xs-right>
-        <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
-          >Send
-          <v-icon right>send</v-icon>
-        </v-btn>
-      </v-flex>
+  <v-sheet class="elevation-1">
+    <v-container>
+      <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+        <v-layout wrap align-baseline>
+          <v-flex xs11 md7 offset-md2>
+            <v-text-field
+              v-model="address"
+              label="Recipient address"
+              counter="52"
+              :rules="addressRules"
+              :disabled="burn"
+              clearable
+              box
+              required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs1 md1 text-xs-center>
+            <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
+          </v-flex>
+          <v-flex xs12 md6 offset-md2>
+            <v-text-field
+              placeholder="Amount"
+              type="number"
+              v-model.number="amount"
+              min="0"
+              :suffix="symbol"
+              :rules="amountRules"
+              box
+              required
+            ></v-text-field>
+          </v-flex>
+          <v-flex xs12 md2 text-xs-right>
+            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
+              >Send
+              <v-icon right>send</v-icon>
+            </v-btn>
+          </v-flex>
 
-      <!-- Alerts transaction success/failure-->
-      <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-        <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-      </v-flex>
-      <v-flex xs12>
-        <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-          {{ transactionSentMessage }}
-        </v-alert>
-      </v-flex>
-    </v-layout>
+          <!-- Alerts transaction success/failure-->
+          <v-flex v-if="errorMessage" xs12 md8 offset-md2>
+            <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+          </v-flex>
+          <v-flex xs12>
+            <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+              {{ transactionSentMessage }}
+            </v-alert>
+          </v-flex>
+        </v-layout>
 
-    <!-- Dialogs -->
-    <ConfirmTransactionDialog
-      ref="confirmTransactionDialog"
-      :amount="amount"
-      :address="address"
-      :symbol="symbol"
-      @confirmed="send"
-    ></ConfirmTransactionDialog>
-    <ConfirmBurnDialog ref="confirmBurnDialog" :amount="amount" :symbol="symbol" @confirmed="send"></ConfirmBurnDialog>
-  </v-form>
+        <!-- Dialogs -->
+        <ConfirmTransactionDialog
+          ref="confirmTransactionDialog"
+          :amount="amount"
+          :address="address"
+          :symbol="symbol"
+          @confirmed="send"
+        ></ConfirmTransactionDialog>
+        <ConfirmBurnDialog
+          ref="confirmBurnDialog"
+          :amount="amount"
+          :symbol="symbol"
+          @confirmed="send"
+        ></ConfirmBurnDialog>
+      </v-form>
+    </v-container>
+  </v-sheet>
 </template>
 
 <script>
