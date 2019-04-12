@@ -1,31 +1,31 @@
 <template>
   <div>
     <v-container>
-      <template v-if="showComponent === 'balances'">
+      <template v-if="view === 'balances'">
         <v-layout wrap mb-5>
           <TokenHeader :token="token" :totalBalance="totalBalance"></TokenHeader>
         </v-layout>
         <AddressesBalances :balances="balances" :symbol="token.symbol" :tokenCli="tokenCli"></AddressesBalances>
       </template>
       <CreateBasicTransaction
-        v-else-if="showComponent === 'send'"
+        v-else-if="view === 'send'"
         :balances="balances"
         :symbol="token.symbol"
         :tokenCli="tokenCli"
       ></CreateBasicTransaction>
       <CreateAdvancedTransaction
-        v-else-if="showComponent === 'send-advanced'"
+        v-else-if="view === 'send-advanced'"
         :balances="balances"
         :symbol="token.symbol"
         :tokenCli="tokenCli"
       ></CreateAdvancedTransaction>
       <TransactionHistory
-        v-else-if="showComponent === 'history'"
+        v-else-if="view === 'history'"
         :tokenCli="tokenCli"
         :symbol="token.symbol"
       ></TransactionHistory>
     </v-container>
-    <NavigationDrawer @show="showComponent = $event" :tokenId="token.tokenId"></NavigationDrawer>
+    <NavigationDrawer :tokenId="token.tokenId"></NavigationDrawer>
   </div>
 </template>
 
@@ -54,8 +54,7 @@ export default {
   data() {
     return {
       balances: [],
-      intervalId: 0,
-      showComponent: 'balances'
+      intervalId: 0
     };
   },
   computed: {
@@ -65,6 +64,9 @@ export default {
         .toLocaleString(undefined, {
           maximumFractionDigits: 10
         });
+    },
+    view() {
+      return this.$route.query.view;
     }
   },
   methods: {

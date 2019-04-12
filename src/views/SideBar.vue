@@ -2,7 +2,16 @@
   <v-navigation-drawer width="120" class="grad" permanent app floating>
     <v-layout align-center column fill-height>
       <v-tooltip class="token-margin" right>
-        <v-btn fab depressed active-class="secondary--text" large slot="activator" color="white" exact :to="`/fct`">
+        <v-btn
+          fab
+          depressed
+          active-class="secondary--text"
+          large
+          slot="activator"
+          color="white"
+          exact
+          :to="`/fct?view=addresses`"
+        >
           <img class="token-icon" src="@/assets/img/fct.png" />
         </v-btn>
         <span>Factoid (FCT)</span>
@@ -19,7 +28,7 @@
           color="white"
           class="white--text font-weight-medium title"
           exact
-          :to="`/token/${token.chainId}`"
+          :to="`/token/${token.chainId}?view=balances`"
         >
           {{ getTokenIcon(token) }}
         </v-btn>
@@ -43,7 +52,16 @@
       </v-tooltip>
 
       <v-tooltip id="settings-link" right>
-        <v-btn icon active-class="secondary--text" flat large slot="activator" color="white" exact to="/settings">
+        <v-btn
+          icon
+          active-class="secondary--text"
+          flat
+          large
+          slot="activator"
+          color="white"
+          exact
+          to="/settings?view=connection"
+        >
           <v-badge v-if="daemonsKo" color="error" right overlap>
             <span slot="badge">!</span>
             <v-icon large>settings</v-icon>

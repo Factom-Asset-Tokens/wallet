@@ -2,12 +2,12 @@
   <div>
     <v-container>
       <v-layout wrap>
-        <Addresses v-if="showComponent === 'addresses'"></Addresses>
-        <CreateBasicTransaction v-else-if="showComponent === 'send'"></CreateBasicTransaction>
-        <ConvertFctToEc v-else-if="showComponent === 'convert'"></ConvertFctToEc>
+        <Addresses v-if="view === 'addresses'"></Addresses>
+        <CreateBasicTransaction v-else-if="view === 'send'"></CreateBasicTransaction>
+        <ConvertFctToEc v-else-if="view === 'convert'"></ConvertFctToEc>
       </v-layout>
     </v-container>
-    <NavigationDrawer @show="showComponent = $event"></NavigationDrawer>
+    <NavigationDrawer></NavigationDrawer>
   </div>
 </template>
 
@@ -21,9 +21,13 @@ export default {
   components: { Addresses, CreateBasicTransaction, ConvertFctToEc, NavigationDrawer },
   data() {
     return {
-      intervalId: null,
-      showComponent: 'addresses'
+      intervalId: null
     };
+  },
+  computed: {
+    view() {
+      return this.$route.query.view;
+    }
   },
   created() {
     const that = this;
