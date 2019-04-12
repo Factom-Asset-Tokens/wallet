@@ -9,7 +9,6 @@
           large
           slot="activator"
           color="white"
-          exact
           :to="`/fct?view=addresses`"
         >
           <img class="token-icon" src="@/assets/img/fct.png" />
@@ -27,7 +26,6 @@
           outline
           color="white"
           class="white--text font-weight-medium title"
-          exact
           :to="`/token/${token.chainId}?view=balances`"
         >
           {{ getTokenIcon(token) }}
@@ -43,7 +41,6 @@
           slot="activator"
           active-class="secondary--text"
           color="white"
-          exact
           :to="{ name: 'Actions' }"
         >
           <v-icon class="fab-button-icon-fix">more_horiz</v-icon>
@@ -59,7 +56,6 @@
           large
           slot="activator"
           color="white"
-          exact
           to="/settings?view=connection"
         >
           <v-badge v-if="daemonsKo" color="error" right overlap>
