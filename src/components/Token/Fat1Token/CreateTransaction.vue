@@ -160,7 +160,7 @@ export default {
     clickBurn() {
       this.burn = !this.burn;
       if (this.burn) {
-        this.address = 'Burning address';
+        this.address = '🔥🔥 Burning Address 🔥🔥';
       } else {
         this.address = '';
       }
