@@ -12,7 +12,8 @@ export default {
   getters: {
     config: state => {
       try {
-        const url = new URL(state.endpoint);
+        const endpoint = state.endpoint.includes('://') ? state.endpoint : `http://${state.endpoint}`;
+        const url = new URL(endpoint);
         return {
           host: url.hostname,
           port: getIntegerPort(url),

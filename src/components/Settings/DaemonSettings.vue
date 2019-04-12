@@ -108,7 +108,8 @@ export default {
 
 function isValidUrl(url) {
   try {
-    new URL(url);
+    const endpoint = url.includes('://') ? url : `http://${url}`;
+    new URL(endpoint);
     return true;
   } catch (e) {
     return false;

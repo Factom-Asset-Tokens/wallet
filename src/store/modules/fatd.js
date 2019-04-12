@@ -16,7 +16,8 @@ export default {
     synced: state => state.syncHeight >= state.factomHeight - 1,
     config: state => {
       try {
-        const url = new URL(state.endpoint);
+        const endpoint = state.endpoint.includes('://') ? state.endpoint : `http://${state.endpoint}`;
+        const url = new URL(endpoint);
         return {
           hostname: url.hostname,
           port: getIntegerPort(url)
