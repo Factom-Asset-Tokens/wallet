@@ -1,5 +1,5 @@
 <template>
-  <v-layout v-if="render" row wrap>
+  <v-layout v-if="render" wrap>
     <v-flex xs12>
       <p class="headline">
         Summary of your new token

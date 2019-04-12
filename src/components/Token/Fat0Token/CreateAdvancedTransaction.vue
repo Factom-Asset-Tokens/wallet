@@ -2,7 +2,7 @@
   <v-sheet class="elevation-1">
     <v-container>
       <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-        <v-layout row wrap>
+        <v-layout wrap>
           <v-flex xs12 pb-4>
             <v-toolbar flat color="primary">
               <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
@@ -41,7 +41,7 @@
           </v-flex>
 
           <v-flex xs12 v-for="(output, index) in outputs" :key="'output-' + output.id">
-            <v-layout row wrap align-baseline justify-center>
+            <v-layout wrap align-baseline justify-center>
               <v-flex xs12 md8 pr-4>
                 <v-text-field
                   label="Address"

@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap>
+  <v-layout wrap>
     <v-flex xs12 my-3>
       <v-text-field
         v-model="tokenId"

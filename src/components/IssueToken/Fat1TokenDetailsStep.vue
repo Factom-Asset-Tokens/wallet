@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap>
+  <v-layout wrap>
     <v-flex xs12>FAT 1</v-flex>
   </v-layout>
 </template>
