@@ -7,34 +7,32 @@
         </v-card-title>
         <v-card-text>
           <v-layout wrap>
-            <v-flex xs6 text-xs-center pa-3 class="subheading">From ID</v-flex>
-            <v-flex xs6 text-xs-center pa-3 class="subheading">To ID</v-flex>
-            <v-flex xs6 px-3>
+            <v-flex xs6 px-3 mt-3>
               <v-text-field
                 background-color="lightGrey"
                 full-width
                 v-model.number="from"
                 type="number"
-                label="From"
+                label="From ID"
                 :min="min"
                 :max="to"
                 :rules="fromRules"
                 required
-                solo
+                box
               ></v-text-field>
             </v-flex>
-            <v-flex xs6 px-3>
+            <v-flex xs6 px-3 mt-3>
               <v-text-field
                 background-color="lightGrey"
                 full-width
                 :rules="toRules"
                 v-model.number="to"
                 type="number"
-                label="To"
+                label="To ID"
                 :min="from"
                 :max="max"
                 required
-                solo
+                box
               ></v-text-field>
             </v-flex>
           </v-layout>

@@ -10,7 +10,7 @@
         :rules="supplyRules"
         :disabled="infiniteSupply"
         :suffix="symbol"
-        solo
+        box
       ></v-text-field>
     </v-flex>
     <v-flex xs12 sm3 :class="{ 'pl-0': $vuetify.breakpoint.xs, 'pl-4': $vuetify.breakpoint.smAndUp }">
@@ -23,11 +23,11 @@
         label="Symbol"
         :rules="symbolRules"
         maxlength="4"
-        solo
+        box
       ></v-text-field>
     </v-flex>
     <v-flex xs12>
-      <v-textarea v-model.trim="metadata" label="Token metadata" solo></v-textarea>
+      <v-textarea v-model.trim="metadata" label="Token metadata" box></v-textarea>
     </v-flex>
   </v-layout>
 </template>

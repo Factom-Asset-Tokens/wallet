@@ -1,15 +1,15 @@
 <template>
   <v-layout wrap align-baseline>
     <template v-if="min !== max">
-      <v-flex xs3 text-xs-right>
+      <v-flex xs4 text-xs-right>
         <v-btn flat icon color="secondary" @click="decrement">
           <v-icon>chevron_left</v-icon>
         </v-btn>
       </v-flex>
-      <v-flex xs6 text-xs-center>
-        <v-text-field prefix="#" v-model.number="id" label="ID" required solo></v-text-field>
+      <v-flex xs4 text-xs-center>
+        <v-text-field prefix="#" v-model.number="id" single-line required></v-text-field>
       </v-flex>
-      <v-flex xs3 text-xs-left>
+      <v-flex xs4 text-xs-left>
         <v-btn flat icon color="secondary" @click="increment">
           <v-icon>chevron_right</v-icon>
         </v-btn>

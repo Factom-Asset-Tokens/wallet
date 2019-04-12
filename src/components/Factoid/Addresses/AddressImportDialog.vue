@@ -19,11 +19,12 @@
                   counter="52"
                   ref="addressInput"
                   autofocus
+                  box
                   required
                 ></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field v-model.trim="name" label="Name (Optional)"></v-text-field>
+                <v-text-field v-model.trim="name" label="Name (Optional)" box></v-text-field>
               </v-flex>
             </v-layout>
           </v-form>

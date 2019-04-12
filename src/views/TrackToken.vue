@@ -16,6 +16,7 @@
                 len
                 required
                 autofocus
+                box
               ></v-text-field>
             </v-card-text>
             <v-card-actions>

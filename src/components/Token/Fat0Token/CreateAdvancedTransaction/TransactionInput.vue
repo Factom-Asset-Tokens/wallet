@@ -4,10 +4,10 @@
       <v-select
         :items="availableAddresses"
         label="Address"
-        box
         v-model="address"
         @input="$emit('input', { address, amount, id: value.id })"
         dense
+        box
       ></v-select>
     </v-flex>
     <v-flex xs11 md3>

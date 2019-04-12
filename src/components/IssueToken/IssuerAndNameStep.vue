@@ -6,7 +6,7 @@
         @input="$emit('input', { tokenId, issuerId })"
         :rules="nameRules"
         label="Choose a name for your token"
-        solo
+        box
       ></v-text-field>
     </v-flex>
     <v-flex xs12 my-3>
@@ -17,7 +17,7 @@
         v-model="issuerId"
         @input="$emit('input', { tokenId, issuerId })"
         label="Select the issuing identity"
-        solo
+        box
       ></v-select>
     </v-flex>
   </v-layout>
