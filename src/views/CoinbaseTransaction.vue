@@ -9,7 +9,7 @@
           <v-card-text>
             <v-layout wrap>
               <v-flex xs6 offset-xs3>
-                <v-select :items="trackedTokens" label="Select token" v-model="tokenChainId" box></v-select>
+                <v-select :items="trackedTokens" label="Select token" v-model="tokenChainId" box single-line></v-select>
               </v-flex>
               <template v-if="tokenChainId">
                 <v-flex xs12 v-if="canEmitCoinbaseTransaction">

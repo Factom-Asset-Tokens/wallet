@@ -7,6 +7,7 @@
         v-model="address"
         @input="$emit('input', { address, amount, id: value.id })"
         dense
+        single-line
         box
       ></v-select>
     </v-flex>
@@ -22,6 +23,7 @@
         label="Amount"
         ref="amountInput"
         @input="$emit('input', { address, amount, id: value.id })"
+        single-line
         box
         required
       ></v-text-field>

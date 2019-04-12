@@ -48,6 +48,7 @@
                   v-model.trim="output.address"
                   :rules="outputAddressRules"
                   size="50"
+                  single-line
                   box
                   required
                 ></v-text-field>
@@ -60,6 +61,7 @@
                   :rules="outputAmountRules"
                   min="0"
                   label="Amount"
+                  single-line
                   box
                   required
                 ></v-text-field>

@@ -11,7 +11,13 @@
             <v-container>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field label="Endpoint" v-model.trim="factomdEndpoint" :rules="urlRules" box></v-text-field>
+                  <v-text-field
+                    label="Endpoint"
+                    v-model.trim="factomdEndpoint"
+                    :rules="urlRules"
+                    single-line
+                    box
+                  ></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -30,7 +36,13 @@
             <v-container>
               <v-layout wrap>
                 <v-flex xs12>
-                  <v-text-field label="Endpoint" v-model.trim="fatdEndpoint" :rules="urlRules" box></v-text-field>
+                  <v-text-field
+                    label="Endpoint"
+                    v-model.trim="fatdEndpoint"
+                    :rules="urlRules"
+                    single-line
+                    box
+                  ></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>

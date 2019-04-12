@@ -56,6 +56,7 @@
                   :disabled="burn"
                   clearable
                   required
+                  single-line
                   box
                 ></v-text-field>
               </v-flex>

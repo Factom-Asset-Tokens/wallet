@@ -11,6 +11,7 @@
               :rules="addressRules"
               clearable
               required
+              single-line
               box
             ></v-text-field>
           </v-flex>
@@ -25,6 +26,7 @@
               :rules="amountRules"
               :error-messages="amountErrors"
               required
+              single-line
               box
             ></v-text-field>
           </v-flex>

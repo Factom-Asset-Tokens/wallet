@@ -16,6 +16,7 @@
               :rules="addressRules"
               :disabled="burn"
               clearable
+              single-line
               box
               required
             ></v-text-field>
@@ -31,6 +32,7 @@
               min="0"
               :suffix="symbol"
               :rules="amountRules"
+              single-line
               box
               required
             ></v-text-field>
