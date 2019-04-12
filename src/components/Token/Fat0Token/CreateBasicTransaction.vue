@@ -1,6 +1,11 @@
 <template>
   <v-sheet class="elevation-1">
     <v-container>
+      <v-layout wrap>
+        <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5>
+          {{ totalBalancetext }} {{ symbol }}
+        </v-flex>
+      </v-layout>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
         <v-layout wrap align-baseline>
           <v-flex xs11 md7 offset-md2>
@@ -99,6 +104,11 @@ export default {
     totalBalance() {
       return this.balances.reduce((acc, val) => acc + val.balance, 0);
     },
+    totalBalancetext() {
+      return this.totalBalance.toLocaleString(undefined, {
+        maximumFractionDigits: 10
+      });
+    },
     selfAddress() {
       return this.balances.find(b => b.address === this.address);
     },
@@ -131,7 +141,7 @@ export default {
     clickBurn() {
       this.burn = !this.burn;
       if (this.burn) {
-        this.address = '🔥🔥 Burning Address 🔥🔥';
+        this.address = '🔥🔥 Burn Address 🔥🔥';
       } else {
         this.address = '';
       }

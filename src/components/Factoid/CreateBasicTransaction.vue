@@ -1,8 +1,11 @@
 <template>
   <v-sheet class="elevation-1">
     <v-container>
+      <v-layout wrap>
+        <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalBalancetext }} FCT </v-flex>
+      </v-layout>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-        <v-layout row wrap>
+        <v-layout wrap>
           <v-flex xs12 md8 offset-md2>
             <v-text-field
               v-model="outputAddress"
@@ -102,6 +105,11 @@ export default {
     },
     totalBalance() {
       return Object.values(this.balances).reduce((acc, val) => acc + val, 0);
+    },
+    totalBalancetext() {
+      return (this.totalBalance / 100000000).toLocaleString(undefined, {
+        maximumFractionDigits: 8
+      });
     },
     transactionProperties() {
       return [this.outputAmount, this.outputAddress];

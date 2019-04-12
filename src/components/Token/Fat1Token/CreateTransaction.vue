@@ -162,7 +162,7 @@ export default {
     clickBurn() {
       this.burn = !this.burn;
       if (this.burn) {
-        this.address = '🔥🔥 Burning Address 🔥🔥';
+        this.address = '🔥🔥 Burn Address 🔥🔥';
       } else {
         this.address = '';
       }
