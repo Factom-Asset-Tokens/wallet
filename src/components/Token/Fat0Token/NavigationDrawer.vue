@@ -1,82 +1,28 @@
 <template>
-  <v-navigation-drawer dark permanent app floating right>
-    <v-container>
-      <v-flex text-xs-center class="title">
-        {{ tokenId }}
-      </v-flex>
-    </v-container>
-    <v-list subheader>
-      <v-divider></v-divider>
-
-      <v-subheader class="primary--text">Info</v-subheader>
-      <v-list-tile
-        avatar
-        to="?view=balances"
-        exact
-        color="secondary"
-        exact-active-class="secondary--text active-nav-element"
-      >
-        <v-list-tile-action>
-          <v-icon color="secondary">account_balance_wallet</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title class="subheading">Balances</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile
-        avatar
-        to="?view=history"
-        exact
-        color="secondary"
-        exact-active-class="secondary--text active-nav-element"
-      >
-        <v-list-tile-action>
-          <v-icon color="secondary">history</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title class="subheading">Transaction History</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
-    <v-divider inset></v-divider>
-
-    <v-list subheader>
-      <v-subheader class="primary--text">Actions</v-subheader>
-
-      <v-list-tile
-        avatar
-        to="?view=send"
-        exact
-        color="secondary"
-        exact-active-class="secondary--text active-nav-element"
-      >
-        <v-list-tile-action>
-          <v-icon color="secondary">send</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title class="subheading">Send Tokens</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile
-        avatar
-        to="?view=send-advanced"
-        exact
-        color="secondary"
-        exact-active-class="secondary--text active-nav-element"
-      >
-        <v-list-tile-action>
-          <v-icon color="secondary">fas fa-cogs</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title class="subheading">Send Tokens (Advanced)</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
-  </v-navigation-drawer>
+  <NavigationDrawer :items="items">
+    <v-flex text-xs-center class="title">
+      {{ tokenId }}
+    </v-flex>
+  </NavigationDrawer>
 </template>
 
 <script>
+import NavigationDrawer from '@/components/NavigationDrawer';
+
 export default {
-  props: ['tokenId']
+  components: { NavigationDrawer },
+  props: ['tokenId'],
+  data() {
+    return {
+      items: [
+        { text: 'Info' },
+        { text: 'Balances', icon: 'account_balance_wallet', to: 'balances' },
+        { text: 'Transaction History', icon: 'history', to: 'history' },
+        { text: 'Actions' },
+        { text: 'Send Tokens', icon: 'send', to: 'send' },
+        { text: 'Send Tokens (Advanced)', icon: 'fas fa-cogs', to: 'send-advanced' }
+      ]
+    };
+  }
 };
 </script>
