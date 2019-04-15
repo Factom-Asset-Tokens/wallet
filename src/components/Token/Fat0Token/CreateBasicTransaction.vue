@@ -77,7 +77,7 @@
 <script>
 import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
-import SendTransaction from '@/mixins/SendTransaction';
+import SendFatTransaction from '@/mixins/SendFatTransaction';
 import { FAT0 } from '@fat-token/fat-js';
 const {
   Transaction: { TransactionBuilder }
@@ -87,7 +87,7 @@ import ConfirmBurnDialog from './CreateBasicTransaction/ConfirmBurnDialog';
 
 export default {
   components: { ConfirmTransactionDialog, ConfirmBurnDialog },
-  mixins: [SendTransaction],
+  mixins: [SendFatTransaction],
   data() {
     return {
       address: '',

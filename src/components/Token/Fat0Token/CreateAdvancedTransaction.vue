@@ -113,7 +113,7 @@
 <script>
 import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
-import SendTransaction from '@/mixins/SendTransaction';
+import SendFatTransaction from '@/mixins/SendFatTransaction';
 import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
 import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
 import { FAT0 } from '@fat-token/fat-js';
@@ -130,7 +130,7 @@ const newInoutput = (function() {
 
 export default {
   components: { TransactionInput, ConfirmTransactionDialog },
-  mixins: [SendTransaction],
+  mixins: [SendFatTransaction],
   data() {
     return {
       sendClicked: false,

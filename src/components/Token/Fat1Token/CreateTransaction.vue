@@ -119,7 +119,7 @@ import groupBy from 'lodash.groupby';
 import { isValidPublicFctAddress } from 'factom';
 import { TransactionBuilder } from '@fat-token/fat-js/1/Transaction';
 import { displayIds, idsSetDiff, matchOwners } from '@/components/Token/Fat1Token/nf-token-ids.js';
-import SendTransaction from '@/mixins/SendTransaction';
+import SendFatTransaction from '@/mixins/SendFatTransaction';
 // Components
 import SelectIdRangeDialog from './CreateTransaction/SelectIdRangeDialog';
 import ConfirmTransactionDialog from './CreateTransaction/ConfirmTransactionDialog';
@@ -128,7 +128,7 @@ import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDia
 
 export default {
   props: ['symbol', 'tokenCli', 'balances'],
-  mixins: [SendTransaction],
+  mixins: [SendFatTransaction],
   components: {
     SelectIdRangeDialog,
     NfTokenDetailsDialog,
