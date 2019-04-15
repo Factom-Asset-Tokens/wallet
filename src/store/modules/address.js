@@ -1,3 +1,6 @@
+import Big from 'bignumber.js';
+const ZERO = new Big(0);
+
 function mapNames(addresses, names) {
   return addresses.map(address => ({ address, name: names[address] }));
 }
@@ -13,6 +16,8 @@ export default {
     preferredEcAddress: ''
   },
   getters: {
+    totalFctBalance: state => Object.values(state.fctBalances).reduce((acc, val) => acc.plus(val), ZERO),
+    totalEcBalance: state => Object.values(state.ecBalances).reduce((acc, val) => acc.plus(val), ZERO),
     fctAddressesWithNames: state => mapNames(state.fctAddresses, state.names),
     ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names),
     payingEcAddress: function(state, getters, rootState) {
@@ -74,7 +79,7 @@ export default {
       });
       const fctBalances = {};
       for (let i = 0; i < fctAddresses.length; ++i) {
-        fctBalances[fctAddresses[i]] = balances[i].ack;
+        fctBalances[fctAddresses[i]] = new Big(balances[i].ack);
       }
       commit('updateFctBalances', fctBalances);
     },
@@ -86,7 +91,7 @@ export default {
       });
       const ecBalances = {};
       for (let i = 0; i < ecAddresses.length; ++i) {
-        ecBalances[ecAddresses[i]] = balances[i].ack;
+        ecBalances[ecAddresses[i]] = new Big(balances[i].ack);
       }
       commit('updateEcBalances', ecBalances);
     },

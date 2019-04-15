@@ -7,7 +7,7 @@
     </template>
     <template v-else>
       <v-icon color="#AECC6F">check_circle</v-icon>
-      <span class="subheading version-text font-italic">v{{ version }}</span>
+      <span class="subheading version-text font-italic">{{ version }}</span>
     </template>
   </div>
   <v-icon v-else-if="status === 'ko'" color="error">cancel</v-icon>

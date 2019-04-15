@@ -8,7 +8,7 @@
           <v-flex xs12 text-xs-center class="title secondary--text" mt-2>{{ fctCost }} FCT</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ ecAmountText }} EC</v-flex>
-          <v-flex xs12 text-xs-center class="subheading" my-2>sent to</v-flex>
+          <v-flex xs12 text-xs-center class="subheading" my-2>and sent to</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ address }}</v-flex>
         </v-layout>
       </v-card-text>
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
+
 export default {
   props: ['ecAmount', 'address', 'fctCost'],
   data() {
@@ -31,14 +33,18 @@ export default {
   },
   computed: {
     ecAmountText() {
-      return typeof this.ecAmount === 'number' ? this.ecAmount.toLocaleString() : '';
+      try {
+        return new Big(this.ecAmount).toFormat();
+      } catch (e) {
+        return '';
+      }
     },
     fctCostText() {
-      return typeof this.fctCost === 'number'
-        ? this.fctCost.toLocaleString(undefined, {
-            maximumFractionDigits: 8
-          })
-        : '';
+      try {
+        return new Big(this.fctCost).toFormat();
+      } catch (e) {
+        return '';
+      }
     }
   },
   methods: {

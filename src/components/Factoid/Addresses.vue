@@ -71,7 +71,7 @@
                 </v-edit-dialog>
               </td>
               <td>
-                {{ (props.item.balance / 100000000).toLocaleString(undefined, { maximumFractionDigits: 8 }) }}
+                {{ props.item.balance }}
               </td>
             </template>
           </v-data-table>
@@ -107,7 +107,7 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
-              <td>{{ props.item.balance.toLocaleString() }}</td>
+              <td>{{ props.item.balance }}</td>
             </template>
           </v-data-table>
         </v-tab-item>
@@ -118,6 +118,7 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 import AddressImportDialog from './Addresses/AddressImportDialog';
 
 export default {
@@ -138,20 +139,14 @@ export default {
   },
   computed: {
     totalFctBalanceText() {
-      const balances = this.$store.state.address.fctBalances;
-      const fctSum = Object.values(balances).reduce((acc, val) => acc + val, 0) / 100000000;
+      const fctSum = this.$store.getters['address/totalFctBalance'].div(100000000);
       return {
-        rounded: fctSum.toLocaleString(),
-        exact: fctSum.toLocaleString(undefined, {
-          maximumFractionDigits: 8
-        })
+        rounded: fctSum.toFormat(5),
+        exact: fctSum.toFormat()
       };
     },
     totalEcBalanceText() {
-      const balances = this.$store.state.address.ecBalances;
-      return Object.values(balances)
-        .reduce((acc, val) => acc + val, 0)
-        .toLocaleString();
+      return this.$store.getters['address/totalEcBalance'].toFormat();
     },
     preferredEcAddress() {
       return this.$store.state.address.preferredEcAddress;
@@ -161,7 +156,7 @@ export default {
       return this.$store.getters['address/fctAddressesWithNames'].map(o =>
         Object.assign(
           {
-            balance: balances[o.address] || 0
+            balance: (balances[o.address] || new Big(0)).div(100000000).toFormat()
           },
           o
         )
@@ -173,7 +168,7 @@ export default {
         Object.assign(
           {
             preferred: o.address === this.preferredEcAddress,
-            balance: balances[o.address] || 0
+            balance: (balances[o.address] || new Big(0)).toFormat()
           },
           o
         )

@@ -2,7 +2,7 @@
   <v-sheet class="elevation-1">
     <v-container>
       <v-layout wrap>
-        <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalBalancetext }} FCT </v-flex>
+        <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalBalanceText }} FCT </v-flex>
       </v-layout>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
         <v-layout wrap>
@@ -22,10 +22,11 @@
             <v-text-field
               placeholder="Amount"
               type="number"
-              v-model.number="outputAmount"
+              v-model="outputAmount"
               min="0"
               suffix="FCT"
               :rules="amountRules"
+              :error-messages="amountErrors"
               required
               single-line
               box
@@ -38,10 +39,10 @@
             </v-btn>
           </v-flex>
           <!-- Alerts -->
-          <v-flex v-if="valid && outputAddress && fee" xs12 md8 offset-md2>
+          <v-flex v-if="valid && outputAddress && feeText" xs12 md8 offset-md2>
             <v-alert :value="true" type="info" outline>
               An additional transaction fee of
-              <strong>{{ fee.toLocaleString(undefined, { maximumFractionDigits: 8 }) }} FCT</strong>
+              <strong>{{ feeText }} FCT</strong>
               will be deducted.
             </v-alert>
           </v-flex>
@@ -59,7 +60,7 @@
           ref="confirmTransactionDialog"
           :address="outputAddress"
           :amount="outputAmount"
-          :fee="fee"
+          :feeText="feeText"
           @confirmed="send"
         ></ConfirmBasicTransactionDialog>
       </v-form>
@@ -68,22 +69,25 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 import NodeCache from 'node-cache';
 import { isValidPublicFctAddress } from 'factom';
 import { buildTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
 import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
 
-const FACTOSHI_MULTIPLIER = 100000000;
+const ZERO = new Big(0);
+const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
   components: { ConfirmBasicTransactionDialog },
   data() {
     return {
       outputAddress: '',
-      outputAmount: 0,
-      fee: 0,
+      outputAmount: '',
+      feeText: '',
       valid: true,
       errorMessage: '',
+      amountErrors: [],
       transactionSentMessage: '',
       sending: false,
       addressRules: [v => isValidPublicFctAddress(v) || 'Invalid public FCT address']
@@ -100,32 +104,37 @@ export default {
       return this.amountRules.every(f => typeof f(this.outputAmount) !== 'string');
     },
     factoshiOutputAmount() {
-      return this.outputAmount * FACTOSHI_MULTIPLIER;
+      return FACTOSHI_MULTIPLIER.times(this.outputAmount);
     },
     balances() {
       return this.$store.state.address.fctBalances;
     },
     totalBalance() {
-      return Object.values(this.balances).reduce((acc, val) => acc + val, 0);
+      return this.$store.getters['address/totalFctBalance'];
     },
-    totalBalancetext() {
-      return (this.totalBalance / 100000000).toLocaleString(undefined, {
-        maximumFractionDigits: 8
-      });
+    totalBalanceText() {
+      return this.totalBalance.div(FACTOSHI_MULTIPLIER).toFormat();
     },
     transactionProperties() {
       return [this.outputAmount, this.outputAddress];
     },
     amountRules() {
       const totalBalance = this.totalBalance;
-      const selfAddressBalance = this.balances[this.outputAddress] || 0;
+      const selfAddressBalance = this.balances[this.outputAddress] || ZERO;
       return [
-        amount => (typeof amount === 'number' && amount > 0) || 'Amount must be strictly positive',
+        amount => (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
         function(amount) {
+          if (!amount) {
+            return 'Amount must be strictly positive';
+          }
+
           if (selfAddressBalance) {
-            return amount * FACTOSHI_MULTIPLIER <= totalBalance - selfAddressBalance || 'Not enough funds available';
+            return (
+              FACTOSHI_MULTIPLIER.times(amount).lte(totalBalance.minus(selfAddressBalance)) ||
+              'Not enough funds available'
+            );
           } else {
-            return amount * FACTOSHI_MULTIPLIER <= totalBalance || 'Not enough funds available';
+            return FACTOSHI_MULTIPLIER.times(amount).lte(totalBalance) || 'Not enough funds available';
           }
         }
       ];
@@ -151,7 +160,13 @@ export default {
       try {
         this.errorMessage = '';
         this.sending = true;
-        const tx = await buildTransaction(this.$store, this.balances, this.outputAddress, this.factoshiOutputAmount);
+        const tx = await buildTransaction(
+          this.$store,
+          this.totalBalance,
+          this.balances,
+          this.outputAddress,
+          this.factoshiOutputAmount
+        );
         const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 1 });
         this.$store.dispatch('address/fetchFctBalances');
@@ -172,9 +187,26 @@ export default {
       if (this.isAddressOk && this.isAmountsOk) {
         const ecRate = await this.getEcRate();
 
-        const tx = getFeeAdjustedTransaction(this.balances, this.outputAddress, this.factoshiOutputAmount, ecRate);
+        try {
+          const tx = getFeeAdjustedTransaction(
+            this.totalBalance,
+            this.balances,
+            this.outputAddress,
+            this.factoshiOutputAmount,
+            ecRate
+          );
 
-        this.fee = tx.feesPaid / FACTOSHI_MULTIPLIER;
+          this.amountErrors = [];
+          this.feeText = new Big(tx.feesPaid).div(FACTOSHI_MULTIPLIER).toFormat();
+        } catch (e) {
+          // This corner case happens if outputAmount + fees > totalBalance
+          // which cannot be detected until we try to evaluate the fees
+          if (e.message.includes('Not enough funds')) {
+            this.amountErrors = ['Not enough FCT availables'];
+          } else {
+            throw e;
+          }
+        }
       }
     }
   },

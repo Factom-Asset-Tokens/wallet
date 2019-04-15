@@ -6,7 +6,9 @@
         <v-layout wrap>
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" mt-2>{{ amountText }} FCT</v-flex>
-          <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2>(+ {{ feeText }} FCT of fee)</v-flex>
+          <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2
+            >(+ {{ feeText }} FCT of fee burned)</v-flex
+          >
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ address }}</v-flex>
         </v-layout>
@@ -21,8 +23,10 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
+
 export default {
-  props: ['amount', 'address', 'fee'],
+  props: ['amount', 'address', 'feeText'],
   data() {
     return {
       display: false
@@ -30,18 +34,11 @@ export default {
   },
   computed: {
     amountText() {
-      return typeof this.amount === 'number'
-        ? this.amount.toLocaleString(undefined, {
-            maximumFractionDigits: 8
-          })
-        : '';
-    },
-    feeText() {
-      return typeof this.fee === 'number'
-        ? this.fee.toLocaleString(undefined, {
-            maximumFractionDigits: 8
-          })
-        : '';
+      try {
+        return new Big(this.amount).toFormat();
+      } catch (e) {
+        return '';
+      }
     }
   },
   methods: {

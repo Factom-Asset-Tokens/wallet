@@ -19,7 +19,7 @@
             <v-text-field
               placeholder="Amount"
               type="number"
-              v-model.number="outputAmount"
+              v-model="outputAmount"
               min="0"
               step="1"
               suffix="EC"
@@ -67,21 +67,22 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 import NodeCache from 'node-cache';
 import { isValidPublicEcAddress } from 'factom';
 import { buildTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
 import ConfirmFctToEcConversionDialog from './ConvertFctToEc/ConfirmFctToEcConversionDialog';
 
-const FACTOSHI_MULTIPLIER = 100000000;
+const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
   components: { ConfirmFctToEcConversionDialog },
   data() {
     return {
       outputAddress: '',
-      outputAmount: 0,
-      fctCost: 0,
-      rate: 0,
+      outputAmount: '',
+      fctCost: '',
+      rate: '',
       valid: true,
       errorMessage: '',
       amountErrors: [],
@@ -98,10 +99,12 @@ export default {
       return this.$store.state.address.fctBalances;
     },
     totalFctBalance() {
-      return Object.values(this.balances).reduce((acc, val) => acc + val, 0);
+      return this.$store.getters['address/totalFctBalance'];
     },
     amountRules() {
-      return [amount => (Number.isInteger(amount) && amount > 0) || 'Amount must be strictly positive integer'];
+      return [
+        amount => (new Big(amount).isInteger() && new Big(amount).gt(0)) || 'Amount must be strictly positive integer'
+      ];
     },
     transactionProperties() {
       return [this.outputAmount, this.outputAddress];
@@ -133,7 +136,13 @@ export default {
       try {
         this.errorMessage = '';
         this.sending = true;
-        const tx = await buildTransaction(this.$store, this.balances, this.outputAddress, this.outputAmount);
+        const tx = await buildTransaction(
+          this.$store,
+          this.totalFctBalance,
+          this.balances,
+          this.outputAddress,
+          new Big(this.outputAmount)
+        );
         const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 10 });
         this.$store.dispatch('address/fetchFctBalances');
@@ -153,16 +162,22 @@ export default {
       // so we have to re-compute the validity of inputs manually.
       if (this.isAddressOk && this.isAmountsOk) {
         const ecRate = await this.getEcRate();
-        const factoshiCost = this.outputAmount * ecRate;
+        const factoshiCost = new Big(this.outputAmount).times(ecRate);
 
         // Fast approximation that doesn't take into account fees
-        if (factoshiCost < this.totalFctBalance) {
+        if (factoshiCost.lt(this.totalFctBalance)) {
           try {
-            const tx = getFeeAdjustedTransaction(this.balances, this.outputAddress, factoshiCost, ecRate);
+            const tx = getFeeAdjustedTransaction(
+              this.totalFctBalance,
+              this.balances,
+              this.outputAddress,
+              factoshiCost,
+              ecRate
+            );
 
             this.amountErrors = [];
-            this.fctCost = tx.totalInputs / FACTOSHI_MULTIPLIER;
-            this.rate = FACTOSHI_MULTIPLIER / ecRate;
+            this.fctCost = new Big(tx.totalInputs).div(FACTOSHI_MULTIPLIER).toFormat();
+            this.rate = FACTOSHI_MULTIPLIER.div(ecRate).toFormat();
           } catch (e) {
             // In case if the total with fees did exceed the funds available
             if (e.message.includes('Not enough funds')) {

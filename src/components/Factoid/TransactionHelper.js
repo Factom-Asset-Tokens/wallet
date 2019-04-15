@@ -1,11 +1,11 @@
 import Promise from 'bluebird';
 import { Transaction } from 'factom';
 
-export async function buildTransaction(store, balances, outputAddress, amount) {
+export async function buildTransaction(store, totalBalance, balances, outputAddress, amount) {
   const ecRate = await store.getters['factomd/cli'].getEntryCreditRate();
-  const outputAmount = outputAddress[0] === 'E' ? amount * ecRate : amount;
+  const outputAmount = outputAddress[0] === 'E' ? amount.times(ecRate) : amount;
 
-  const tx = getFeeAdjustedTransaction(balances, outputAddress, outputAmount, ecRate);
+  const tx = getFeeAdjustedTransaction(totalBalance, balances, outputAddress, outputAmount, ecRate);
   // Get inputs secret keys
   const keystore = store.state.keystore.store;
   const inputsSecrets = await Promise.map(tx.inputs, function(input) {
@@ -14,7 +14,7 @@ export async function buildTransaction(store, balances, outputAddress, amount) {
   });
 
   // Build signed transaction with correct fees
-  const signedTxBuilder = Transaction.builder().output(outputAddress, outputAmount);
+  const signedTxBuilder = Transaction.builder().output(outputAddress, toInt(outputAmount));
   for (const input of inputsSecrets) {
     signedTxBuilder.input(input.secret, input.amount);
   }
@@ -23,15 +23,13 @@ export async function buildTransaction(store, balances, outputAddress, amount) {
   return signedTxBuilder.build();
 }
 
-export function getFeeAdjustedTransaction(balances, outputAddress, outputAmount, ecRate) {
-  const totalBalance = Object.values(balances).reduce((acc, val) => acc + val, 0);
-
+export function getFeeAdjustedTransaction(totalBalance, balances, outputAddress, outputAmount, ecRate) {
   let inputsAmount = outputAmount;
   // Build initial TX without fee
   let inputs = computeInputs(balances, totalBalance, inputsAmount, outputAddress);
-  const txBuilder = Transaction.builder().output(outputAddress, outputAmount);
+  const txBuilder = Transaction.builder().output(outputAddress, toInt(outputAmount));
   for (const input of inputs) {
-    txBuilder.input(input.address, input.amount);
+    txBuilder.input(input.address, toInt(input.amount));
   }
   let tx = txBuilder.build();
 
@@ -39,12 +37,12 @@ export function getFeeAdjustedTransaction(balances, outputAddress, outputAmount,
   while (tx.feesPaid < tx.computeRequiredFees(ecRate, { rcdType: 1 })) {
     const fees = tx.computeRequiredFees(ecRate, { rcdType: 1 });
 
-    inputsAmount += fees;
+    inputsAmount = inputsAmount.plus(fees);
     inputs = computeInputs(balances, totalBalance, inputsAmount, outputAddress);
 
-    const txBuilder = Transaction.builder().output(outputAddress, outputAmount);
+    const txBuilder = Transaction.builder().output(outputAddress, toInt(outputAmount));
     for (const input of inputs) {
-      txBuilder.input(input.address, input.amount);
+      txBuilder.input(input.address, toInt(input.amount));
     }
     tx = txBuilder.build();
   }
@@ -53,9 +51,9 @@ export function getFeeAdjustedTransaction(balances, outputAddress, outputAmount,
 }
 
 function computeInputs(balances, totalBalance, amount, excludedAddress) {
-  const availableBalance = totalBalance - (balances[excludedAddress] || 0);
+  const availableBalance = totalBalance.minus(balances[excludedAddress] || 0);
 
-  if (amount > availableBalance) {
+  if (amount.gt(availableBalance)) {
     throw new Error('Not enough funds to make that transaction');
   }
 
@@ -68,13 +66,13 @@ function computeInputs(balances, totalBalance, amount, excludedAddress) {
       address,
       balance: balances[address]
     }))
-    .sort((a, b) => a.balance < b.balance);
+    .sort((a, b) => a.balance.lt(b.balance));
 
   for (const b of sortedBalances) {
-    if (b.address !== excludedAddress && b.balance > 0) {
-      if (amountToCover - b.balance > 0) {
+    if (b.address !== excludedAddress && b.balance.gt(0)) {
+      if (amountToCover.minus(b.balance).gt(0)) {
         inputs.push({ address: b.address, amount: b.balance });
-        amountToCover -= b.balance;
+        amountToCover = amountToCover.minus(b.balance);
       } else {
         inputs.push({ address: b.address, amount: amountToCover });
         break;
@@ -83,4 +81,8 @@ function computeInputs(balances, totalBalance, amount, excludedAddress) {
   }
 
   return inputs;
+}
+
+function toInt(bn) {
+  return bn.integerValue().toNumber();
 }
