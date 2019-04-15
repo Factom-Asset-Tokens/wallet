@@ -3,7 +3,7 @@
     <v-flex xs12 sm4>
       <v-text-field
         ref="supplyInput"
-        v-model.number="supply"
+        v-model="supply"
         type="number"
         label="Maximum supply"
         min="0"
@@ -33,20 +33,20 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 const SYMBOL_REGEX = /^[A-Z]{1,4}$/;
 
 export default {
   data: () => ({
     infiniteSupply: false,
-    supply: null,
+    supply: '',
     symbol: '',
     metadata: '',
     symbolRules: [v => SYMBOL_REGEX.test(v) || 'Invalid symbol']
   }),
   computed: {
     supplyRules: function() {
-      const infiniteSupply = this.infiniteSupply;
-      return [v => infiniteSupply || (v && v > 0) || 'Invalid supply'];
+      return [v => this.infiniteSupply || (v && new Big(v).gt(0)) || 'Invalid supply'];
     },
     details() {
       return {
@@ -61,7 +61,7 @@ export default {
     setInfiniteSupply(v) {
       this.infiniteSupply = v;
       if (v) {
-        this.supply = 0;
+        this.supply = '';
       }
     }
   }
