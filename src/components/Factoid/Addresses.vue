@@ -45,10 +45,9 @@
         <v-tab-item>
           <v-data-table
             :headers="[
-              { text: 'Address', value: 'address' },
-              { text: 'Name', value: 'name' },
-              ,
-              { text: 'Balance', value: 'balance' }
+              { text: 'Address', value: 'address', sortable: false },
+              { text: 'Name', value: 'name', sortable: false },
+              { text: 'Balance', value: 'value', align: 'right' }
             ]"
             :items="fctAddresses"
             item-key="address"
@@ -71,7 +70,7 @@
                 </v-edit-dialog>
               </td>
               <td>
-                {{ props.item.balance }}
+                {{ props.item.balanceText }}
               </td>
             </template>
           </v-data-table>
@@ -80,9 +79,9 @@
           <v-data-table
             :headers="[
               { text: '', value: 'prefered', sortable: false },
-              { text: 'Address', value: 'address' },
-              { text: 'Name', value: 'name' },
-              { text: 'Balance', value: 'balance' }
+              { text: 'Address', value: 'address', sortable: false },
+              { text: 'Name', value: 'name', sortable: false },
+              { text: 'Balance', value: 'value', align: 'right' }
             ]"
             :items="ecAddresses"
             item-key="address"
@@ -107,7 +106,7 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
-              <td>{{ props.item.balance }}</td>
+              <td>{{ props.item.balanceText }}</td>
             </template>
           </v-data-table>
         </v-tab-item>
@@ -155,26 +154,30 @@ export default {
     },
     fctAddresses() {
       const balances = this.$store.state.address.fctBalances;
-      return this.$store.getters['address/fctAddressesWithNames'].map(o =>
-        Object.assign(
-          {
-            balance: (balances[o.address] || new Big(0)).div(FACTOSHI_MULTIPLIER).toFormat()
-          },
-          o
-        )
-      );
+      return this.$store.getters['address/fctAddressesWithNames'].map(o => {
+        const value = balances[o.address] || new Big(0);
+
+        return {
+          address: o.address,
+          value: value.toNumber(),
+          balanceText: value.div(FACTOSHI_MULTIPLIER).toFormat(),
+          name: o.name
+        };
+      });
     },
     ecAddresses() {
       const balances = this.$store.state.address.ecBalances;
-      return this.$store.getters['address/ecAddressesWithNames'].map(o =>
-        Object.assign(
-          {
-            preferred: o.address === this.preferredEcAddress,
-            balance: (balances[o.address] || new Big(0)).toFormat()
-          },
-          o
-        )
-      );
+      return this.$store.getters['address/ecAddressesWithNames'].map(o => {
+        const value = balances[o.address] || new Big(0);
+
+        return {
+          address: o.address,
+          preferred: o.address === this.preferredEcAddress,
+          value: value.toNumber(),
+          balanceText: value.toFormat(),
+          name: o.name
+        };
+      });
     },
     selectedAddressType() {
       switch (this.tab) {
