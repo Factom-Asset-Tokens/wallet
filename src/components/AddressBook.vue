@@ -34,9 +34,8 @@
 
 <script>
 export default {
-  data: () => ({
-    type: 'fct'
-  }),
+  props: ['type'],
+  data: () => ({}),
   computed: {
     recentlyUsed() {
       return this.$store.state.address[`${this.type}RecentlyUsed`];
