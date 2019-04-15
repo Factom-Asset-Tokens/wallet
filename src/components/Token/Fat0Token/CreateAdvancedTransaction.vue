@@ -1,122 +1,127 @@
 <template>
-  <v-sheet class="elevation-1">
-    <v-container>
-      <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-        <v-layout wrap>
-          <v-flex xs12 pb-4>
-            <v-toolbar flat color="primary">
-              <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
+  <div>
+    <v-sheet class="elevation-1 vsheet-bottom-margin">
+      <v-container id="transaction">
+        <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+          <v-layout wrap>
+            <v-flex xs12 pb-4>
+              <v-toolbar flat color="primary">
+                <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
 
-              <v-spacer></v-spacer>
-              <div class="total-amount">{{ totalInputs.toFormat() }} {{ symbol }}</div>
-              <v-toolbar-items>
-                <v-btn flat @click="add('inputs')">
-                  <v-icon>add_circle_outline</v-icon>
-                </v-btn>
-              </v-toolbar-items>
-            </v-toolbar>
-          </v-flex>
-          <v-flex xs12 v-for="(input, index) in inputs" :key="'input-' + input.id">
-            <TransactionInput
-              v-model="inputs[index]"
-              @delete="deleteInoutput('inputs', input.id)"
-              :balances="balances"
-              :first="index === 0"
-              :symbol="symbol"
-              :alreadySelectedAddresses="selectedInputAddresses"
-            ></TransactionInput>
-          </v-flex>
-          <v-flex xs12 pt-5 pb-4>
-            <v-toolbar flat color="primary">
-              <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <div class="total-amount">{{ totalInputs.toFormat() }} {{ symbol }}</div>
+                <v-toolbar-items>
+                  <v-btn flat @click="add('inputs')">
+                    <v-icon>add_circle_outline</v-icon>
+                  </v-btn>
+                </v-toolbar-items>
+              </v-toolbar>
+            </v-flex>
+            <v-flex xs12 v-for="(input, index) in inputs" :key="'input-' + input.id">
+              <TransactionInput
+                v-model="inputs[index]"
+                @delete="deleteInoutput('inputs', input.id)"
+                :balances="balances"
+                :first="index === 0"
+                :symbol="symbol"
+                :alreadySelectedAddresses="selectedInputAddresses"
+              ></TransactionInput>
+            </v-flex>
+            <v-flex xs12 pt-5 pb-4>
+              <v-toolbar flat color="primary">
+                <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
 
-              <v-spacer></v-spacer>
-              <div class="total-amount">{{ totalOutputs.toFormat() }} {{ symbol }}</div>
-              <v-toolbar-items>
-                <v-btn flat @click="add('outputs')">
-                  <v-icon>add_circle_outline</v-icon>
-                </v-btn>
-              </v-toolbar-items>
-            </v-toolbar>
-          </v-flex>
+                <v-spacer></v-spacer>
+                <div class="total-amount">{{ totalOutputs.toFormat() }} {{ symbol }}</div>
+                <v-toolbar-items>
+                  <v-btn flat @click="add('outputs')">
+                    <v-icon>add_circle_outline</v-icon>
+                  </v-btn>
+                </v-toolbar-items>
+              </v-toolbar>
+            </v-flex>
 
-          <v-flex xs12 v-for="(output, index) in outputs" :key="'output-' + output.id">
-            <v-layout wrap align-baseline justify-center>
-              <v-flex xs12 md8 pr-4>
-                <v-text-field
-                  label="Address"
-                  v-model.trim="output.address"
-                  :rules="outputAddressRules"
-                  size="50"
-                  single-line
-                  box
-                  required
-                ></v-text-field>
+            <v-flex xs12 v-for="(output, index) in outputs" :key="'output-' + output.id">
+              <v-layout wrap align-baseline justify-center>
+                <v-flex xs12 md8 pr-4>
+                  <v-text-field
+                    label="Address"
+                    v-model.trim="output.address"
+                    :rules="outputAddressRules"
+                    size="50"
+                    single-line
+                    box
+                    required
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs11 md3>
+                  <v-text-field
+                    v-model="output.amount"
+                    type="number"
+                    :suffix="symbol"
+                    :rules="outputAmountRules"
+                    min="0"
+                    label="Amount"
+                    single-line
+                    box
+                    required
+                  ></v-text-field>
+                </v-flex>
+                <v-flex xs1 text-xs-center>
+                  <v-icon v-if="index !== 0" @click="deleteInoutput('outputs', output.id)">delete</v-icon>
+                </v-flex>
+              </v-layout>
+            </v-flex>
+
+            <v-layout align-center wrap>
+              <v-flex xs12 sm10>
+                <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
+                  {{ transactionError }}
+                </v-alert>
               </v-flex>
-              <v-flex xs11 md3>
-                <v-text-field
-                  v-model="output.amount"
-                  type="number"
-                  :suffix="symbol"
-                  :rules="outputAmountRules"
-                  min="0"
-                  label="Amount"
-                  single-line
-                  box
-                  required
-                ></v-text-field>
+
+              <v-flex xs12 sm2 text-xs-right pt-3>
+                <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
+                  >Send
+                  <v-icon right>send</v-icon>
+                </v-btn>
               </v-flex>
-              <v-flex xs1 text-xs-center>
-                <v-icon v-if="index !== 0" @click="deleteInoutput('outputs', output.id)">delete</v-icon>
+
+              <!-- Alerts transaction success/failure-->
+              <v-flex v-if="errorMessage" xs12>
+                <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+              </v-flex>
+              <v-flex xs12>
+                <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                  {{ transactionSentMessage }}
+                </v-alert>
               </v-flex>
             </v-layout>
-          </v-flex>
-
-          <v-layout align-center wrap>
-            <v-flex xs12 sm10>
-              <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
-                {{ transactionError }}
-              </v-alert>
-            </v-flex>
-
-            <v-flex xs12 sm2 text-xs-right pt-5>
-              <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
-                >Send
-                <v-icon right>send</v-icon>
-              </v-btn>
-            </v-flex>
-
-            <!-- Alerts transaction success/failure-->
-            <v-flex v-if="errorMessage" xs12>
-              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-            </v-flex>
-            <v-flex xs12>
-              <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-                {{ transactionSentMessage }}
-              </v-alert>
-            </v-flex>
           </v-layout>
-        </v-layout>
 
-        <!-- Dialogs -->
-        <ConfirmTransactionDialog
-          ref="confirmTransactionDialog"
-          :outputs="outputs"
-          :symbol="symbol"
-          @confirmed="send"
-        ></ConfirmTransactionDialog>
-      </v-form>
-    </v-container>
-  </v-sheet>
+          <!-- Dialogs -->
+          <ConfirmTransactionDialog
+            ref="confirmTransactionDialog"
+            :outputs="outputs"
+            :symbol="symbol"
+            @confirmed="send"
+          ></ConfirmTransactionDialog>
+        </v-form>
+      </v-container>
+    </v-sheet>
+    <AddressBook :type="'fct'" @address="pickAddressFromAddressBook"></AddressBook>
+  </div>
 </template>
 
 <script>
+import { clipboard } from 'electron';
 import Big from 'bignumber.js';
 import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
 import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
 import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
+import AddressBook from '@/components/AddressBook';
 import { FAT0 } from '@fat-token/fat-js';
 const {
   Transaction: { TransactionBuilder }
@@ -132,7 +137,7 @@ const newInoutput = (function() {
 const ZERO = new Big(0);
 
 export default {
-  components: { TransactionInput, ConfirmTransactionDialog },
+  components: { TransactionInput, ConfirmTransactionDialog, AddressBook },
   mixins: [SendFatTransaction],
   data() {
     return {
@@ -184,6 +189,12 @@ export default {
     }
   },
   methods: {
+    pickAddressFromAddressBook(address) {
+      clipboard.writeText(address);
+      this.$store.commit('snackInfo', 'Address copied to the clipboard');
+      const vuetify = this.$vuetify;
+      this.$nextTick(() => vuetify.goTo('#transaction'));
+    },
     add: function(type) {
       this[type].push(newInoutput());
     },
@@ -202,10 +213,12 @@ export default {
       }
     },
     async send() {
+      const outputAddresses = this.outputs.map(o => o.address);
       await this.sendTransaction();
       if (this.transactionSentMessage) {
         this.inputs = [newInoutput()];
         this.outputs = [newInoutput()];
+        outputAddresses.forEach(address => this.$store.commit('address/addRecentlyUsed', address));
       }
     },
     async buildTransaction() {
@@ -262,5 +275,8 @@ export default {
 <style scoped>
 .total-amount {
   margin-right: 36px;
+}
+.vsheet-bottom-margin {
+  margin-bottom: 24px;
 }
 </style>
