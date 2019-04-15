@@ -1,115 +1,118 @@
 <template>
-  <v-layout wrap>
-    <v-flex>
-      <v-sheet class="elevation-1">
-        <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-          <v-container fluid>
-            <v-layout wrap align-baseline>
-              <v-flex xs12>
-                <div class="headline">Available Tokens</div>
-              </v-flex>
-              <v-flex xs12>
-                <v-chip
-                  v-for="id in availableTokens"
-                  :key="id.min"
-                  outline
-                  color="secondary"
-                  class="font-weight-bold subheading"
-                  @click="selectToken(id)"
-                >
-                  <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
-                    <v-icon>info_outline</v-icon>
-                  </v-avatar>
-                  {{ id | displayIds }}
-                </v-chip>
-              </v-flex>
-              <v-flex xs12 mt-4>
-                <div class="headline">Tokens to send</div>
-              </v-flex>
-              <v-flex xs12>
-                <div v-if="selectedTokens.length > 0">
+  <div>
+    <v-layout wrap>
+      <v-flex>
+        <v-sheet class="elevation-1 vsheet-bottom-margin">
+          <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+            <v-container fluid id="transaction">
+              <v-layout wrap align-baseline>
+                <v-flex xs12>
+                  <div class="headline">Available Tokens</div>
+                </v-flex>
+                <v-flex xs12>
                   <v-chip
-                    v-for="id in selectedTokens"
+                    v-for="id in availableTokens"
                     :key="id.min"
                     outline
                     color="secondary"
                     class="font-weight-bold subheading"
-                    close
-                    @input="unselectToken(id)"
+                    @click="selectToken(id)"
                   >
                     <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
                       <v-icon>info_outline</v-icon>
                     </v-avatar>
                     {{ id | displayIds }}
                   </v-chip>
-                </div>
-                <div v-else class="font-italic subheading">
-                  Start selecting tokens from the "Available Tokens" section.
-                </div>
-              </v-flex>
-              <v-flex md9 mt-4>
-                <v-text-field
-                  v-model="address"
-                  label="Recipient address"
-                  counter="52"
-                  :rules="addressRules"
-                  :disabled="burn"
-                  clearable
-                  required
-                  single-line
-                  box
-                ></v-text-field>
-              </v-flex>
-              <v-flex md1 mt-4 text-xs-left>
-                <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
-              </v-flex>
+                </v-flex>
+                <v-flex xs12 mt-4>
+                  <div class="headline">Tokens to send</div>
+                </v-flex>
+                <v-flex xs12>
+                  <div v-if="selectedTokens.length > 0">
+                    <v-chip
+                      v-for="id in selectedTokens"
+                      :key="id.min"
+                      outline
+                      color="secondary"
+                      class="font-weight-bold subheading"
+                      close
+                      @input="unselectToken(id)"
+                    >
+                      <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
+                        <v-icon>info_outline</v-icon>
+                      </v-avatar>
+                      {{ id | displayIds }}
+                    </v-chip>
+                  </div>
+                  <div v-else class="font-italic subheading">
+                    Start selecting tokens from the "Available Tokens" section.
+                  </div>
+                </v-flex>
+                <v-flex md9 mt-4>
+                  <v-text-field
+                    v-model="address"
+                    label="Recipient address"
+                    counter="52"
+                    :rules="addressRules"
+                    :disabled="burn"
+                    clearable
+                    required
+                    single-line
+                    box
+                  ></v-text-field>
+                </v-flex>
+                <v-flex md1 mt-4 text-xs-left>
+                  <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
+                </v-flex>
 
-              <v-flex md2 text-xs-right mt-4>
-                <v-btn
-                  color="primary"
-                  large
-                  :disabled="!valid || selectedTokens.length === 0"
-                  type="submit"
-                  :loading="sending"
-                  >Send
-                  <v-icon right>send</v-icon>
-                </v-btn>
-              </v-flex>
+                <v-flex md2 text-xs-right mt-4>
+                  <v-btn
+                    color="primary"
+                    large
+                    :disabled="!valid || selectedTokens.length === 0"
+                    type="submit"
+                    :loading="sending"
+                    >Send
+                    <v-icon right>send</v-icon>
+                  </v-btn>
+                </v-flex>
 
-              <!-- Extra validation rules errors (not dismissable) -->
-              <v-flex xs12>
-                <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
-                  {{ transactionError }}
-                </v-alert>
-              </v-flex>
+                <!-- Extra validation rules errors (not dismissable) -->
+                <v-flex xs12>
+                  <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
+                    {{ transactionError }}
+                  </v-alert>
+                </v-flex>
 
-              <!-- Alerts transaction success/failure-->
-              <v-flex v-if="errorMessage" xs12>
-                <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-              </v-flex>
-              <v-flex xs12>
-                <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-                  {{ transactionSentMessage }}
-                </v-alert>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-form>
-      </v-sheet>
-    </v-flex>
+                <!-- Alerts transaction success/failure-->
+                <v-flex v-if="errorMessage" xs12>
+                  <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+                </v-flex>
+                <v-flex xs12>
+                  <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                    {{ transactionSentMessage }}
+                  </v-alert>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-form>
+        </v-sheet>
+      </v-flex>
 
-    <!-- Dialogs -->
-    <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
-    <NfTokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></NfTokenDetailsDialog>
-    <ConfirmTransactionDialog
-      ref="confirmTransactionDialog"
-      :selectedTokens="selectedTokens"
-      :address="address"
-      :burn="burn"
-      @confirmed="send"
-    ></ConfirmTransactionDialog>
-    <ConfirmBurnDialog ref="confirmBurnDialog" :selectedTokens="selectedTokens" @confirmed="send"></ConfirmBurnDialog>
-  </v-layout>
+      <!-- Dialogs -->
+      <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
+      <NfTokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></NfTokenDetailsDialog>
+      <ConfirmTransactionDialog
+        ref="confirmTransactionDialog"
+        :selectedTokens="selectedTokens"
+        :address="address"
+        :burn="burn"
+        @confirmed="send"
+      ></ConfirmTransactionDialog>
+      <ConfirmBurnDialog ref="confirmBurnDialog" :selectedTokens="selectedTokens" @confirmed="send"></ConfirmBurnDialog>
+    </v-layout>
+    <AddressBook :type="'fct'" @address="pickAddressFromAddressBook"></AddressBook>
+  </div>
 </template>
 
 <script>
@@ -125,6 +128,7 @@ import SelectIdRangeDialog from './CreateTransaction/SelectIdRangeDialog';
 import ConfirmTransactionDialog from './CreateTransaction/ConfirmTransactionDialog';
 import ConfirmBurnDialog from './CreateTransaction/ConfirmBurnDialog';
 import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDialog';
+import AddressBook from '@/components/AddressBook';
 
 export default {
   props: ['symbol', 'tokenCli', 'balances'],
@@ -133,7 +137,8 @@ export default {
     SelectIdRangeDialog,
     NfTokenDetailsDialog,
     ConfirmTransactionDialog,
-    ConfirmBurnDialog
+    ConfirmBurnDialog,
+    AddressBook
   },
   data() {
     return {
@@ -160,6 +165,11 @@ export default {
     }
   },
   methods: {
+    pickAddressFromAddressBook(address) {
+      this.address = address;
+      const vuetify = this.$vuetify;
+      this.$nextTick(() => vuetify.goTo('#transaction'));
+    },
     clickBurn() {
       this.burn = !this.burn;
       if (this.burn) {
@@ -225,10 +235,13 @@ export default {
       return txBuilder.build();
     },
     async send() {
+      const address = this.address;
+
       await this.sendTransaction();
       if (this.transactionSentMessage) {
         this.burn = false;
         this.selectedTokens = [];
+        this.$store.commit('address/addRecentlyUsed', address);
       }
     }
   },
@@ -257,5 +270,8 @@ export default {
 <style scoped>
 .grey-text {
   color: #424242;
+}
+.vsheet-bottom-margin {
+  margin-bottom: 24px;
 }
 </style>
