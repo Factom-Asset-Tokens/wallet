@@ -121,6 +121,8 @@
 import Big from 'bignumber.js';
 import AddressImportDialog from './Addresses/AddressImportDialog';
 
+const FACTOSHI_MULTIPLIER = new Big(100000000);
+
 export default {
   components: { AddressImportDialog },
   data: function() {
@@ -139,7 +141,7 @@ export default {
   },
   computed: {
     totalFctBalanceText() {
-      const fctSum = this.$store.getters['address/totalFctBalance'].div(100000000);
+      const fctSum = this.$store.getters['address/totalFctBalance'].div(FACTOSHI_MULTIPLIER);
       return {
         rounded: fctSum.toFormat(5),
         exact: fctSum.toFormat()
@@ -156,7 +158,7 @@ export default {
       return this.$store.getters['address/fctAddressesWithNames'].map(o =>
         Object.assign(
           {
-            balance: (balances[o.address] || new Big(0)).div(100000000).toFormat()
+            balance: (balances[o.address] || new Big(0)).div(FACTOSHI_MULTIPLIER).toFormat()
           },
           o
         )

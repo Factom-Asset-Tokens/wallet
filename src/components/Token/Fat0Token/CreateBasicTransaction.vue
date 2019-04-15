@@ -1,77 +1,80 @@
 <template>
-  <v-sheet class="elevation-1">
-    <v-container>
-      <v-layout wrap>
-        <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5>
-          {{ totalBalance.toFormat() }} {{ symbol }}
-        </v-flex>
-      </v-layout>
-      <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
-        <v-layout wrap align-baseline>
-          <v-flex xs11 md7 offset-md2>
-            <v-text-field
-              v-model="address"
-              label="Recipient address"
-              counter="52"
-              :rules="addressRules"
-              :disabled="burn"
-              clearable
-              single-line
-              box
-              required
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs1 md1 text-xs-center>
-            <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
-          </v-flex>
-          <v-flex xs12 md6 offset-md2>
-            <v-text-field
-              placeholder="Amount"
-              type="number"
-              v-model="amount"
-              min="0"
-              :suffix="symbol"
-              :rules="amountRules"
-              single-line
-              box
-              required
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12 md2 text-xs-right>
-            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
-              >Send
-              <v-icon right>send</v-icon>
-            </v-btn>
-          </v-flex>
-
-          <!-- Alerts transaction success/failure-->
-          <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-            <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-          </v-flex>
-          <v-flex xs12>
-            <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-              {{ transactionSentMessage }}
-            </v-alert>
+  <div>
+    <v-sheet class="elevation-1 vsheet-bottom-margin">
+      <v-container id="transaction">
+        <v-layout wrap>
+          <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5>
+            {{ totalBalance.toFormat() }} {{ symbol }}
           </v-flex>
         </v-layout>
+        <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+          <v-layout wrap align-baseline>
+            <v-flex xs11 md7 offset-md2>
+              <v-text-field
+                v-model="address"
+                label="Recipient address"
+                counter="52"
+                :rules="addressRules"
+                :disabled="burn"
+                clearable
+                single-line
+                box
+                required
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs1 md1 text-xs-center>
+              <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
+            </v-flex>
+            <v-flex xs12 md6 offset-md2>
+              <v-text-field
+                placeholder="Amount"
+                type="number"
+                v-model="amount"
+                min="0"
+                :suffix="symbol"
+                :rules="amountRules"
+                single-line
+                box
+                required
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs12 md2 text-xs-right>
+              <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
+                >Send
+                <v-icon right>send</v-icon>
+              </v-btn>
+            </v-flex>
 
-        <!-- Dialogs -->
-        <ConfirmTransactionDialog
-          ref="confirmTransactionDialog"
-          :amount="amount"
-          :address="address"
-          :symbol="symbol"
-          @confirmed="send"
-        ></ConfirmTransactionDialog>
-        <ConfirmBurnDialog
-          ref="confirmBurnDialog"
-          :amount="amount"
-          :symbol="symbol"
-          @confirmed="send"
-        ></ConfirmBurnDialog>
-      </v-form>
-    </v-container>
-  </v-sheet>
+            <!-- Alerts transaction success/failure-->
+            <v-flex v-if="errorMessage" xs12 md8 offset-md2>
+              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+            </v-flex>
+            <v-flex xs12>
+              <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                {{ transactionSentMessage }}
+              </v-alert>
+            </v-flex>
+          </v-layout>
+
+          <!-- Dialogs -->
+          <ConfirmTransactionDialog
+            ref="confirmTransactionDialog"
+            :amount="amount"
+            :address="address"
+            :symbol="symbol"
+            @confirmed="send"
+          ></ConfirmTransactionDialog>
+          <ConfirmBurnDialog
+            ref="confirmBurnDialog"
+            :amount="amount"
+            :symbol="symbol"
+            @confirmed="send"
+          ></ConfirmBurnDialog>
+        </v-form>
+      </v-container>
+    </v-sheet>
+    <AddressBook :type="'fct'" @address="pickAddressFromAddressBook"></AddressBook>
+  </div>
 </template>
 
 <script>
@@ -83,13 +86,15 @@ import { FAT0 } from '@fat-token/fat-js';
 const {
   Transaction: { TransactionBuilder }
 } = FAT0;
+// Components
 import ConfirmTransactionDialog from './CreateBasicTransaction/ConfirmTransactionDialog';
 import ConfirmBurnDialog from './CreateBasicTransaction/ConfirmBurnDialog';
+import AddressBook from '@/components/AddressBook';
 
 const ZERO = new Big(0);
 
 export default {
-  components: { ConfirmTransactionDialog, ConfirmBurnDialog },
+  components: { ConfirmTransactionDialog, ConfirmBurnDialog, AddressBook },
   mixins: [SendFatTransaction],
   props: ['balances', 'totalBalance', 'symbol', 'tokenCli'],
   data() {
@@ -126,6 +131,11 @@ export default {
     }
   },
   methods: {
+    pickAddressFromAddressBook(address) {
+      this.address = address;
+      const vuetify = this.$vuetify;
+      this.$nextTick(() => vuetify.goTo('#transaction'));
+    },
     async confirmTransaction() {
       this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
@@ -183,13 +193,19 @@ export default {
       return txBuilder.build();
     },
     async send() {
+      const address = this.address;
       await this.sendTransaction();
       if (this.transactionSentMessage) {
         this.burn = false;
+        this.$store.commit('address/addRecentlyUsed', address);
       }
     }
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.vsheet-bottom-margin {
+  margin-bottom: 24px;
+}
+</style>
