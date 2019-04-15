@@ -8,7 +8,7 @@
               <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
 
               <v-spacer></v-spacer>
-              <div class="total-amount">{{ totalInputs }} {{ symbol }}</div>
+              <div class="total-amount">{{ totalInputs.toFormat() }} {{ symbol }}</div>
               <v-toolbar-items>
                 <v-btn flat @click="add('inputs')">
                   <v-icon>add_circle_outline</v-icon>
@@ -31,7 +31,7 @@
               <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
 
               <v-spacer></v-spacer>
-              <div class="total-amount">{{ totalOutputs }} {{ symbol }}</div>
+              <div class="total-amount">{{ totalOutputs.toFormat() }} {{ symbol }}</div>
               <v-toolbar-items>
                 <v-btn flat @click="add('outputs')">
                   <v-icon>add_circle_outline</v-icon>
@@ -55,7 +55,7 @@
               </v-flex>
               <v-flex xs11 md3>
                 <v-text-field
-                  v-model.number="output.amount"
+                  v-model="output.amount"
                   type="number"
                   :suffix="symbol"
                   :rules="outputAmountRules"
@@ -111,6 +111,7 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
@@ -124,9 +125,11 @@ const {
 const newInoutput = (function() {
   let i = 0;
   return function() {
-    return { id: i++, address: '', amount: 0 };
+    return { id: i++, address: '', amount: '' };
   };
 })();
+
+const ZERO = new Big(0);
 
 export default {
   components: { TransactionInput, ConfirmTransactionDialog },
@@ -166,14 +169,15 @@ export default {
     totalInputs() {
       return this.inputs
         .map(o => o.amount)
-        .filter(a => typeof a === 'number')
-        .reduce((a, b) => a + b, 0);
+        .filter(a => !!a)
+        .reduce((acc, val) => acc.plus(val), ZERO);
     },
+
     totalOutputs() {
       return this.outputs
         .map(o => o.amount)
-        .filter(a => typeof a === 'number')
-        .reduce((a, b) => a + b, 0);
+        .filter(a => !!a)
+        .reduce((acc, val) => acc.plus(val), ZERO);
     },
     validTransactionProperties() {
       return [this.totalInputs, this.totalOutputs, this.addressesCount];
@@ -214,10 +218,10 @@ export default {
         return { secret, amount: input.amount };
       });
       for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.amount);
+        txBuilder.input(input.secret, Number(input.amount));
       }
       for (const output of this.outputs) {
-        txBuilder.output(output.address, output.amount);
+        txBuilder.output(output.address, Number(output.amount));
       }
 
       return txBuilder.build();
@@ -235,14 +239,14 @@ export default {
       }
 
       // Total inputs and outputs must be equal
-      if (this.totalInputs !== this.totalOutputs) {
+      if (!this.totalInputs.eq(this.totalOutputs)) {
         this.validTransaction = false;
         this.transactionError = 'The sum of inputs and outputs must be equal.';
         return;
       }
 
       // The amount transfered has to be greater than 0
-      if (this.totalInputs === 0) {
+      if (this.totalInputs.eq(ZERO)) {
         this.validTransaction = false;
         this.transactionError = 'The amount transfered cannot be 0.';
         return;

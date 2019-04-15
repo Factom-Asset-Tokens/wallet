@@ -3,13 +3,14 @@
     <v-container>
       <template v-if="view === 'balances'">
         <v-layout wrap mb-5>
-          <TokenHeader :token="token" :totalBalance="totalBalance"></TokenHeader>
+          <TokenHeader :token="token" :totalBalance="totalBalance.toFormat()"></TokenHeader>
         </v-layout>
         <AddressesBalances :balances="balances" :symbol="token.symbol" :tokenCli="tokenCli"></AddressesBalances>
       </template>
       <CreateBasicTransaction
         v-else-if="view === 'send'"
         :balances="balances"
+        :totalBalance="totalBalance"
         :symbol="token.symbol"
         :tokenCli="tokenCli"
       ></CreateBasicTransaction>
@@ -30,6 +31,7 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 import TokenHeader from './TokenHeader';
 import TransactionHistory from './TransactionHistory';
 
@@ -59,11 +61,7 @@ export default {
   },
   computed: {
     totalBalance() {
-      return this.balances
-        .reduce((acc, val) => acc + val.balance, 0)
-        .toLocaleString(undefined, {
-          maximumFractionDigits: 10
-        });
+      return this.balances.reduce((acc, val) => acc.plus(val.balance), new Big(0));
     },
     view() {
       return this.$route.query.view;
@@ -75,10 +73,8 @@ export default {
       const addresses = this.$store.getters['address/fctAddressesWithNames'];
 
       this.balances = await Promise.map(addresses, async function(address) {
-        const result = {};
-        result.balance = await tokenCli.getBalance(address.address);
-
-        return Object.assign(result, address);
+        const balance = await tokenCli.getBalance(address.address);
+        return Object.assign({ balance: new Big(balance) }, address);
       });
     }
   },

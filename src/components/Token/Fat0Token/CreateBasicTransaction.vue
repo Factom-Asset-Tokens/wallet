@@ -3,7 +3,7 @@
     <v-container>
       <v-layout wrap>
         <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5>
-          {{ totalBalancetext }} {{ symbol }}
+          {{ totalBalance.toFormat() }} {{ symbol }}
         </v-flex>
       </v-layout>
       <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
@@ -28,7 +28,7 @@
             <v-text-field
               placeholder="Amount"
               type="number"
-              v-model.number="amount"
+              v-model="amount"
               min="0"
               :suffix="symbol"
               :rules="amountRules"
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
@@ -85,31 +86,25 @@ const {
 import ConfirmTransactionDialog from './CreateBasicTransaction/ConfirmTransactionDialog';
 import ConfirmBurnDialog from './CreateBasicTransaction/ConfirmBurnDialog';
 
+const ZERO = new Big(0);
+
 export default {
   components: { ConfirmTransactionDialog, ConfirmBurnDialog },
   mixins: [SendFatTransaction],
+  props: ['balances', 'totalBalance', 'symbol', 'tokenCli'],
   data() {
     return {
       address: '',
-      amount: 0,
+      amount: '',
       burn: false,
       valid: true,
       errorMessage: '',
       addressRules: [v => this.burn || isValidPublicFctAddress(v) || 'Invalid public FCT address']
     };
   },
-  props: ['balances', 'symbol', 'tokenCli'],
   computed: {
     fireColor() {
       return this.burn ? 'error' : 'grey';
-    },
-    totalBalance() {
-      return this.balances.reduce((acc, val) => acc + val.balance, 0);
-    },
-    totalBalancetext() {
-      return this.totalBalance.toLocaleString(undefined, {
-        maximumFractionDigits: 10
-      });
     },
     selfAddress() {
       return this.balances.find(b => b.address === this.address);
@@ -118,12 +113,13 @@ export default {
       const totalBalance = this.totalBalance;
       const selfAddress = this.selfAddress;
       return [
-        amount => (typeof amount === 'number' && amount > 0) || 'Amount must be strictly positive',
-        function(amount) {
+        amount => (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
+        function(val) {
+          const amount = new Big(val);
           if (selfAddress) {
-            return amount <= totalBalance - selfAddress.balance || 'Not enough funds available';
+            return amount.lte(totalBalance.minus(selfAddress.balance)) || 'Not enough funds available';
           } else {
-            return amount <= totalBalance || 'Not enough funds available';
+            return amount.lte(totalBalance) || 'Not enough funds available';
           }
         }
       ];
@@ -149,17 +145,18 @@ export default {
       }
     },
     async buildTransaction() {
+      const outputAmount = new Big(this.amount);
       const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.address;
       // Greedy algorithm to select inputs
       const inputs = [];
-      let amountToCover = this.amount;
+      let amountToCover = outputAmount;
       for (const b of this.balances) {
         // Output address must be excluded from the choices of inputs
         // otherwise it would be an invalid transaction as per fat0 standard
-        if (b.address !== outputAddress && b.balance > 0) {
-          if (amountToCover - b.balance > 0) {
+        if (b.address !== outputAddress && b.balance.gt(0)) {
+          if (amountToCover.minus(b.balance).gt(0)) {
             inputs.push({ address: b.address, amount: b.balance });
-            amountToCover -= b.balance;
+            amountToCover = amountToCover.minus(b.balance);
           } else {
             inputs.push({ address: b.address, amount: amountToCover });
             break;
@@ -175,9 +172,12 @@ export default {
       });
 
       // Build transaction object
-      const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId()).output(outputAddress, this.amount);
+      const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId()).output(
+        outputAddress,
+        outputAmount.toNumber()
+      );
       for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.amount);
+        txBuilder.input(input.secret, input.amount.toNumber());
       }
 
       return txBuilder.build();

@@ -14,7 +14,7 @@
     <v-flex xs11 md3>
       <v-text-field
         v-if="address"
-        v-model.number="amount"
+        v-model="amount"
         :rules="amountRules"
         type="number"
         :suffix="symbol"
@@ -35,6 +35,10 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
+
+const ZERO = new Big(0);
+
 export default {
   data() {
     return {
@@ -45,22 +49,24 @@ export default {
   props: ['value', 'first', 'balances', 'alreadySelectedAddresses', 'symbol'],
   computed: {
     balance() {
-      return this.address ? this.balances.find(b => b.address === this.address).balance : 0;
+      return this.address ? this.balances.find(b => b.address === this.address).balance : ZERO;
     },
     amountRules() {
       const maxAmount = this.balance;
       return [
-        amount => (typeof amount === 'number' && amount > 0) || 'Amount must be strictly positive',
-        amount => amount <= maxAmount || "Address doesn't hold enough funds"
+        amount => (amount && new Big(amount).gt(0)) || 'Amount must be strictly positive',
+        amount => maxAmount.gte(amount) || "Address doesn't hold enough funds"
       ];
     },
     availableAddresses() {
       const that = this;
       return this.balances
-        .filter(b => b.balance > 0 && (!this.alreadySelectedAddresses.has(b.address) || b.address === that.address))
+        .filter(
+          b => b.balance.gt(ZERO) && (!this.alreadySelectedAddresses.has(b.address) || b.address === that.address)
+        )
         .map(b => ({
           value: b.address,
-          text: `${b.name || b.address} (${b.balance} ${that.symbol})`
+          text: `${b.name || b.address} (${b.balance.toFormat()} ${that.symbol})`
         }));
     }
   }

@@ -37,7 +37,7 @@ export default {
       try {
         return new Big(this.amount).toFormat();
       } catch (e) {
-        return '';
+        return '??';
       }
     }
   },

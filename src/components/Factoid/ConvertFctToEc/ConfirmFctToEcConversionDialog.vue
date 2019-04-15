@@ -36,14 +36,14 @@ export default {
       try {
         return new Big(this.ecAmount).toFormat();
       } catch (e) {
-        return '';
+        return '??';
       }
     },
     fctCostText() {
       try {
         return new Big(this.fctCost).toFormat();
       } catch (e) {
-        return '';
+        return '??';
       }
     }
   },

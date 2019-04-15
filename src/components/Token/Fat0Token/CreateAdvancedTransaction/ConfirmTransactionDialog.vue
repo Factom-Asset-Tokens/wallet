@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
+
 export default {
   props: ['outputs', 'symbol'],
   data() {
@@ -32,13 +34,14 @@ export default {
   },
   computed: {
     amountText() {
-      const amount = this.outputs
-        .map(o => o.amount)
-        .filter(a => typeof a === 'number')
-        .reduce((a, b) => a + b, 0);
-      return amount.toLocaleString(undefined, {
-        maximumFractionDigits: 10
-      });
+      try {
+        return this.outputs
+          .map(o => o.amount)
+          .reduce((acc, val) => acc.plus(val), new Big(0))
+          .toFormat();
+      } catch (e) {
+        return '??';
+      }
     }
   },
   methods: {

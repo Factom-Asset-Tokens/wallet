@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
 export default {
   props: ['amount', 'symbol'],
   data() {
@@ -27,11 +28,11 @@ export default {
   },
   computed: {
     amountText() {
-      return typeof this.amount === 'number'
-        ? this.amount.toLocaleString(undefined, {
-            maximumFractionDigits: 10
-          })
-        : '';
+      try {
+        return new Big(this.amount).toFormat();
+      } catch (e) {
+        return '??';
+      }
     }
   },
   methods: {

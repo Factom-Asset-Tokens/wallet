@@ -16,7 +16,7 @@
           <td>{{ props.item.address }}</td>
           <td>{{ props.item.name }}</td>
           <td class="text-xs-right">
-            {{ props.item.balance.toLocaleString(undefined, { maximumFractionDigits: 10 }) }}
+            {{ props.item.balance.toFormat() }}
           </td>
         </template>
       </v-data-table>
