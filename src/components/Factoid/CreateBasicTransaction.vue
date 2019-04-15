@@ -1,71 +1,74 @@
 <template>
-  <v-sheet class="elevation-1">
-    <v-container>
-      <v-layout wrap>
-        <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalBalanceText }} FCT </v-flex>
-      </v-layout>
-      <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+  <div>
+    <v-sheet class="elevation-1 vsheet-bottom-margin">
+      <v-container id="transaction">
         <v-layout wrap>
-          <v-flex xs12 md8 offset-md2>
-            <v-text-field
-              v-model="outputAddress"
-              label="Recipient FCT address"
-              counter="52"
-              :rules="addressRules"
-              clearable
-              required
-              single-line
-              box
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12 md6 offset-md2>
-            <v-text-field
-              placeholder="Amount"
-              type="number"
-              v-model="outputAmount"
-              min="0"
-              suffix="FCT"
-              :rules="amountRules"
-              :error-messages="amountErrors"
-              required
-              single-line
-              box
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12 md2 text-xs-right>
-            <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
-              >Send
-              <v-icon right>send</v-icon>
-            </v-btn>
-          </v-flex>
-          <!-- Alerts -->
-          <v-flex v-if="valid && outputAddress && feeText" xs12 md8 offset-md2>
-            <v-alert :value="true" type="info" outline>
-              An additional transaction fee of
-              <strong>{{ feeText }} FCT</strong>
-              will be deducted.
-            </v-alert>
-          </v-flex>
-          <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-            <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
-          </v-flex>
-          <v-flex xs12>
-            <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-              {{ transactionSentMessage }}
-            </v-alert>
-          </v-flex>
+          <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalBalanceText }} FCT </v-flex>
         </v-layout>
-        <!-- Dialogs -->
-        <ConfirmBasicTransactionDialog
-          ref="confirmTransactionDialog"
-          :address="outputAddress"
-          :amount="outputAmount"
-          :feeText="feeText"
-          @confirmed="send"
-        ></ConfirmBasicTransactionDialog>
-      </v-form>
-    </v-container>
-  </v-sheet>
+        <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+          <v-layout wrap>
+            <v-flex xs12 md8 offset-md2>
+              <v-text-field
+                v-model="outputAddress"
+                label="Recipient FCT address"
+                counter="52"
+                :rules="addressRules"
+                clearable
+                required
+                single-line
+                box
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs12 md6 offset-md2>
+              <v-text-field
+                placeholder="Amount"
+                type="number"
+                v-model="outputAmount"
+                min="0"
+                suffix="FCT"
+                :rules="amountRules"
+                :error-messages="amountErrors"
+                required
+                single-line
+                box
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs12 md2 text-xs-right>
+              <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
+                >Send
+                <v-icon right>send</v-icon>
+              </v-btn>
+            </v-flex>
+            <!-- Alerts -->
+            <v-flex v-if="valid && outputAddress && feeText" xs12 md8 offset-md2>
+              <v-alert :value="true" type="info" outline>
+                An additional transaction fee of
+                <strong>{{ feeText }} FCT</strong>
+                will be deducted.
+              </v-alert>
+            </v-flex>
+            <v-flex v-if="errorMessage" xs12 md8 offset-md2>
+              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+            </v-flex>
+            <v-flex xs12>
+              <v-alert :value="transactionSentMessage" type="success" outline dismissible>
+                {{ transactionSentMessage }}
+              </v-alert>
+            </v-flex>
+          </v-layout>
+          <!-- Dialogs -->
+          <ConfirmBasicTransactionDialog
+            ref="confirmTransactionDialog"
+            :address="outputAddress"
+            :amount="outputAmount"
+            :feeText="feeText"
+            @confirmed="send"
+          ></ConfirmBasicTransactionDialog>
+        </v-form>
+      </v-container>
+    </v-sheet>
+    <AddressBook :type="'fct'" @address="pickAddressFromAddressBook"></AddressBook>
+  </div>
 </template>
 
 <script>
@@ -74,12 +77,13 @@ import NodeCache from 'node-cache';
 import { isValidPublicFctAddress } from 'factom';
 import { buildTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
 import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
+import AddressBook from '@/components/AddressBook';
 
 const ZERO = new Big(0);
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  components: { ConfirmBasicTransactionDialog },
+  components: { ConfirmBasicTransactionDialog, AddressBook },
   data() {
     return {
       outputAddress: '',
@@ -141,6 +145,11 @@ export default {
     }
   },
   methods: {
+    pickAddressFromAddressBook(address) {
+      this.outputAddress = address;
+      const vuetify = this.$vuetify;
+      this.$nextTick(() => vuetify.goTo('#transaction'));
+    },
     async confirmTransaction() {
       this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
@@ -169,6 +178,7 @@ export default {
         );
         const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 1 });
+        this.$store.commit('address/addRecentlyUsed', this.outputAddress);
         this.$store.dispatch('address/fetchFctBalances');
         this.$store.dispatch('address/fetchEcBalances');
         this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
@@ -216,4 +226,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.vsheet-bottom-margin {
+  margin-bottom: 24px;
+}
+</style>

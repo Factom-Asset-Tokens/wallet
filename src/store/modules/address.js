@@ -5,9 +5,13 @@ function mapNames(addresses, names) {
   return addresses.map(address => ({ address, name: names[address] }));
 }
 
+const RECENTLY_USED_HISTORY_SIZE = 4;
+
 export default {
   namespaced: true,
   state: {
+    fctRecentlyUsed: [],
+    ecRecentlyUsed: [],
     ecAddresses: [],
     ecBalances: {},
     fctAddresses: [],
@@ -45,6 +49,27 @@ export default {
     },
     setPreferredEcAddress(state, ecAddress) {
       state.preferredEcAddress = ecAddress;
+    },
+    addRecentlyUsed(state, address) {
+      let circularBuffer;
+      if (address[0] === 'F') {
+        circularBuffer = [...state.fctRecentlyUsed];
+      } else {
+        circularBuffer = [...state.ecRecentlyUsed];
+      }
+
+      if (!circularBuffer.includes(address)) {
+        circularBuffer.unshift(address);
+        if (circularBuffer.length > RECENTLY_USED_HISTORY_SIZE) {
+          circularBuffer.pop();
+        }
+      }
+
+      if (address[0] === 'F') {
+        state.fctRecentlyUsed = circularBuffer;
+      } else {
+        state.ecRecentlyUsed = circularBuffer;
+      }
     }
   },
   actions: {
