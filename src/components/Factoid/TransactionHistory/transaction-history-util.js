@@ -13,43 +13,39 @@ function buildTransactionMovements(tx, addressSet) {
 
   const isCoinbase = !tx.inputs.length;
 
-  for (let index = 0; index < tx.outputs.length; ++index) {
-    const output = tx.outputs[index];
+  result.push(getTransactionMovements(tx, addressSet, isCoinbase, 'outputs', '+', 'FCT'));
+  result.push(getTransactionMovements(tx, addressSet, isCoinbase, 'ecoutputs', '+', 'EC'));
+  result.push(getTransactionMovements(tx, addressSet, isCoinbase, 'inputs', '-', 'FCT'));
 
-    if (addressSet.has(output.address)) {
-      result.push(
-        buildTransactionMovement({
-          tx,
-          io: output,
-          sign: '+',
-          isCoinbase
-        })
-      );
-    }
-  }
-  for (let index = 0; index < tx.inputs.length; ++index) {
-    const input = tx.inputs[index];
-    if (addressSet.has(input.address)) {
-      result.push(
-        buildTransactionMovement({
-          tx,
-          io: input,
-          sign: '-'
-        })
-      );
-    }
-  }
-
-  return result;
+  return flatmap(result);
 }
 
-function buildTransactionMovement({ tx, sign, io, isCoinbase = false }) {
+function getTransactionMovements(tx, addressSet, isCoinbase, attribute, sign, symbol) {
+  return tx[attribute]
+    .map(function(io) {
+      if (addressSet.has(io.address)) {
+        return buildTransactionMovement({
+          tx,
+          io,
+          sign,
+          isCoinbase,
+          symbol
+        });
+      }
+    })
+    .filter(a => a);
+}
+
+function buildTransactionMovement({ tx, sign, io, symbol, isCoinbase }) {
+  const amount =
+    symbol === 'FCT' ? new Big(io.fct_amount).div(FACTOSHI_MULTIPLIER).toFormat() : new Big(io.ec_amount).toFormat();
   return {
     key: tx.txid + sign + io.seq_num,
     id: tx.txid,
     address: io.address,
     sign,
-    amount: new Big(io.fct_amount).div(FACTOSHI_MULTIPLIER).toFormat(),
+    symbol,
+    amount,
     date: tx.blockchain_date,
     coinbase: isCoinbase
   };

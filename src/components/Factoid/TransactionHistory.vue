@@ -11,8 +11,8 @@
             <v-flex xs6 class="font-italic">{{ tx.address }}</v-flex>
             <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
               <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
-              {{ tx.sign }}
-              {{ tx.amount.toLocaleString(undefined, { maximumFractionDigits: 8 }) }}
+              {{ tx.amount }}
+              {{ tx.symbol }}
             </v-flex>
           </v-layout>
         </v-list-tile>
@@ -60,7 +60,7 @@ export default {
   },
   computed: {
     addresses() {
-      return this.$store.state.address.fctAddresses;
+      return this.$store.state.address.fctAddresses.concat(this.$store.state.address.ecAddresses);
     }
   },
   created() {
