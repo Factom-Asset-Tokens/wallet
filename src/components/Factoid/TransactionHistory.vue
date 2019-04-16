@@ -11,6 +11,7 @@
             <v-flex xs6 class="font-italic">{{ tx.address }}</v-flex>
             <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
               <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
+              {{ tx.sign }}
               {{ tx.amount }}
               {{ tx.symbol }}
             </v-flex>
@@ -29,7 +30,7 @@
         <v-icon left>arrow_drop_down_circle</v-icon>Load more transactions
       </v-btn>
     </v-flex>
-    <TransactionDetailsDialog ref="transactionDetailsDialog"></TransactionDetailsDialog>
+    <TransactionDetailsDialog ref="transactionDetailsDialog" :addresses="addressesSet"></TransactionDetailsDialog>
   </div>
 </template>
 
@@ -61,6 +62,9 @@ export default {
   computed: {
     addresses() {
       return this.$store.state.address.fctAddresses.concat(this.$store.state.address.ecAddresses);
+    },
+    addressesSet() {
+      return new Set(this.addresses);
     }
   },
   created() {
@@ -71,6 +75,8 @@ export default {
       return sign === '+' ? 'green--text' : 'red--text';
     },
     async loadMoreMovements() {
+      const initialLoad = this.movements.length === 0;
+
       try {
         this.loading = true;
         const nbTxsLoaded = await this.fetchPage(this.nextPage);
@@ -78,6 +84,9 @@ export default {
 
         if (nbTxsLoaded < PAGINATION_LIMIT) {
           this.allLoaded = true;
+          if (!initialLoad) {
+            this.$store.commit('snackInfo', 'No more transaction');
+          }
         }
       } catch (e) {
         this.$store.commit('snackError', e.message);
@@ -85,8 +94,10 @@ export default {
         this.loading = false;
       }
 
-      const vuetify = this.$vuetify;
-      this.$nextTick(() => vuetify.goTo('#bottomButton'));
+      if (!initialLoad) {
+        const vuetify = this.$vuetify;
+        this.$nextTick(() => vuetify.goTo('#bottomButton'));
+      }
     },
     async fetchPage(page) {
       const url = `${this.addresses.join(',')}?${querystring.stringify({
@@ -105,8 +116,7 @@ export default {
       const transactions = data.result.transactions;
 
       transactions.forEach(tx => (this.transactions[tx.txid] = tx));
-      const newMovements = buildTransactionsMovements(transactions, this.addresses);
-      this.movements = this.movements.concat(newMovements);
+      this.movements = this.movements.concat(buildTransactionsMovements(transactions, this.addresses));
 
       return transactions.length;
     },

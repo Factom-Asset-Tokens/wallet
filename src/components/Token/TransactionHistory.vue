@@ -10,7 +10,7 @@
               <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
               <v-icon v-if="tx.burn" color="secondary" title="Burn" left>fas fa-fire-alt</v-icon>
               {{ tx.sign }}
-              {{ tx.amount.toLocaleString(undefined, { maximumFractionDigits: 8 }) }}
+              {{ tx.amount }}
             </v-flex>
           </v-layout>
         </v-list-tile>
@@ -22,12 +22,16 @@
         <div class="subheading font-italic no-transaction-padding">No past transactions.</div>
       </v-sheet>
     </v-flex>
-    <v-flex xs12 text-xs-center mt-3>
-      <v-btn id="scrollButton" large color="primary" :loading="loading" @click="loadMoreMovements">
+    <v-flex id="bottomButton" xs12 text-xs-center mt-3>
+      <v-btn v-if="!allLoaded" large color="primary" :loading="loading" @click="loadMoreMovements">
         <v-icon left>arrow_drop_down_circle</v-icon>Load more transactions
       </v-btn>
     </v-flex>
-    <TransactionDetailsDialog :symbol="symbol" ref="transactionDetailsDialog"></TransactionDetailsDialog>
+    <TransactionDetailsDialog
+      :symbol="symbol"
+      :addresses="addressesSet"
+      ref="transactionDetailsDialog"
+    ></TransactionDetailsDialog>
   </div>
 </template>
 
@@ -45,7 +49,8 @@ export default {
     return {
       movements: [],
       transactions: {},
-      page: 0,
+      nextPage: 0,
+      allLoaded: false,
       loading: false
     };
   },
@@ -53,55 +58,63 @@ export default {
   computed: {
     addresses() {
       return this.$store.state.address.fctAddresses;
+    },
+    addressesSet() {
+      return new Set(this.addresses);
     }
   },
   created() {
-    this.initialFetch();
+    this.loadMoreMovements();
   },
   methods: {
     amountColorClass(sign) {
       return sign === '+' ? 'green--text' : 'red--text';
     },
     async loadMoreMovements() {
+      const initialLoad = this.movements.length === 0;
       try {
         this.loading = true;
-        await this.fetchPage(this.page + 1);
-        this.page++;
-      } catch (e) {
-        if (e.message.includes('-32803')) {
-          this.$store.commit('snackInfo', 'No more transaction');
-        } else {
-          this.$store.commit('snackError', e.message);
+        const nbTxsLoaded = await this.fetchPage(this.nextPage);
+        this.nextPage++;
+
+        if (nbTxsLoaded < PAGINATION_LIMIT) {
+          this.allLoaded = true;
+          if (!initialLoad) {
+            this.$store.commit('snackInfo', 'No more transaction');
+          }
         }
+      } catch (e) {
+        this.$store.commit('snackError', e.message);
       } finally {
         this.loading = false;
       }
 
-      const vuetify = this.$vuetify;
-      this.$nextTick(() => vuetify.goTo('#scrollButton'));
+      if (!initialLoad) {
+        const vuetify = this.$vuetify;
+        this.$nextTick(() => vuetify.goTo('#bottomButton'));
+      }
     },
-    async initialFetch() {
+    async fetchPage(page) {
       try {
-        await this.fetchPage(0);
+        const transactions = await this.tokenCli.getTransactions({
+          addresses: this.addresses,
+          order: 'desc',
+          page: page,
+          limit: PAGINATION_LIMIT
+        });
+
+        transactions.forEach(tx => (this.transactions[tx.getEntryhash()] = tx));
+
+        this.movements = this.movements.concat(buildTransactionsMovements(transactions, this.addresses));
+
+        return transactions.length;
       } catch (e) {
         if (e.message.includes('-32803')) {
-          this.page = -1;
+          return 0;
         } else {
           throw e;
         }
       }
-    },
-    async fetchPage(page) {
-      const transactions = await this.tokenCli.getTransactions({
-        addresses: this.addresses,
-        order: 'desc',
-        page: page,
-        limit: PAGINATION_LIMIT
-      });
-
-      transactions.forEach(tx => (this.transactions[tx.getEntryhash()] = tx));
-
-      this.movements = this.movements.concat(buildTransactionsMovements(transactions, this.addresses));
     },
     openDetails(txId) {
       this.$refs.transactionDetailsDialog.show(this.transactions[txId]);

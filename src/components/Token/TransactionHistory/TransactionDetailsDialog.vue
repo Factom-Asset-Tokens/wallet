@@ -14,11 +14,11 @@
             <v-flex xs12 class="font-weight-bold secondary--text" mt-4>
               <v-icon left color="secondary">fa-sign-in-alt</v-icon>Inputs
             </v-flex>
-            <InoutputDetails :ios="inputs" type="input"></InoutputDetails>
+            <InoutputDetails :ios="inputs" type="input" :addresses="addresses"></InoutputDetails>
             <v-flex xs12 class="font-weight-bold secondary--text">
               <v-icon left color="secondary">fa-sign-out-alt</v-icon>Outputs
             </v-flex>
-            <InoutputDetails :ios="outputs" type="output"></InoutputDetails>
+            <InoutputDetails :ios="outputs" type="output" :addresses="addresses"></InoutputDetails>
             <template v-if="metadata">
               <v-flex xs12 my-3 class="font-weight-bold secondary--text">Metadata</v-flex>
               <v-flex xs12 mb-3>{{ metadata }}</v-flex>
@@ -41,7 +41,7 @@ import { transformInoutputsToArray, getTotalTransaction } from './transaction-hi
 
 export default {
   components: { InoutputDetails },
-  props: ['symbol'],
+  props: ['symbol', 'addresses'],
   data() {
     return {
       display: false,
@@ -65,7 +65,7 @@ export default {
       return transformInoutputsToArray(this.transaction.getOutputs());
     },
     totalText() {
-      return getTotalTransaction(this.transaction).toLocaleString();
+      return getTotalTransaction(this.transaction).toFormat();
     }
   },
   methods: {

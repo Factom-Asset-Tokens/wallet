@@ -1,4 +1,5 @@
 import flatmap from 'lodash.flatmap';
+import Big from 'bignumber.js';
 
 export function buildTransactionsMovements(transactions, addresses) {
   const addressSet = new Set(addresses);
@@ -47,30 +48,17 @@ function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = fals
     id: tx.getEntryhash(),
     address,
     sign,
-    amount: Array.isArray(amount) ? computeTotalBalanceOfNfTokens(amount) : amount,
+    amount: getAmount(amount).toFormat(),
     timestamp: tx.getTimestamp(),
     coinbase: isCoinbase,
     burn: isBurn
   };
 }
 
-function computeTotalBalanceOfNfTokens(tokens) {
-  return tokens.reduce(function(acc, token) {
-    switch (typeof token) {
-      case 'number':
-        return acc + 1;
-      case 'object':
-        return acc + token.max - token.min + 1;
-      default:
-        throw new Error('Unsupported token', token);
-    }
-  }, 0);
-}
-
 export function transformInoutputsToArray(inoutputs) {
   return Object.keys(inoutputs).map(address => ({
     address,
-    amount: inoutputs[address]
+    amount: Array.isArray(inoutputs[address]) ? inoutputs[address] : new Big(inoutputs[address])
   }));
 }
 
@@ -80,7 +68,24 @@ export function getTotalTransaction(transaction) {
       ? Object.values(transaction.getInputs())
       : Object.values(transaction.getOutputs());
 
-  return toSum
-    .map(amount => (Array.isArray(amount) ? computeTotalBalanceOfNfTokens(amount) : amount))
-    .reduce((acc, val) => acc + val, 0);
+  return toSum.map(getAmount).reduce((acc, val) => acc.plus(val), new Big(0));
+}
+
+function getAmount(amount) {
+  return Array.isArray(amount) ? computeTotalBalanceOfNfTokens(amount) : new Big(amount);
+}
+
+function computeTotalBalanceOfNfTokens(tokens) {
+  return new Big(
+    tokens.reduce(function(acc, token) {
+      switch (typeof token) {
+        case 'number':
+          return acc + 1;
+        case 'object':
+          return acc + token.max - token.min + 1;
+        default:
+          throw new Error('Unsupported token', token);
+      }
+    }, 0)
+  );
 }

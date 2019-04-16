@@ -69,7 +69,7 @@
         </v-form>
       </v-container>
     </v-sheet>
-    <AddressBook :type="'ec'" @address="pickAddressFromAddressBook"></AddressBook>
+    <AddressBook type="ec" @address="pickAddressFromAddressBook"></AddressBook>
   </div>
 </template>
 

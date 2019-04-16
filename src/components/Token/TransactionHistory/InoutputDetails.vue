@@ -4,7 +4,10 @@
     <v-layout pa-1 wrap v-for="(io, index) in ios" :key="io.address" align-center :class="rowColor(index)">
       <v-flex xs8>
         {{ io.address }}
-        <v-icon v-if="specialIcon(io.address)" color="secondary">{{ specialIcon(io.address) }}</v-icon>
+        <v-icon v-if="addresses.has(io.address)" right color="secondary" title="Address in the wallet"
+          >account_balance_wallet</v-icon
+        >
+        <v-icon v-if="specialIcon(io.address)" right color="secondary">{{ specialIcon(io.address) }}</v-icon>
       </v-flex>
       <v-flex xs4 text-xs-right>
         <v-chip
@@ -23,9 +26,12 @@
     <v-layout wrap py-1 v-for="io in ios" :key="io.address">
       <v-flex xs8>
         {{ io.address }}
-        <v-icon v-if="specialIcon(io.address)" color="secondary">{{ specialIcon(io.address) }}</v-icon>
+        <v-icon v-if="addresses.has(io.address)" right color="secondary" title="Address in the wallet"
+          >account_balance_wallet</v-icon
+        >
+        <v-icon v-if="specialIcon(io.address)" right color="secondary">{{ specialIcon(io.address) }}</v-icon>
       </v-flex>
-      <v-flex xs4 text-xs-right>{{ io.amount }}</v-flex>
+      <v-flex xs4 text-xs-right>{{ io.amount.toFormat() }}</v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -34,7 +40,7 @@
 import { displayIds, sortIds, standardizeId } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
-  props: ['ios', 'type'],
+  props: ['ios', 'type', 'addresses'],
   computed: {
     areNfTokens() {
       return Array.isArray(this.ios[0].amount);

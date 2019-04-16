@@ -19,15 +19,30 @@
             <v-flex v-if="inputs.length > 0" xs12 class="font-weight-bold secondary--text">
               <v-icon left color="secondary">fa-sign-in-alt</v-icon>Inputs
             </v-flex>
-            <InoutputDetails v-if="inputs.length > 0" :ios="inputs" :symbol="'FCT'"></InoutputDetails>
+            <InoutputDetails
+              v-if="inputs.length > 0"
+              :ios="inputs"
+              symbol="FCT"
+              :addresses="addresses"
+            ></InoutputDetails>
             <v-flex v-if="fctOutputs.length > 0" xs12 class="font-weight-bold secondary--text">
               <v-icon left color="secondary">fa-sign-out-alt</v-icon>Factoid Outputs
             </v-flex>
-            <InoutputDetails v-if="fctOutputs.length > 0" :ios="fctOutputs" :symbol="'FCT'"></InoutputDetails>
+            <InoutputDetails
+              v-if="fctOutputs.length > 0"
+              :ios="fctOutputs"
+              symbol="FCT"
+              :addresses="addresses"
+            ></InoutputDetails>
             <v-flex v-if="ecOutputs.length > 0" xs12 class="font-weight-bold secondary--text">
               <v-icon left color="secondary">fa-sign-out-alt</v-icon>Entry Credit Outputs
             </v-flex>
-            <InoutputDetails v-if="ecOutputs.length > 0" :ios="ecOutputs" :symbol="'EC'"></InoutputDetails>
+            <InoutputDetails
+              v-if="ecOutputs.length > 0"
+              :ios="ecOutputs"
+              symbol="EC"
+              :addresses="addresses"
+            ></InoutputDetails>
           </v-layout>
         </v-container>
       </v-card-text>
@@ -48,6 +63,7 @@ const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
   components: { InoutputDetails },
+  props: ['addresses'],
   data() {
     return {
       display: false,
@@ -55,9 +71,6 @@ export default {
     };
   },
   computed: {
-    addresses() {
-      return new Set(this.$store.state.address.fctAddresses.concat(this.$store.state.address.ecAddresses));
-    },
     txId() {
       return this.transaction.txid;
     },

@@ -111,7 +111,7 @@
       ></ConfirmTransactionDialog>
       <ConfirmBurnDialog ref="confirmBurnDialog" :selectedTokens="selectedTokens" @confirmed="send"></ConfirmBurnDialog>
     </v-layout>
-    <AddressBook :type="'fct'" @address="pickAddressFromAddressBook"></AddressBook>
+    <AddressBook type="fct" @address="pickAddressFromAddressBook"></AddressBook>
   </div>
 </template>
 
