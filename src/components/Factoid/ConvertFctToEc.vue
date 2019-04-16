@@ -90,7 +90,7 @@ export default {
       outputAddress: '',
       outputAmount: '',
       fctCost: '',
-      rate: '',
+      rate: 0,
       valid: true,
       errorMessage: '',
       amountErrors: [],

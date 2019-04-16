@@ -25,6 +25,9 @@
 </template>
 
 <script>
+import Promise from 'bluebird';
+import Big from 'bignumber.js';
+
 import TokenHeader from './TokenHeader';
 import TransactionHistory from './TransactionHistory';
 
@@ -32,7 +35,6 @@ import AddressesBalances from './Fat1Token/AddressesBalances';
 import CreateTransaction from './Fat1Token/CreateTransaction';
 import NavigationDrawer from './Fat1Token/NavigationDrawer';
 
-import Promise from 'bluebird';
 import { standardizeId } from './Fat1Token/nf-token-ids.js';
 
 export default {
@@ -53,11 +55,7 @@ export default {
   },
   computed: {
     totalBalance() {
-      return this.balances
-        .reduce((acc, val) => acc + val.balance, 0)
-        .toLocaleString(undefined, {
-          maximumFractionDigits: 10
-        });
+      return this.balances.reduce((acc, val) => acc.plus(val.balance), new Big(0)).toFormat();
     },
     view() {
       return this.$route.query.view;
