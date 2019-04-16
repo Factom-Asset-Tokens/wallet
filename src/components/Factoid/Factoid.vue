@@ -2,6 +2,7 @@
   <div>
     <v-container>
       <Addresses v-if="view === 'addresses'"></Addresses>
+      <TransactionHistory v-if="view === 'history'"></TransactionHistory>
       <CreateBasicTransaction v-else-if="view === 'send'"></CreateBasicTransaction>
       <ConvertFctToEc v-else-if="view === 'convert'"></ConvertFctToEc>
     </v-container>
@@ -13,10 +14,11 @@
 import Addresses from '@/components/Factoid/Addresses';
 import CreateBasicTransaction from '@/components/Factoid/CreateBasicTransaction';
 import ConvertFctToEc from '@/components/Factoid/ConvertFctToEc';
+import TransactionHistory from '@/components/Factoid/TransactionHistory';
 import NavigationDrawer from '@/components/Factoid/NavigationDrawer';
 
 export default {
-  components: { Addresses, CreateBasicTransaction, ConvertFctToEc, NavigationDrawer },
+  components: { Addresses, CreateBasicTransaction, ConvertFctToEc, TransactionHistory, NavigationDrawer },
   data() {
     return {
       intervalId: null
