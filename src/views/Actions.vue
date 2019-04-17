@@ -16,12 +16,12 @@
             </v-btn>
           </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
-            <v-btn color="primary" large block :to="{ name: 'IssueToken' }" class="subheading">
+            <v-btn color="primary" large block :to="{ name: 'IssueToken' }" class="subheading" disabled>
               <v-icon left>create</v-icon>Issue a new token
             </v-btn>
           </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
-            <v-btn color="primary" large block :to="{ name: 'CoinbaseTransaction' }" class="subheading">
+            <v-btn color="primary" large block :to="{ name: 'CoinbaseTransaction' }" class="subheading" disabled>
               <v-icon left>send</v-icon>Create a coinbase transaction
             </v-btn>
           </v-flex>
