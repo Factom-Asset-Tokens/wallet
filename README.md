@@ -7,7 +7,6 @@ A wallet for [Factom Asset Tokens](https://github.com/Factom-Asset-Tokens/FAT)
 ```bash
 git clone https://github.com/Factom-Asset-Tokens/wallet.git fat-wallet
 cd fat-wallet
-git checkout development
 npm install
 npm run electron:build
 ```
