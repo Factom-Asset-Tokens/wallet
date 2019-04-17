@@ -4,16 +4,16 @@
       Please note this page does not show pending transactions, only transactions recorded in a block.
     </v-flex>
     <v-list v-if="movements.length > 0">
-      <template v-for="(tx, index) in movements">
-        <v-list-tile :key="tx.key" @click.stop="openDetails(tx.id)">
+      <template v-for="(mvt, index) in movements">
+        <v-list-tile :key="mvt.key" @click.stop="openDetails(mvt.txId)">
           <v-layout wrap>
-            <v-flex xs2>{{ tx.date | formatDate }}</v-flex>
-            <v-flex xs6 class="font-italic">{{ tx.address }}</v-flex>
-            <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
-              <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
-              {{ tx.sign }}
-              {{ tx.amount }}
-              {{ tx.symbol }}
+            <v-flex xs2>{{ mvt.date | formatDate }}</v-flex>
+            <v-flex xs6 class="font-italic">{{ mvt.address }}</v-flex>
+            <v-flex xs4 class="font-weight-bold" :class="amountColorClass(mvt.sign)" text-xs-right>
+              <v-icon v-if="mvt.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
+              {{ mvt.sign }}
+              {{ mvt.amount }}
+              {{ mvt.symbol }}
             </v-flex>
           </v-layout>
         </v-list-tile>

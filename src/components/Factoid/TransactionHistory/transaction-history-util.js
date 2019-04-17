@@ -41,7 +41,7 @@ function buildTransactionMovement({ tx, sign, io, symbol, isCoinbase }) {
     symbol === 'FCT' ? new Big(io.fct_amount).div(FACTOSHI_MULTIPLIER).toFormat() : new Big(io.ec_amount).toFormat();
   return {
     key: tx.txid + sign + io.seq_num,
-    id: tx.txid,
+    txId: tx.txid,
     address: io.address,
     sign,
     symbol,

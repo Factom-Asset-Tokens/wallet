@@ -1,16 +1,16 @@
 <template>
   <div>
     <v-list v-if="movements.length > 0">
-      <template v-for="(tx, index) in movements">
-        <v-list-tile :key="tx.id + tx.address" @click.stop="openDetails(tx.id)">
+      <template v-for="(mvt, index) in movements">
+        <v-list-tile :key="mvt.txId + mvt.address" @click.stop="openDetails(mvt.txId)">
           <v-layout wrap>
-            <v-flex xs2>{{ tx.timestamp | formatTimestamp }}</v-flex>
-            <v-flex xs6 class="font-italic">{{ tx.address }}</v-flex>
-            <v-flex xs4 class="font-weight-bold" :class="amountColorClass(tx.sign)" text-xs-right>
-              <v-icon v-if="tx.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
-              <v-icon v-if="tx.burn" color="secondary" title="Burn" left>fas fa-fire-alt</v-icon>
-              {{ tx.sign }}
-              {{ tx.amount }}
+            <v-flex xs2>{{ mvt.timestamp | formatTimestamp }}</v-flex>
+            <v-flex xs6 class="font-italic">{{ mvt.address }}</v-flex>
+            <v-flex xs4 class="font-weight-bold" :class="amountColorClass(mvt.sign)" text-xs-right>
+              <v-icon v-if="mvt.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
+              <v-icon v-if="mvt.burn" color="secondary" title="Burn" left>fas fa-fire-alt</v-icon>
+              {{ mvt.sign }}
+              {{ mvt.amount }}
             </v-flex>
           </v-layout>
         </v-list-tile>

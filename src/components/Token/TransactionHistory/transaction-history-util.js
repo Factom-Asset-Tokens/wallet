@@ -45,7 +45,7 @@ function buildTransactionMovements(tx, addressSet) {
 
 function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = false, isBurn = false }) {
   return {
-    id: tx.getEntryhash(),
+    txId: tx.getEntryhash(),
     address,
     sign,
     amount: getAmount(amount).toFormat(),
