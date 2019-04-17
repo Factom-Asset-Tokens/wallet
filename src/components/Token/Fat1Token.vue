@@ -72,8 +72,10 @@ export default {
 
         if (result.balance > 0) {
           const nfBalance = await tokenCli.getNFBalance({
-            address: address.address
+            address: address.address,
+            limit: result.balance
           });
+
           result.ids = nfBalance.map(standardizeId);
         } else {
           result.ids = [];
