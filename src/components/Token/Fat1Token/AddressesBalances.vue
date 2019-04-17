@@ -14,7 +14,18 @@
       >
         <template slot="items" slot-scope="props">
           <td>{{ props.item.address }}</td>
-          <td>{{ props.item.name }}</td>
+          <td>
+            <v-edit-dialog :return-value.sync="props.item.name" lazy>
+              {{ props.item.name }}
+              <v-text-field
+                slot="input"
+                :value="props.item.name"
+                @input="updateAddressName(props.item.address, $event)"
+                label="Edit"
+                single-line
+              ></v-text-field>
+            </v-edit-dialog>
+          </td>
           <td>
             <div style="display: flex; justify-content: flex-end; align-items: center">
               <div>{{ props.item.balance.toLocaleString() }}</div>
@@ -56,6 +67,9 @@ export default {
     sortIds,
     showTokenDetails(id) {
       this.$refs.detailsDialog.show(id);
+    },
+    updateAddressName(address, name) {
+      this.$store.commit('address/updateAddressNames', { address, name });
     }
   },
   filters: {
