@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     untrack() {
-      this.$store.commit('tokens/untrack', this.token.chainId);
+      this.$store.dispatch('tokens/untrack', this.token.chainId);
       this.$router.push({ name: 'Actions' });
     }
   }
