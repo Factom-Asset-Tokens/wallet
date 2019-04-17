@@ -68,7 +68,7 @@ export default {
           };
 
           this.$store.dispatch('tokens/track', { token, cli: tokenCli });
-          this.$router.push({ path: `/token/${this.tokenChainId}` });
+          this.$router.push({ path: `/token/${this.tokenChainId}?view=balances` });
         } catch (e) {
           const code = tryParseApiErrorCode(e);
           if (code === -32800) {
