@@ -9,7 +9,7 @@
                 <v-flex xs12>
                   <div class="headline">Available Tokens</div>
                 </v-flex>
-                <v-flex xs12>
+                <v-flex xs12 v-if="availableTokens.length > 0">
                   <v-chip
                     v-for="id in availableTokens"
                     :key="id.min"
@@ -24,29 +24,30 @@
                     {{ id | displayIds }}
                   </v-chip>
                 </v-flex>
+                <v-flex xs12 v-else class="font-italic subheading primary--text">
+                  You do not have any token yet!
+                </v-flex>
                 <v-flex xs12 mt-4>
                   <div class="headline">Tokens to send</div>
                 </v-flex>
-                <v-flex xs12>
-                  <div v-if="selectedTokens.length > 0">
-                    <v-chip
-                      v-for="id in selectedTokens"
-                      :key="id.min"
-                      outline
-                      color="secondary"
-                      class="font-weight-bold subheading"
-                      close
-                      @input="unselectToken(id)"
-                    >
-                      <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
-                        <v-icon>info_outline</v-icon>
-                      </v-avatar>
-                      {{ id | displayIds }}
-                    </v-chip>
-                  </div>
-                  <div v-else class="font-italic subheading">
-                    Start selecting tokens from the "Available Tokens" section.
-                  </div>
+                <v-flex v-if="selectedTokens.length > 0">
+                  <v-chip
+                    v-for="id in selectedTokens"
+                    :key="id.min"
+                    outline
+                    color="secondary"
+                    class="font-weight-bold subheading"
+                    close
+                    @input="unselectToken(id)"
+                  >
+                    <v-avatar class="secondary grey-text" @click.stop="showTokenDetails(id)">
+                      <v-icon>info_outline</v-icon>
+                    </v-avatar>
+                    {{ id | displayIds }}
+                  </v-chip>
+                </v-flex>
+                <v-flex xs12 v-else class="font-italic subheading primary--text">
+                  Start selecting tokens from the "Available Tokens" section.
                 </v-flex>
                 <v-flex md9 mt-4>
                   <v-text-field
