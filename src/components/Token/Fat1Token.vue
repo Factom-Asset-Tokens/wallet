@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import Promise from 'bluebird';
 import Big from 'bignumber.js';
 
 import TokenHeader from './TokenHeader';
@@ -38,8 +37,6 @@ import TransactionHistory from './TransactionHistory';
 import AddressesBalances from './Fat1Token/AddressesBalances';
 import CreateTransaction from './Fat1Token/CreateTransaction';
 import NavigationDrawer from './Fat1Token/NavigationDrawer';
-
-import { standardizeId } from './Fat1Token/nf-token-ids.js';
 
 const ZERO = new Big(0);
 
@@ -55,11 +52,13 @@ export default {
   props: ['token', 'tokenCli'],
   data() {
     return {
-      balances: {},
       intervalId: 0
     };
   },
   computed: {
+    balances() {
+      return this.$store.getters['tokens/balancesOf'](this.token.chainId);
+    },
     totalBalance() {
       return Object.values(this.balances)
         .reduce((acc, val) => acc.plus(val.balance), ZERO)
@@ -83,36 +82,11 @@ export default {
   },
   methods: {
     async fetchBalances() {
-      const tokenCli = this.tokenCli;
-      const addresses = this.$store.state.address.fctAddresses;
-
-      this.balances = await Promise.reduce(
-        addresses,
-        async function(acc, address) {
-          const result = {};
-          result.balance = await tokenCli.getBalance(address);
-
-          if (result.balance > 0) {
-            const nfBalance = await tokenCli.getNFBalance({
-              address,
-              limit: result.balance
-            });
-
-            result.ids = nfBalance.map(standardizeId);
-          } else {
-            result.ids = [];
-          }
-
-          acc[address] = result;
-          return acc;
-        },
-        {}
-      );
+      return this.$store.dispatch('tokens/fetchBalances', this.token.chainId);
     }
   },
   watch: {
     token() {
-      this.balances = {};
       this.fetchBalances();
     }
   },

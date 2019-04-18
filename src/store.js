@@ -58,7 +58,7 @@ export default new Vuex.Store({
     async init({ dispatch }) {
       await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus'), dispatch('keystore/init')]);
       // Address and identity modules require keystore module to be initialized first
-      await Promise.all([dispatch('address/init'), dispatch('identity/init')]);
+      await Promise.all([dispatch('address/init'), dispatch('identity/init'), dispatch('tokens/init')]);
     },
     async backup({ state }) {
       const backup = { config: {}, address: {} };

@@ -3,7 +3,7 @@
     <template v-if="syncing">
       <v-icon color="#E8980C">warning</v-icon>
       <span class="syncing subheading version-text">(Syncing... {{ syncHeight }} / {{ targetHeight }})</span>
-      <span class="subheading version-text font-italic">v{{ version }}</span>
+      <span class="subheading version-text font-italic">{{ version }}</span>
     </template>
     <template v-else>
       <v-icon color="#AECC6F">check_circle</v-icon>

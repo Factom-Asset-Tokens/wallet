@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import Promise from 'bluebird';
 import Big from 'bignumber.js';
 import TokenHeader from './TokenHeader';
 import TransactionHistory from './TransactionHistory';
@@ -60,11 +59,13 @@ export default {
   props: ['token', 'tokenCli'],
   data() {
     return {
-      balances: {},
       intervalId: 0
     };
   },
   computed: {
+    balances() {
+      return this.$store.getters['tokens/balancesOf'](this.token.chainId);
+    },
     totalBalance() {
       return Object.values(this.balances).reduce((acc, val) => acc.plus(val), ZERO);
     },
@@ -78,23 +79,11 @@ export default {
   },
   methods: {
     async fetchBalances() {
-      const tokenCli = this.tokenCli;
-      const addresses = this.$store.state.address.fctAddresses;
-
-      this.balances = await Promise.reduce(
-        addresses,
-        async function(acc, address) {
-          const balance = await tokenCli.getBalance(address);
-          acc[address] = new Big(balance);
-          return acc;
-        },
-        {}
-      );
+      return this.$store.dispatch('tokens/fetchBalances', this.token.chainId);
     }
   },
   watch: {
     token() {
-      this.balances = {};
       this.fetchBalances();
     }
   },

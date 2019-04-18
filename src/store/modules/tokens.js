@@ -1,8 +1,17 @@
+import Promise from 'bluebird';
+import getBalances from './tokens/get-balances';
+
 export default {
   namespaced: true,
   state: {
     tracked: {},
-    clis: {}
+    clis: {},
+    balances: {}
+  },
+  getters: {
+    balancesOf(state) {
+      return chainId => (state.balances[chainId] ? state.balances[chainId] : {});
+    }
   },
   mutations: {
     addToken(state, token) {
@@ -24,9 +33,18 @@ export default {
       const copy = { ...state.clis };
       delete copy[tokenChainId];
       state.clis = copy;
+    },
+    updateBalances(state, { tokenChainId, balances }) {
+      const copy = { ...state.balances };
+      copy[tokenChainId] = balances;
+      state.balances = copy;
     }
   },
   actions: {
+    async init({ state, dispatch }) {
+      const chainIds = Object.keys(state.tracked);
+      return Promise.map(chainIds, chainId => dispatch('fetchBalances', chainId));
+    },
     async initializeTokenClis({ state, commit, rootGetters }) {
       const cli = rootGetters['fatd/cli'];
 
@@ -44,6 +62,14 @@ export default {
     untrack({ commit }, tokenChainId) {
       commit('removeToken', tokenChainId);
       commit('removeCli', tokenChainId);
+    },
+    async fetchBalances({ state, commit, rootState }, tokenChainId) {
+      const cli = state.clis[tokenChainId];
+      const addresses = rootState.address.fctAddresses;
+
+      const balances = await getBalances(cli, addresses);
+
+      commit('updateBalances', { tokenChainId, balances });
     }
   }
 };
