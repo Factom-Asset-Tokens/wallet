@@ -1,4 +1,4 @@
-import { createFileKeyStore, getFileKeyStore } from 'factom-keystore';
+import { createFileKeyStore, openFileKeyStore } from 'factom-keystore';
 import path from 'path';
 const { app } = require('electron').remote;
 import uuidv4 from 'uuid/v4';
@@ -26,7 +26,7 @@ export default {
         await Promise.all([store.generateFactoidAddress(), store.generateEntryCreditAddress()]);
         commit('updateStore', store);
       } else {
-        const store = await getFileKeyStore(state.filename, PASSWORD);
+        const store = await openFileKeyStore(state.filename, PASSWORD);
         commit('updateStore', store);
       }
     }
