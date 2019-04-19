@@ -1,6 +1,6 @@
 {
   "name": "fat-wallet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "author": {
     "name": "Luciap Technology Inc.",
@@ -16,7 +16,11 @@
     "start": "npm run serve",
     "generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@sentry/browser": "^5.1.0",
+    "@sentry/electron": "^0.17.1",
+    "@sentry/integrations": "^5.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
