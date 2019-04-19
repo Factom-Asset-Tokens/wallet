@@ -18,7 +18,7 @@ protocol.registerStandardSchemes(['app'], { secure: true });
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    icon: path.join(__static, '/icons/256x256.png'),
+    icon: path.join(__static, '/icon.png'),
     webPreferences: {
       webSecurity: false
     }

@@ -13,7 +13,8 @@
     "format": "prettier --write \"src/**/*.{js,vue}\"",
     "build": "rm -rf dist_electron && vue-cli-service electron:build",
     "serve": "vue-cli-service electron:serve",
-    "start": "npm run serve"
+    "start": "npm run serve",
+    "generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten"
   },
   "dependencies": {},
   "devDependencies": {
@@ -31,6 +32,7 @@
     "bluebird": "^3.5.4",
     "deepmerge": "^3.2.0",
     "electron": "^4.1.4",
+    "electron-icon-builder": "^1.0.0",
     "electron-store": "^3.2.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
