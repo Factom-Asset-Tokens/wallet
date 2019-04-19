@@ -1,6 +1,7 @@
 'use strict';
 
 import { app, protocol, BrowserWindow } from 'electron';
+import path from 'path';
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib';
 import Store from 'electron-store';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -17,6 +18,7 @@ protocol.registerStandardSchemes(['app'], { secure: true });
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
+    icon: path.join(__static, '/icons/256x256.png'),
     webPreferences: {
       webSecurity: false
     }

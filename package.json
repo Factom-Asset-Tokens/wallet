@@ -2,17 +2,18 @@
   "name": "fat-wallet",
   "version": "0.1.0",
   "private": true,
-  "author": "Paul Bernier",
+  "author": {
+    "name": "Luciap Technology Inc.",
+    "email": "contact@luciap.ca"
+  },
   "description": "Wallet for FAT tokens. Factom Asset Tokens (FAT) is a protocol of tokenization built on top of the Factom blockchain.",
   "license": "MIT",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "format": "prettier --write \"src/**/*.{js,vue}\"",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "vue-cli-service electron:serve",
-    "start": "npm run electron:serve"
+    "build": "rm -rf dist_electron && vue-cli-service electron:build",
+    "serve": "vue-cli-service electron:serve",
+    "start": "npm run serve"
   },
   "dependencies": {},
   "devDependencies": {
