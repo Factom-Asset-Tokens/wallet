@@ -10,6 +10,9 @@ module.exports = {
         },
         appImage: {
           license: 'LICENSE.md'
+        },
+        mac: {
+          category: 'public.app-category.finance'
         }
       }
     }
