@@ -3,7 +3,7 @@
   <v-container fluid v-if="areNfTokens">
     <v-layout pa-1 wrap v-for="(io, index) in ios" :key="io.address" align-center :class="rowColor(index)">
       <v-flex xs8>
-        {{ io.address }}
+        <span :title="displayAddressTitle(io.address)">{{ io.address }}</span>
         <v-icon v-if="addresses.has(io.address)" right color="secondary" title="Address in the wallet"
           >account_balance_wallet</v-icon
         >
@@ -25,7 +25,7 @@
   <v-container fluid v-else>
     <v-layout wrap py-1 v-for="io in ios" :key="io.address">
       <v-flex xs8>
-        {{ io.address }}
+        <span :title="displayAddressTitle(io.address)">{{ io.address }}</span>
         <v-icon v-if="addresses.has(io.address)" right color="secondary" title="Address in the wallet"
           >account_balance_wallet</v-icon
         >
@@ -44,9 +44,15 @@ export default {
   computed: {
     areNfTokens() {
       return Array.isArray(this.ios[0].amount);
+    },
+    addressNames() {
+      return this.$store.state.address.names;
     }
   },
   methods: {
+    displayAddressTitle(address) {
+      return this.addressNames[address] || '';
+    },
     getNfTokens(amount) {
       return sortIds(amount.map(standardizeId));
     },

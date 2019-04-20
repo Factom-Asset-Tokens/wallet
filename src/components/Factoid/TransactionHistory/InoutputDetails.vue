@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout wrap py-1 v-for="io in ios" :key="io.key">
       <v-flex xs8>
-        {{ io.address }}
+        <span :title="addressNames[io.address] || ''">{{ io.address }}</span>
         <v-icon v-if="addresses.has(io.address)" right color="secondary" title="Address in the wallet"
           >account_balance_wallet</v-icon
         >
@@ -14,6 +14,11 @@
 
 <script>
 export default {
-  props: ['ios', 'symbol', 'addresses']
+  props: ['ios', 'symbol', 'addresses'],
+  computed: {
+    addressNames() {
+      return this.$store.state.address.names;
+    }
+  }
 };
 </script>

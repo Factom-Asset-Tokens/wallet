@@ -8,8 +8,8 @@
         <v-list-tile :key="mvt.key" @click.stop="openDetails(mvt.txId)">
           <v-layout wrap>
             <v-flex xs2>{{ mvt.date | formatDate }}</v-flex>
-            <v-flex xs6 class="font-italic">{{ mvt.address }}</v-flex>
-            <v-flex xs4 class="font-weight-bold" :class="amountColorClass(mvt.sign)" text-xs-right>
+            <v-flex xs7 class="font-italic">{{ displayAddress(mvt.address) }}</v-flex>
+            <v-flex xs3 class="font-weight-bold" :class="amountColorClass(mvt.sign)" text-xs-right>
               <v-icon v-if="mvt.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
               {{ mvt.sign }}
               {{ mvt.amount }}
@@ -65,12 +65,18 @@ export default {
     },
     addressesSet() {
       return new Set(this.addresses);
+    },
+    addressNames() {
+      return this.$store.state.address.names;
     }
   },
   created() {
     this.loadMoreMovements();
   },
   methods: {
+    displayAddress(address) {
+      return this.addressNames[address] || address;
+    },
     amountColorClass(sign) {
       return sign === '+' ? 'green--text' : 'red--text';
     },
