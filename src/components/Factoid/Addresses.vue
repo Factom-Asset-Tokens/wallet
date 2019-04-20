@@ -69,9 +69,7 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
-              <td>
-                {{ props.item.balanceText }}
-              </td>
+              <td class="text-xs-right">{{ props.item.balanceText }}</td>
             </template>
           </v-data-table>
         </v-tab-item>
@@ -106,7 +104,7 @@
                   ></v-text-field>
                 </v-edit-dialog>
               </td>
-              <td>{{ props.item.balanceText }}</td>
+              <td class="text-xs-right">{{ props.item.balanceText }}</td>
             </template>
           </v-data-table>
         </v-tab-item>

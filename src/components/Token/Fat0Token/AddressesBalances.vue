@@ -26,9 +26,7 @@
               ></v-text-field>
             </v-edit-dialog>
           </td>
-          <td class="text-xs-right">
-            {{ props.item.balanceText }}
-          </td>
+          <td class="text-xs-right">{{ props.item.balanceText }}</td>
         </template>
       </v-data-table>
     </v-flex>
