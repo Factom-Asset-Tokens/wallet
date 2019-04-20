@@ -4,10 +4,11 @@
       <v-data-table
         class="elevation-1"
         :headers="[
-          { text: 'Address', value: 'address', sortable: false },
-          { text: 'Name', value: 'name', sortable: false },
+          { text: 'Address', value: 'address' },
+          { text: 'Name', value: 'name' },
           { text: 'Balance', value: 'balance', align: 'right' }
         ]"
+        :pagination.sync="pagination"
         :items="balances"
         item-key="address"
         disable-initial-sort
@@ -64,6 +65,15 @@ import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDia
 export default {
   components: { NfTokenDetailsDialog },
   props: ['balances', 'symbol', 'tokenCli'],
+  data() {
+    return {
+      pagination: {
+        descending: true,
+        rowsPerPage: 10,
+        sortBy: 'value'
+      }
+    };
+  },
   methods: {
     sortIds,
     showTokenDetails(id) {

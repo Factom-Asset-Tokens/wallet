@@ -45,10 +45,11 @@
         <v-tab-item>
           <v-data-table
             :headers="[
-              { text: 'Address', value: 'address', sortable: false },
-              { text: 'Name', value: 'name', sortable: false },
+              { text: 'Address', value: 'address' },
+              { text: 'Name', value: 'name' },
               { text: 'Balance', value: 'value', align: 'right' }
             ]"
+            :pagination.sync="fctPagination"
             :items="fctAddresses"
             item-key="address"
             disable-initial-sort
@@ -78,10 +79,11 @@
           <v-data-table
             :headers="[
               { text: '', value: 'preferred', sortable: false, width: '72px' },
-              { text: 'Address', value: 'address', sortable: false },
-              { text: 'Name', value: 'name', sortable: false },
+              { text: 'Address', value: 'address' },
+              { text: 'Name', value: 'name' },
               { text: 'Balance', value: 'value', align: 'right' }
             ]"
+            :pagination.sync="ecPagination"
             :items="ecAddresses"
             item-key="address"
             disable-initial-sort
@@ -127,7 +129,17 @@ export default {
   data: function() {
     return {
       tab: null,
-      loading: false
+      loading: false,
+      fctPagination: {
+        descending: true,
+        rowsPerPage: 10,
+        sortBy: 'value'
+      },
+      ecPagination: {
+        descending: true,
+        rowsPerPage: 10,
+        sortBy: 'value'
+      }
     };
   },
   async mounted() {

@@ -4,10 +4,11 @@
       <v-data-table
         class="elevation-1"
         :headers="[
-          { text: 'Address', value: 'address', sortable: false },
-          { text: 'Name', value: 'name', sortable: false },
+          { text: 'Address', value: 'address' },
+          { text: 'Name', value: 'name' },
           { text: 'Balance', value: 'value', align: 'right' }
         ]"
+        :pagination.sync="pagination"
         :items="items"
         item-key="address"
         disable-initial-sort
@@ -37,6 +38,15 @@
 <script>
 export default {
   props: ['balances', 'symbol'],
+  data() {
+    return {
+      pagination: {
+        descending: true,
+        rowsPerPage: 10,
+        sortBy: 'value'
+      }
+    };
+  },
   computed: {
     items() {
       return this.balances.map(b => ({
