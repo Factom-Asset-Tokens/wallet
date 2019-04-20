@@ -5,7 +5,7 @@ import { getIntegerPort } from './common';
 export default {
   namespaced: true,
   state: {
-    endpoint: 'http://localhost:8078',
+    endpoint: 'http://0.testnet.fat.dbgrow.com:8078',
     status: null,
     factomHeight: 1,
     syncHeight: 1,

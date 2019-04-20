@@ -5,7 +5,7 @@ import { getIntegerPort } from './common';
 export default {
   namespaced: true,
   state: {
-    endpoint: 'http://localhost:8088/v2',
+    endpoint: 'https://dev.factomd.net/v2',
     status: null,
     version: null
   },
