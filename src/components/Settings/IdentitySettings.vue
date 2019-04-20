@@ -50,7 +50,7 @@
         <v-card-text class="subheading">
           <div>
             Digital identities are identities registered on the Factom blockchain and referenced by their chain ID. A
-            set of ed25519 key pairs is associated with an identities. Those keys can be used to sign and authenticate
+            set of ed25519 key pairs is associated with an identity. Those keys can be used to sign and authenticate
             data.
           </div>
           <div>
