@@ -8,6 +8,7 @@ Vue.use(Vuetify, {
     primary: '#7287b1',
     secondary: '#EEB71C',
     accent: '#23182D',
-    lightGrey: '#55585e'
+    lightGrey: '#55585e',
+    lighterGrey: '#797d86'
   }
 });

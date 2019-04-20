@@ -59,7 +59,8 @@
               <td>{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog :return-value.sync="props.item.name" lazy>
-                  {{ props.item.name }}
+                  <span v-if="props.item.name">{{ props.item.name }}</span>
+                  <v-icon v-else color="lighterGrey">edit</v-icon>
                   <v-text-field
                     slot="input"
                     :value="props.item.name"
@@ -94,7 +95,8 @@
               <td>{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog lazy>
-                  {{ props.item.name }}
+                  <span v-if="props.item.name">{{ props.item.name }}</span>
+                  <v-icon v-else color="lighterGrey">edit</v-icon>
                   <v-text-field
                     slot="input"
                     :value="props.item.name"
