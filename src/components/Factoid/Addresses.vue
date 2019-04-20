@@ -76,7 +76,7 @@
         <v-tab-item>
           <v-data-table
             :headers="[
-              { text: '', value: 'prefered', sortable: false },
+              { text: '', value: 'preferred', sortable: false, width: '72px' },
               { text: 'Address', value: 'address', sortable: false },
               { text: 'Name', value: 'name', sortable: false },
               { text: 'Balance', value: 'value', align: 'right' }
@@ -87,7 +87,7 @@
             class="elevation-1"
           >
             <template slot="items" slot-scope="props">
-              <td>
+              <td class="text-xs-center" title="Select address preferentially used to pay FAT transactions">
                 <v-icon v-if="props.item.preferred" color="secondary">star</v-icon>
                 <v-icon v-else @click="setPreferredEcAddress(props.item.address)">star_outline</v-icon>
               </td>
