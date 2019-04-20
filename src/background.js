@@ -41,42 +41,55 @@ function createWindow() {
 }
 
 function setApplicationMenu() {
+  const template = [];
   if (process.platform === 'darwin') {
     const appName = 'FAT Wallet';
-    Menu.setApplicationMenu(
-      Menu.buildFromTemplate([
+    template.push({
+      label: appName,
+      submenu: [
+        { label: `About ${appName}`, role: 'about' },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { label: `Hide ${appName}`, role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
         {
-          label: appName,
-          submenu: [
-            { label: `About ${appName}`, role: 'about' },
-            { type: 'separator' },
-            { role: 'services' },
-            { type: 'separator' },
-            { label: `Hide ${appName}`, role: 'hide' },
-            { role: 'hideothers' },
-            { role: 'unhide' },
-            {
-              label: 'Quit',
-              accelerator: 'Command+Q',
-              click: () => app.quit()
-            }
-          ]
-        },
-        { role: 'editMenu' },
+          label: 'Quit',
+          accelerator: 'Command+Q',
+          click: () => app.quit()
+        }
+      ]
+    });
+  } else {
+    template.push({
+      label: 'File',
+      submenu: [
         {
-          label: 'View',
-          submenu: [
-            { role: 'resetZoom' },
-            { role: 'zoomIn' },
-            { role: 'zoomOut' },
-            { type: 'separator' },
-            { role: 'toggleFullScreen' }
-          ]
-        },
-        { role: 'windowMenu' }
-      ])
-    );
+          label: 'Quit',
+          accelerator: 'Ctrl+Q',
+          click: () => app.quit()
+        }
+      ]
+    });
   }
+
+  template.push(
+    { role: 'editMenu' },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'toggleFullScreen' }
+      ]
+    },
+    { role: 'windowMenu' }
+  );
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 // Quit when all windows are closed.
@@ -109,7 +122,9 @@ app.on('ready', async () => {
     }
   }
   createWindow();
-  setApplicationMenu();
+  if (!isDevelopment) {
+    setApplicationMenu();
+  }
 });
 
 // Exit cleanly on request from parent process in development mode.
