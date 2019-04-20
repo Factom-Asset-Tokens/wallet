@@ -30,7 +30,7 @@
                 <v-flex xs12 mt-4>
                   <div class="headline">Tokens to send</div>
                 </v-flex>
-                <v-flex v-if="selectedTokens.length > 0">
+                <v-flex xs12 v-if="selectedTokens.length > 0">
                   <v-chip
                     v-for="id in selectedTokens"
                     :key="id.min"
