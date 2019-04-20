@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow, Menu } from 'electron';
 import path from 'path';
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib';
 import Store from 'electron-store';
@@ -40,6 +40,45 @@ function createWindow() {
   });
 }
 
+function setApplicationMenu() {
+  if (process.platform === 'darwin') {
+    const appName = 'FAT Wallet';
+    Menu.setApplicationMenu(
+      Menu.buildFromTemplate([
+        {
+          label: appName,
+          submenu: [
+            { label: `About ${appName}`, role: 'about' },
+            { type: 'separator' },
+            { role: 'services' },
+            { type: 'separator' },
+            { label: `Hide ${appName}`, role: 'hide' },
+            { role: 'hideothers' },
+            { role: 'unhide' },
+            {
+              label: 'Quit',
+              accelerator: 'Command+Q',
+              click: () => app.quit()
+            }
+          ]
+        },
+        { role: 'editMenu' },
+        {
+          label: 'View',
+          submenu: [
+            { role: 'resetZoom' },
+            { role: 'zoomIn' },
+            { role: 'zoomOut' },
+            { type: 'separator' },
+            { role: 'toggleFullScreen' }
+          ]
+        },
+        { role: 'windowMenu' }
+      ])
+    );
+  }
+}
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -70,6 +109,7 @@ app.on('ready', async () => {
     }
   }
   createWindow();
+  setApplicationMenu();
 });
 
 // Exit cleanly on request from parent process in development mode.
