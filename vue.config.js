@@ -6,13 +6,17 @@ module.exports = {
         productName: 'FAT Wallet',
         linux: {
           category: 'Utility',
-          target: ['deb', 'zip', 'AppImage']
+          target: ['deb', 'AppImage']
         },
         appImage: {
           license: 'LICENSE.md'
         },
         mac: {
-          category: 'public.app-category.finance'
+          category: 'public.app-category.finance',
+          target: ['dmg']
+        },
+        win: {
+          target: ['nsis']
         }
       }
     }
