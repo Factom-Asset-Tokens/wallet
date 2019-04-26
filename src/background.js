@@ -1,8 +1,8 @@
 'use strict';
 
 import { app, protocol, BrowserWindow, Menu } from 'electron';
-import path from 'path';
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib';
+import path from 'path';
 import Store from 'electron-store';
 import * as Sentry from '@sentry/electron/dist/main';
 import { version } from '../package.json';
@@ -25,12 +25,14 @@ let win;
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true });
+
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
     icon: path.join(__static, '/icon.png'),
     webPreferences: {
-      webSecurity: false
+      webSecurity: false,
+      nodeIntegration: true
     }
   });
   win.maximize();
