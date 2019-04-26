@@ -30,13 +30,15 @@ export default new Vuex.Store({
   state: {
     snack: false,
     snackMessage: '',
-    snackColor: ''
+    snackColor: '',
+    displayAppSideBar: false
   },
   getters: {
     daemonsKo: state => state.fatd.status === 'ko' || state.factomd.status === 'ko',
     daemonsSyncing: (state, getters) => state.fatd.status === 'ok' && !getters['fatd/synced']
   },
   mutations: {
+    showAppSideBar: state => (state.displayAppSideBar = true),
     updateSnack: (state, value) => (state.snack = value),
     snackError(state, message) {
       state.snackColor = 'error';
@@ -55,8 +57,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async init({ dispatch }) {
-      await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus'), dispatch('keystore/init')]);
+    async init({ dispatch }, { password }) {
+      await Promise.all([
+        dispatch('factomd/checkStatus'),
+        dispatch('fatd/checkStatus'),
+        dispatch('keystore/init', password)
+      ]);
+
       // Address and identity modules require keystore module to be initialized first
       await Promise.all([dispatch('address/init'), dispatch('identity/init'), dispatch('tokens/init')]);
     },

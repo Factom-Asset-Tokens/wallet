@@ -4,8 +4,6 @@ const { app } = require('electron').remote;
 import uuidv4 from 'uuid/v4';
 
 const USER_DATA_PATH = app.getPath('userData');
-// TODO: implement user password at next iteration
-const PASSWORD = 'THE_PASSWORD';
 
 export default {
   namespaced: true,
@@ -18,17 +16,24 @@ export default {
     updateStore: (state, store) => (state.store = store)
   },
   actions: {
-    async init({ state, commit }) {
+    async init({ state, commit }, password) {
       if (!state.filename) {
         const filename = path.join(USER_DATA_PATH, uuidv4());
         commit('updateFilename', filename);
-        const store = await createFileKeyStore(filename, PASSWORD);
+        const store = await createFileKeyStore(filename, password);
         await Promise.all([store.generateFactoidAddress(), store.generateEntryCreditAddress()]);
         commit('updateStore', store);
       } else {
-        const store = await openFileKeyStore(state.filename, PASSWORD);
+        const store = await openFileKeyStore(state.filename, password);
         commit('updateStore', store);
       }
+    },
+    async testPassword({ state }, password) {
+      if (!state.filename) {
+        throw new Error('No existing keystore file');
+      }
+      const store = await openFileKeyStore(state.filename, password);
+      store.getSeed();
     }
   }
 };

@@ -41,9 +41,11 @@ export default {
     }
   },
   actions: {
-    async init({ state, dispatch }) {
-      const chainIds = Object.keys(state.tracked);
-      return Promise.map(chainIds, chainId => dispatch('fetchBalances', chainId));
+    async init({ state, dispatch, rootState }) {
+      if (rootState.fatd.status === 'ok') {
+        const chainIds = Object.keys(state.tracked);
+        return Promise.map(chainIds, chainId => dispatch('fetchBalances', chainId));
+      }
     },
     async initializeTokenClis({ state, commit, rootGetters }) {
       const cli = rootGetters['fatd/cli'];

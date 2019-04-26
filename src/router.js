@@ -7,6 +7,7 @@ import IssueToken from './views/IssueToken.vue';
 import CoinbaseTransaction from './views/CoinbaseTransaction.vue';
 import Actions from './views/Actions.vue';
 import Factoid from './views/Factoid.vue';
+import Start from './views/Start.vue';
 
 Vue.use(Router);
 
@@ -14,7 +15,12 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    { path: '/', redirect: { name: 'Actions' } },
+    { path: '/', redirect: { name: 'Start' } },
+    {
+      path: '/start',
+      name: 'Start',
+      component: Start
+    },
     {
       path: '/actions',
       name: 'Actions',

@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <SideBar></SideBar>
+    <SideBar v-if="displayAppSideBar"></SideBar>
     <v-content>
       <v-container fluid>
         <router-view id="router-view" />
@@ -23,7 +23,7 @@ export default {
     SideBar
   },
   computed: {
-    ...mapState(['snackMessage', 'snackColor']),
+    ...mapState(['snackMessage', 'snackColor', 'displayAppSideBar']),
     snack: {
       get() {
         return this.$store.state.snack;

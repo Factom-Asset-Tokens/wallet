@@ -46,9 +46,11 @@ export default {
     }
   },
   actions: {
-    async init({ dispatch }) {
-      await dispatch('fetchIdentityKeysFromKeyStore');
-      await dispatch('refreshIdentitiesActiveKeys');
+    async init({ dispatch, rootState }) {
+      if (rootState.factomd.status === 'ok') {
+        await dispatch('fetchIdentityKeysFromKeyStore');
+        await dispatch('refreshIdentitiesActiveKeys');
+      }
     },
     async fetchIdentityKeysFromKeyStore({ commit, rootState }) {
       const identityKeys = rootState.keystore.store.getAllIdentityKeys();

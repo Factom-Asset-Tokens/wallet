@@ -3,13 +3,6 @@
     <v-sheet elevation="2">
       <v-container>
         <v-layout wrap>
-          <v-flex xs12 my-4 text-xs-center>
-            <div class="display-2 font-weight-light">Welcome to the</div>
-            <div class="display-2 font-weight-light">Factom Asset Token Wallet</div>
-          </v-flex>
-          <v-flex xs12 text-xs-center mb-5>
-            <img src="@/assets/img/fat-icon.png" width="100px" />
-          </v-flex>
           <v-flex xs12 sm6 offset-sm3 my-4>
             <v-btn color="primary" large block :to="{ name: 'TrackToken' }" class="subheading">
               <v-icon left>track_changes</v-icon>Track an existing token
@@ -32,12 +25,7 @@
 </template>
 
 <script>
-export default {
-  mounted() {
-    // TODO: should be done once at the startup of the whole application
-    this.$store.dispatch('init');
-  }
-};
+export default {};
 </script>
 
 <style scoped></style>
