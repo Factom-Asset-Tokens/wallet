@@ -23,8 +23,8 @@ appStore.set('latestVersionOpened', app.getVersion());
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
-// Standard scheme must be registered before the app is ready
-protocol.registerStandardSchemes(['app'], { secure: true });
+// Scheme must be registered before the app is ready
+protocol.registerSchemesAsPrivileged([{ scheme: 'app', secure: true }]);
 
 function createWindow() {
   // Create the browser window.
