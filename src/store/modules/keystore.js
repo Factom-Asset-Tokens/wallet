@@ -34,6 +34,12 @@ export default {
       }
       const store = await openFileKeyStore(state.filename, password);
       store.getSeed();
+    },
+    async changePassword({ state, commit }, { oldPassword, newPassword }) {
+      const keystore = state.store;
+      commit('updateStore', null);
+      await keystore.changePassword(oldPassword, newPassword);
+      commit('updateStore', keystore);
     }
   }
 };

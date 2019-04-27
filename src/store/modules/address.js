@@ -23,16 +23,7 @@ export default {
     totalFctBalance: state => Object.values(state.fctBalances).reduce((acc, val) => acc.plus(val), ZERO),
     totalEcBalance: state => Object.values(state.ecBalances).reduce((acc, val) => acc.plus(val), ZERO),
     fctAddressesWithNames: state => mapNames(state.fctAddresses, state.names),
-    ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names),
-    payingEcAddress: function(state, getters, rootState) {
-      if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress]) {
-        return rootState.keystore.store.getSecretKey(state.preferredEcAddress);
-      }
-      const found = state.ecAddresses.find(address => state.ecBalances[address]);
-      if (found) {
-        return rootState.keystore.store.getSecretKey(found);
-      }
-    }
+    ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names)
   },
   mutations: {
     addEcAddress: (state, address) => state.ecAddresses.push(address),
@@ -143,6 +134,15 @@ export default {
       const { public: ecPub } = await rootState.keystore.store.generateEntryCreditAddress();
       commit('addEcAddress', ecPub);
       await dispatch('fetchEcBalances');
+    },
+    getPayingEcAddress({ state, rootState }) {
+      if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress]) {
+        return rootState.keystore.store.getSecretKey(state.preferredEcAddress);
+      }
+      const found = state.ecAddresses.find(address => state.ecBalances[address]);
+      if (found) {
+        return rootState.keystore.store.getSecretKey(found);
+      }
     }
   }
 };

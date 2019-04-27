@@ -3,7 +3,8 @@
     <v-container>
       <DaemonSettings v-if="view === 'connection'" class="section-margin-bottom"></DaemonSettings>
       <IdentitySettings v-else-if="view === 'identity'" class="section-margin-bottom"></IdentitySettings>
-      <Backup v-if="view === 'backup'"></Backup>
+      <PasswordChange v-else-if="view === 'password'"></PasswordChange>
+      <Backup v-else-if="view === 'backup'"></Backup>
     </v-container>
     <NavigationDrawer></NavigationDrawer>
   </div>
@@ -13,11 +14,12 @@
 import DaemonSettings from '@/components/Settings/DaemonSettings';
 import IdentitySettings from '@/components/Settings/IdentitySettings';
 import Backup from '@/components/Settings/Backup';
+import PasswordChange from '@/components/Settings/PasswordChange';
 import NavigationDrawer from '@/components/Settings/NavigationDrawer';
 
 export default {
   name: 'Settings',
-  components: { DaemonSettings, IdentitySettings, Backup, NavigationDrawer },
+  components: { DaemonSettings, IdentitySettings, PasswordChange, Backup, NavigationDrawer },
   data() {
     return {};
   },
