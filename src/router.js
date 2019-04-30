@@ -8,6 +8,7 @@ import CoinbaseTransaction from './views/CoinbaseTransaction.vue';
 import Actions from './views/Actions.vue';
 import Factoid from './views/Factoid.vue';
 import Start from './views/Start.vue';
+import NewWallet from './views/NewWallet.vue';
 
 Vue.use(Router);
 
@@ -20,6 +21,11 @@ export default new Router({
       path: '/start',
       name: 'Start',
       component: Start
+    },
+    {
+      path: '/new-wallet',
+      name: 'NewWallet',
+      component: NewWallet
     },
     {
       path: '/actions',

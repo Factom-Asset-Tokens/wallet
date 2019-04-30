@@ -57,11 +57,11 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async init({ dispatch }, { password }) {
+    async init({ dispatch }, { password, seed }) {
       await Promise.all([
         dispatch('factomd/checkStatus'),
         dispatch('fatd/checkStatus'),
-        dispatch('keystore/init', password)
+        dispatch('keystore/init', { password, seed })
       ]);
 
       // Address and identity modules require keystore module to be initialized first

@@ -105,7 +105,7 @@ export default {
       }
 
       if (this.newPassword !== this.newPasswordConfirm) {
-        this.newPasswordConfirmErrors = ['Password confirmation is different'];
+        this.newPasswordConfirmErrors = ['Password confirmation does not match'];
         valid = false;
       }
 

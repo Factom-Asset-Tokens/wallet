@@ -23,7 +23,7 @@
       <v-dialog v-model="loading" persistent width="300">
         <v-card color="primary">
           <v-card-text>
-            Initializing your wallet...
+            Unlocking your wallet...
             <v-progress-linear indeterminate color="white"></v-progress-linear>
           </v-card-text>
         </v-card>

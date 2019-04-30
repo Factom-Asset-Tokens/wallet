@@ -16,12 +16,12 @@ export default {
     updateStore: (state, store) => (state.store = store)
   },
   actions: {
-    async init({ state, commit }, password) {
+    async init({ state, commit }, { password, seed }) {
       if (!state.filename) {
-        const filename = path.join(USER_DATA_PATH, uuidv4());
-        commit('updateFilename', filename);
-        const store = await createFileKeyStore(filename, password);
+        const filename = `${path.join(USER_DATA_PATH, uuidv4())}.keystore.json`;
+        const store = await createFileKeyStore(filename, password, seed.join(' '));
         await Promise.all([store.generateFactoidAddress(), store.generateEntryCreditAddress()]);
+        commit('updateFilename', filename);
         commit('updateStore', store);
       } else {
         const store = await openFileKeyStore(state.filename, password);

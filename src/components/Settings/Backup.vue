@@ -4,12 +4,12 @@
       <v-layout wrap>
         <v-flex xs12 mt-2 text-xs-center>
           <v-btn color="primary" large class="subheading" :loading="loadingSeed" @click="showSeed">
-            <v-icon left>fa-seedling</v-icon>show recovery seed
+            <v-icon left>fa-seedling</v-icon>show recovery phrase
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
           <v-btn color="secondary" class="font-italic subheading text-none" flat @click="toggleSeedInfo"
-            >Wait, what is a recovery seed?</v-btn
+            >Wait, what is a recovery phrase?</v-btn
           >
           <v-slide-y-transition>
             <v-sheet id="seedInfo" v-show="showSeedInfo" elevation="10">
@@ -17,13 +17,13 @@
                 <v-layout wrap>
                   <v-flex xs12 class="subheading">
                     <p class="font-weight-black">
-                      The recovery seed is a "master access key" made of 12 simple and rememberable words. From this
-                      seed it is possible to "grow" back your wallet. This is why it is critically important to keep a
-                      copy of that seed secret and safe. Any malicious actor gaining access to it would be able to steal
-                      your funds and identities.
+                      The recovery phrase is a "master access key" made of 12 or 24 simple and rememberable words. From
+                      this phrase it is possible to recover your wallet keys. This is why it is critically important to
+                      keep a copy of that phrase secret and safe. Any malicious actor gaining access to it would be able
+                      to steal your funds and identities.
                     </p>
                     <p>
-                      Important note: some aspects of the wallet cannot be recovered solely from the seed:
+                      Important note: some aspects of the wallet cannot be recovered solely from the recovery phrase:
                     </p>
                     <ul class="margin-bottom">
                       <li>
@@ -62,14 +62,13 @@
                 <v-layout wrap>
                   <v-flex xs12 class="subheading">
                     <p>
-                      A backup file is a file containing everything needed to fully restore the wallet to its current
-                      state. It contains all the access keys to your funds and identities this is why it is critically
-                      important that this backup file is kept secret and safe. Any malicious actor gaining access to it
-                      would be able to steal your funds and identities.
+                      A backup file is a snapshot of your wallet containing everything needed to fully restore the
+                      wallet to its current state. It contains all the access keys to your funds and identities this is
+                      why it is critically important that this backup file is kept secret and safe. Any malicious actor
+                      gaining access to it would be able to steal your funds and identities.
                     </p>
                     <p>
-                      It is a super-set of the recovery seed and will include everything that is not covered by the
-                      seed.
+                      It is a super-set of the recovery phrase and will include everything that is not covered by it.
                     </p>
                   </v-flex>
                 </v-layout>
