@@ -11,26 +11,45 @@
             <img src="@/assets/img/fat-icon.png" width="100px" />
           </v-flex>
         </v-layout>
-        <WalletLogin v-if="hasKeyStore"></WalletLogin>
+        <WalletLogin v-if="accessibleKeyStore"></WalletLogin>
         <NewWalletSelection v-else></NewWalletSelection>
       </v-container>
+      <KeystoreMissingDialog :keystorePath="keystorePath" ref="keystoreMissingDialog"></KeystoreMissingDialog>
     </v-sheet>
   </v-container>
 </template>
 
 <script>
+import fs from 'fs';
 import Store from 'electron-store';
 import WalletLogin from '@/components/Start/WalletLogIn';
 import NewWalletSelection from '@/components/Start/NewWalletSelection';
+import KeystoreMissingDialog from '@/components/Start/KeystoreMissingDialog';
 
 const userConfig = new Store({ name: 'user-config.v1' });
 
 export default {
   name: 'Start',
-  components: { WalletLogin, NewWalletSelection },
+  components: { WalletLogin, NewWalletSelection, KeystoreMissingDialog },
   computed: {
-    hasKeyStore() {
-      return !!userConfig.get('state.keystore.filename');
+    keystorePath() {
+      return userConfig.get('state.keystore.filename');
+    },
+    accessibleKeyStore() {
+      if (this.keystorePath) {
+        try {
+          fs.accessSync(this.keystorePath, fs.constants.R_OK | fs.constants.W_OK);
+          return true;
+        } catch (err) {
+          return false;
+        }
+      }
+      return false;
+    }
+  },
+  mounted() {
+    if (this.keystorePath && !this.accessibleKeyStore) {
+      this.$refs.keystoreMissingDialog.show();
     }
   }
 };
