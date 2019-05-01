@@ -17,15 +17,17 @@ export default {
   },
   actions: {
     async init({ state, commit }, { password, seed }) {
-      if (!state.filename) {
+      if (seed) {
         const filename = `${path.join(USER_DATA_PATH, uuidv4())}.keystore.json`;
         const store = await createFileKeyStore(filename, password, seed.join(' '));
         await Promise.all([store.generateFactoidAddress(), store.generateEntryCreditAddress()]);
         commit('updateFilename', filename);
         commit('updateStore', store);
-      } else {
+      } else if (state.filename) {
         const store = await openFileKeyStore(state.filename, password);
         commit('updateStore', store);
+      } else {
+        throw new Error('Inconsistent state');
       }
     },
     async testPassword({ state }, password) {
