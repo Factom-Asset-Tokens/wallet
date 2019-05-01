@@ -12,7 +12,7 @@
       <v-flex xs12>
         <v-layout wrap>
           <v-flex xs12 sm8 md4 offset-sm2 offset-md4>
-            <v-btn class="button-padding" outline block color="primary" depressed large>
+            <v-btn class="button-padding" outline block color="primary" depressed large :to="{ name: 'RestoreWallet' }">
               <v-icon left>settings_backup_restore</v-icon>Restore from recovery phrase
             </v-btn>
           </v-flex>

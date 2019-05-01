@@ -41,7 +41,7 @@
         </v-layout>
       </v-card-text>
       <v-card-actions>
-        <v-btn flat :to="{ name: 'Start' }">Back</v-btn>
+        <v-btn flat @click="$emit('back')">Back</v-btn>
         <v-spacer></v-spacer>
         <v-btn color="primary" type="submit">I understand my responsability</v-btn>
       </v-card-actions>

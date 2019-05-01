@@ -19,7 +19,7 @@
               :append-icon="displayPassword ? 'visibility_off' : 'visibility'"
               :type="displayPassword ? 'text' : 'password'"
               @click:append="displayPassword = !displayPassword"
-              label="Wallet Password"
+              label="Password"
               :rules="passwordRules"
               validate-on-blur
               autofocus

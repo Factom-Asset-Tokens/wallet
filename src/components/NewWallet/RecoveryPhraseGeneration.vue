@@ -43,18 +43,24 @@ import { generateMnemonic } from 'bip39';
 
 export default {
   name: 'RecoveryPhraseGeneration',
-  props: ['seed'],
   data() {
     return {
+      seed: [],
       seedStrength: '128'
     };
   },
   created() {
-    this.$emit('update:seed', generateMnemonic(this.seedStrength).split(' '));
+    this.generateMnemonic();
+  },
+  methods: {
+    generateMnemonic() {
+      this.seed = generateMnemonic(this.seedStrength).split(' ');
+      this.$emit('update:seed', this.seed);
+    }
   },
   watch: {
     seedStrength() {
-      this.$emit('update:seed', generateMnemonic(this.seedStrength).split(' '));
+      this.generateMnemonic();
     }
   }
 };
