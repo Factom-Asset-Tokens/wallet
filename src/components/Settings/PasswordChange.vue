@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="changePassword" ref="form">
+  <v-form @submit.prevent="changePassword" ref="form" lazy-validation>
     <v-sheet elevation="1">
       <v-container>
         <v-layout wrap>
@@ -23,8 +23,8 @@
               :type="displayNewPassword ? 'text' : 'password'"
               @click:append="displayNewPassword = !displayNewPassword"
               label="New Password"
-              :error-messages="newPasswordErrors"
-              @input="newPasswordErrors = []"
+              :rules="newPasswordRules"
+              validate-on-blur
               box
             ></v-text-field>
           </v-flex>
@@ -35,8 +35,8 @@
               :type="displayNewPasswordConfirm ? 'text' : 'password'"
               @click:append="displayNewPasswordConfirm = !displayNewPasswordConfirm"
               label="New Password (confirmation)"
-              :error-messages="newPasswordConfirmErrors"
-              @input="newPasswordConfirmErrors = []"
+              :rules="newPasswordConfirmRules"
+              validate-on-blur
               box
             ></v-text-field>
           </v-flex>
@@ -61,16 +61,20 @@ export default {
       displayCurrentPassword: false,
       currentPasswordErrors: [],
       newPassword: '',
+      newPasswordRules: [v => (v && v.length >= 9) || 'Must be at least 9 character long'],
       displayNewPassword: false,
-      newPasswordErrors: [],
       newPasswordConfirm: '',
-      displayNewPasswordConfirm: false,
-      newPasswordConfirmErrors: []
+      displayNewPasswordConfirm: false
     };
+  },
+  computed: {
+    newPasswordConfirmRules() {
+      return [v => v === this.newPassword || 'Password confirmation does not match'];
+    }
   },
   methods: {
     async changePassword() {
-      if (await this.validatePasswordChange()) {
+      if ((await this.validateCurrentPassword()) && this.$refs.form.validate()) {
         await this.$store.dispatch('keystore/changePassword', {
           oldPassword: this.currentPassword,
           newPassword: this.newPassword
@@ -80,7 +84,7 @@ export default {
         this.$refs.form.reset();
       }
     },
-    async validatePasswordChange() {
+    async validateCurrentPassword() {
       let valid = true;
 
       if (!this.currentPassword) {
@@ -97,16 +101,6 @@ export default {
             this.$store.commit('snackError', e.message);
           }
         }
-      }
-
-      if (!this.newPassword) {
-        this.newPasswordErrors = ['Password is empty'];
-        valid = false;
-      }
-
-      if (this.newPassword !== this.newPasswordConfirm) {
-        this.newPasswordConfirmErrors = ['Password confirmation does not match'];
-        valid = false;
       }
 
       return valid;
