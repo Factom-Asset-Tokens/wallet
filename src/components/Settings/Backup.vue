@@ -3,16 +3,16 @@
     <v-container>
       <v-layout wrap>
         <v-flex xs12 mt-2 text-xs-center>
-          <v-btn color="primary" large class="subheading" :loading="loadingSeed" @click="showSeed">
+          <v-btn color="primary" large class="subheading" @click="showRecoveryPhraseDialog">
             <v-icon left>fa-seedling</v-icon>show recovery phrase
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
-          <v-btn color="secondary" class="font-italic subheading text-none" flat @click="toggleSeedInfo"
+          <v-btn color="secondary" class="font-italic subheading text-none" flat @click="toggleRecoveryPhraseInfo"
             >Wait, what is a recovery phrase?</v-btn
           >
           <v-slide-y-transition>
-            <v-sheet id="seedInfo" v-show="showSeedInfo" elevation="10">
+            <v-sheet id="recoveryPhraseInfo" v-show="showRecoveryPhraseInfo" elevation="10">
               <v-container text-xs-left>
                 <v-layout wrap>
                   <v-flex xs12 class="subheading">
@@ -39,7 +39,7 @@
                     </ul>
                     <p>
                       Point 1 and 2 are the most important to be aware of. If you are looking for a full backup of the
-                      wallet use the "save backup file" option.
+                      wallet use the "generate backup file" option.
                     </p>
                   </v-flex>
                 </v-layout>
@@ -48,8 +48,8 @@
           </v-slide-y-transition>
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
-          <v-btn color="primary" large class="subheading" @click="saveBackupFile">
-            <v-icon left>far fa-save</v-icon>save backup file
+          <v-btn color="primary" large class="subheading" @click="showGenerateBackupFileDialog">
+            <v-icon left>far fa-save</v-icon>generate backup file
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
@@ -78,66 +78,36 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <ShowSeedDialog ref="showSeedDialog"></ShowSeedDialog>
+    <ShowRecoveryPhraseDialog ref="showRecoveryPhraseDialog"></ShowRecoveryPhraseDialog>
+    <GenerateBackupFileDialog ref="generateBackupFileDialog"></GenerateBackupFileDialog>
   </v-sheet>
 </template>
 
 <script>
-import ShowSeedDialog from './Backup/ShowSeedDialog.vue';
-const { dialog } = require('electron').remote;
-const { writeFile } = require('fs');
+import ShowRecoveryPhraseDialog from './Backup/ShowRecoveryPhraseDialog.vue';
+import GenerateBackupFileDialog from './Backup/GenerateBackupFileDialog.vue';
 
 export default {
   name: 'Backup',
-  components: { ShowSeedDialog },
+  components: { ShowRecoveryPhraseDialog, GenerateBackupFileDialog },
   data: function() {
     return {
-      showSeedInfo: false,
-      showBackupFileInfo: false,
-      loadingSeed: false
+      showRecoveryPhraseInfo: false,
+      showBackupFileInfo: false
     };
   },
   methods: {
-    async saveBackupFile() {
-      const store = this.$store;
-
-      try {
-        const backup = await store.dispatch('backup');
-        const data = JSON.stringify(backup, null, 4);
-
-        dialog.showSaveDialog({ defaultPath: 'fat-wallet.backup.json' }, this.writeBackupFile.bind(null, data));
-      } catch (e) {
-        store.commit('snackError', e.message);
-      }
+    showRecoveryPhraseDialog() {
+      this.$refs.showRecoveryPhraseDialog.show();
     },
-    async writeBackupFile(data, filename) {
-      const store = this.$store;
-      if (filename) {
-        writeFile(filename, data, err => {
-          if (err) {
-            store.commit('snackError', err.message);
-          } else {
-            store.commit('snackSuccess', `File saved at ${filename}`);
-          }
-        });
-      }
+    showGenerateBackupFileDialog() {
+      this.$refs.generateBackupFileDialog.show();
     },
-    async showSeed() {
-      this.loadingSeed = true;
-      try {
-        const seed = this.$store.state.keystore.store.getMnemonic().split(' ');
-        this.$refs.showSeedDialog.show(seed);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        this.loadingSeed = false;
-      }
-    },
-    toggleSeedInfo() {
-      this.showSeedInfo = !this.showSeedInfo;
-      if (this.showSeedInfo) {
+    toggleRecoveryPhraseInfo() {
+      this.showRecoveryPhraseInfo = !this.showRecoveryPhraseInfo;
+      if (this.showRecoveryPhraseInfo) {
         const vuetify = this.$vuetify;
-        this.$nextTick(() => vuetify.goTo('#seedInfo'));
+        this.$nextTick(() => vuetify.goTo('#recoveryPhraseInfo'));
       }
     },
     toggleBackupFileInfo() {
