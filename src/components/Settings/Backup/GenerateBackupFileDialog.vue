@@ -8,7 +8,7 @@
             <v-flex xs12 mb-4>
               <p class="subheading">
                 The backup file is encrypted with your wallet password. You will need to remember the password to
-                restore your wallet from this backup file. Store it in a secure place.
+                restore your wallet from this backup file.
               </p>
             </v-flex>
             <v-flex xs12 text-xs-center>
@@ -29,7 +29,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" type="submit">Generate Backup File</v-btn>
+          <v-btn color="primary" type="submit">Generate Encrypted Backup File</v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -39,6 +39,9 @@
 <script>
 const { dialog } = require('electron').remote;
 const { writeFile } = require('fs');
+import BackupCypher from '@/lib/BackupCypher';
+
+const BACKUP_CYPHER = new BackupCypher();
 
 export default {
   data: function() {
@@ -63,7 +66,7 @@ export default {
 
       try {
         const backup = await this.$store.dispatch('backup');
-        const data = JSON.stringify(backup, null, 4);
+        const data = JSON.stringify(BACKUP_CYPHER.cypherBackup(backup, this.password));
 
         dialog.showSaveDialog({ defaultPath: 'fat-wallet.backup.json' }, this.writeBackupFile.bind(null, data));
         this.display = false;

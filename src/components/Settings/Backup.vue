@@ -49,12 +49,12 @@
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
           <v-btn color="primary" large class="subheading" @click="showGenerateBackupFileDialog">
-            <v-icon left>far fa-save</v-icon>generate backup file
+            <v-icon left>far fa-save</v-icon>generate encrypted backup file
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
           <v-btn color="secondary" class="font-italic subheading text-none" flat @click="toggleBackupFileInfo"
-            >Wait, what is a backup file?</v-btn
+            >Wait, what is an encrypted backup file?</v-btn
           >
           <v-slide-y-transition>
             <v-sheet id="backupFileInfo" v-show="showBackupFileInfo" elevation="10">
@@ -62,10 +62,11 @@
                 <v-layout wrap>
                   <v-flex xs12 class="subheading">
                     <p>
-                      A backup file is a snapshot of your wallet containing everything needed to fully restore the
-                      wallet to its current state. It contains all the access keys to your funds and identities this is
-                      why it is critically important that this backup file is kept secret and safe. Any malicious actor
-                      gaining access to it would be able to steal your funds and identities.
+                      An encrypted backup file is a snapshot of your wallet containing everything needed to fully
+                      restore the wallet to its current state and that is encrypted with your current wallet password.
+                      It contains all the access keys to your funds and identities this is why it is important that this
+                      backup file is kept secret and safe. You must remember your current wallet password to be able to
+                      restore your wallet at a later time using this file.
                     </p>
                     <p>
                       It is a super-set of the recovery phrase and will include everything that is not covered by it.
