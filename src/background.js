@@ -24,7 +24,7 @@ appStore.set('latestVersionOpened', app.getVersion());
 let win;
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{ scheme: 'app', secure: true }]);
+protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true } }]);
 
 function createWindow() {
   // Create the browser window.
