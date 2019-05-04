@@ -48,7 +48,7 @@ export default {
         try {
           this.loading = true;
           await this.$store.dispatch('init', { password: this.password });
-          this.$router.replace({ name: 'Actions' });
+          this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
           this.$store.commit('showAppSideBar');
         } finally {
           this.loading = false;

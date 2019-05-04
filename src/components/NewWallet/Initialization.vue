@@ -25,7 +25,7 @@ export default {
             password: this.password,
             seed: this.seed
           });
-          this.$router.replace({ name: 'Factoid' });
+          this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
           this.$store.commit('showAppSideBar');
         }, 500);
       }
