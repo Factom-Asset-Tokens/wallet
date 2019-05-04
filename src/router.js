@@ -9,7 +9,8 @@ import Actions from './views/Actions.vue';
 import Factoid from './views/Factoid.vue';
 import Start from './views/Start.vue';
 import NewWallet from './views/NewWallet.vue';
-import RestoreWallet from './views/RestoreWallet.vue';
+import RestoreWalletPhrase from './views/RestoreWalletPhrase.vue';
+import RestoreWalletBackup from './views/RestoreWalletBackup.vue';
 
 Vue.use(Router);
 
@@ -29,9 +30,14 @@ export default new Router({
       component: NewWallet
     },
     {
-      path: '/restore-wallet',
-      name: 'RestoreWallet',
-      component: RestoreWallet
+      path: '/restore-wallet-phrase',
+      name: 'RestoreWalletPhrase',
+      component: RestoreWalletPhrase
+    },
+    {
+      path: '/restore-wallet-backup',
+      name: 'RestoreWalletBackup',
+      component: RestoreWalletBackup
     },
     {
       path: '/actions',

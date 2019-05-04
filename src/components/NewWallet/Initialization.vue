@@ -16,14 +16,15 @@
 <script>
 export default {
   name: 'Introduction',
-  props: ['active', 'password', 'seed'],
+  props: ['active', 'password', 'seed', 'backup'],
   watch: {
     async active() {
       if (this.active) {
         setTimeout(async () => {
           await this.$store.dispatch('init', {
             password: this.password,
-            seed: this.seed
+            seed: this.seed,
+            backup: this.backup
           });
           this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
           this.$store.commit('showAppSideBar');

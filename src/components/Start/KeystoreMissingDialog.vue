@@ -6,7 +6,7 @@
         <v-layout wrap class="subheading">
           <v-flex xs12>
             <p>
-              The keystore file your wallet is either missing or cannot be accessed (permissions) at this location:
+              The keystore file of your wallet is either missing or cannot be accessed (permissions) at this location:
             </p>
           </v-flex>
           <v-flex xs12 my-3>

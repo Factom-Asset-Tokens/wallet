@@ -16,11 +16,17 @@ export default {
     updateStore: (state, store) => (state.store = store)
   },
   actions: {
-    async init({ state, commit }, { password, seed }) {
-      if (seed) {
+    async init({ state, commit }, { password, seed, backup }) {
+      if (backup || Array.isArray(seed)) {
         const filename = `${path.join(USER_DATA_PATH, uuidv4())}.keystore.json`;
-        const store = await createFileKeyStore(filename, password, seed.join(' '));
-        await Promise.all([store.generateFactoidAddress(), store.generateEntryCreditAddress()]);
+        const initialData = backup || seed.join(' ');
+        const store = await createFileKeyStore(filename, password, initialData);
+
+        if (seed) {
+          // Populate a new empty wallet with a FCT and EC address
+          await Promise.all([store.generateFactoidAddress(), store.generateEntryCreditAddress()]);
+        }
+
         commit('updateFilename', filename);
         commit('updateStore', store);
       } else if (state.filename) {

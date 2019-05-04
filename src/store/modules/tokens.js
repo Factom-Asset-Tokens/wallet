@@ -57,8 +57,23 @@ export default {
         })
       );
     },
-    track({ commit }, { token, cli }) {
-      commit('addCli', cli);
+    async track({ commit, rootGetters }, tokenChainId) {
+      const cli = rootGetters['fatd/cli'];
+      const tokenCli = await cli.getTokenCLI(tokenChainId);
+      const issuance = await tokenCli.getIssuance();
+
+      const token = {
+        chainId: issuance.getTokenChainId(),
+        issuer: issuance.getIssuerIdentityRootChainId(),
+        tokenId: issuance.getTokenId(),
+        entryHash: issuance.getEntryhash(),
+        timestamp: issuance.getTimestamp(),
+        type: issuance.getType(),
+        symbol: issuance.getSymbol(),
+        supply: issuance.getSupply()
+      };
+
+      commit('addCli', tokenCli);
       commit('addToken', token);
     },
     untrack({ commit }, tokenChainId) {

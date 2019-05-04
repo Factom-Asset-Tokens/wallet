@@ -52,22 +52,7 @@ export default {
         this.loading = true;
 
         try {
-          const cli = this.$store.getters['fatd/cli'];
-          const tokenCli = await cli.getTokenCLI(this.tokenChainId);
-          const issuance = await tokenCli.getIssuance();
-
-          const token = {
-            chainId: issuance.getTokenChainId(),
-            issuer: issuance.getIssuerIdentityRootChainId(),
-            tokenId: issuance.getTokenId(),
-            entryHash: issuance.getEntryhash(),
-            timestamp: issuance.getTimestamp(),
-            type: issuance.getType(),
-            symbol: issuance.getSymbol(),
-            supply: issuance.getSupply()
-          };
-
-          this.$store.dispatch('tokens/track', { token, cli: tokenCli });
+          await this.$store.dispatch('tokens/track', this.tokenChainId);
           this.$router.push({ path: `/token/${this.tokenChainId}?view=balances` });
         } catch (e) {
           const code = tryParseApiErrorCode(e);

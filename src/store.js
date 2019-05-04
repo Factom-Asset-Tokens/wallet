@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Promise from 'bluebird';
 
 Vue.use(Vuex);
 
@@ -57,35 +58,72 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async init({ dispatch }, { password, seed }) {
+    async init({ dispatch }, { password, seed, backup }) {
+      if (backup) {
+        await dispatch('restoreFromBackup', backup);
+      }
+
+      const keystoreBackup = backup ? backup.keystore : null;
       await Promise.all([
         dispatch('factomd/checkStatus'),
         dispatch('fatd/checkStatus'),
-        dispatch('keystore/init', { password, seed })
+        dispatch('keystore/init', { password, seed, backup: keystoreBackup })
       ]);
 
       // Address and identity modules require keystore module to be initialized first
       await Promise.all([dispatch('address/init'), dispatch('identity/init'), dispatch('tokens/init')]);
     },
     async backup({ state }) {
-      const backup = { config: {}, address: {} };
-      // Daemon configs
-      backup.config.factomd = state.factomd.config;
-      backup.config.fatd = state.fatd.config;
-      // Tracked tokens
-      backup.trackedTokens = Object.values(state.tokens.tracked).map(t => t.chainId);
-      // Identity chains
-      backup.identities = Object.keys(state.identity.identities);
-      // Addresses
-      backup.address.preferredEcAddress = state.address.preferredEcAddress;
-      backup.address.names = state.address.names;
-      // Keystore backup
+      const backup = {};
+      // 1. Daemon endpoints
+      backup.factomd = { endpoint: state.factomd.endpoint };
+      backup.fatd = { endpoint: state.fatd.endpoint };
+      // 2. Tracked tokens
+      backup.tokens = { tracked: Object.values(state.tokens.tracked).map(t => t.chainId) };
+      // 3. Identity chains
+      backup.identity = { chainIds: Object.keys(state.identity.identities) };
+      // 4. Addresses
+      backup.address = { preferredEcAddress: state.address.preferredEcAddress, names: state.address.names };
+      // 5. Keystore backup
       backup.keystore = state.keystore.store.getBackup();
 
       return backup;
     },
-    async restore() {
-      // TODO
+    async restoreFromBackup({ commit, dispatch }, backup) {
+      // 1. Daemon endpoints
+      if (backup.factomd && backup.factomd.endpoint) {
+        commit('factomd/updateEndpoint', backup.factomd.endpoint);
+      }
+      if (backup.fatd && backup.fatd.endpoint) {
+        commit('fatd/updateEndpoint', backup.fatd.endpoint);
+      }
+
+      // 2. Tracked tokens
+      if (backup.tokens && Array.isArray(backup.tokens.tracked)) {
+        await Promise.map(backup.tokens.tracked, chainId => dispatch('tokens/track', chainId));
+      }
+
+      // 3. Identity chains
+      if (backup.identity && Array.isArray(backup.identity.chainIds)) {
+        backup.identity.chainIds.forEach(chainId => {
+          const emptyIdentity = {};
+          emptyIdentity[chainId] = {};
+          commit('identity/addIdentity', emptyIdentity);
+        });
+      }
+
+      // 4. Addresses
+      if (backup.address) {
+        commit('address/setPreferredEcAddress', backup.address.preferredEcAddress);
+        if (backup.address.names) {
+          const names = backup.address.names;
+          Object.keys(names).forEach(address =>
+            commit('address/updateAddressNames', { address, name: names[address] })
+          );
+        }
+      }
+
+      // 5. keystore is restored by 'keystore/init' action
     }
   },
   strict: debug

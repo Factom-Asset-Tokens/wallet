@@ -20,7 +20,7 @@
 
 <script>
 import SetPassword from '@/components/NewWallet/SetPassword';
-import RecoveryPhraseInput from '@/components/RestoreWallet/RecoveryPhraseInput';
+import RecoveryPhraseInput from '@/components/RestoreWalletPhrase/RecoveryPhraseInput';
 import Initialization from '@/components/NewWallet/Initialization';
 
 export default {
