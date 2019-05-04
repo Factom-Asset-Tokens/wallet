@@ -14,13 +14,13 @@
           :to="'?view=' + e.to"
           exact
           color="secondary"
-          exact-active-class="secondary--text active-nav-element"
+          exact-active-class="active-nav-element"
         >
           <v-list-tile-action>
             <v-icon color="secondary">{{ e.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title class="subheading">{{ e.text }}</v-list-tile-title>
+            <v-list-tile-title class="secondary--text subheading">{{ e.text }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-subheader v-else :key="e.text" class="primary--text">{{ e.text }}</v-subheader>
