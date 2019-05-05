@@ -4,7 +4,7 @@
       <v-layout wrap>
         <v-flex xs12 mt-2 text-xs-center>
           <v-btn color="primary" large class="subheading" @click="showRecoveryPhraseDialog">
-            <v-icon left>fa-seedling</v-icon>show recovery phrase
+            <v-icon left>format_list_numbered</v-icon>show recovery phrase
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
@@ -49,7 +49,7 @@
         </v-flex>
         <v-flex xs12 mt-4 text-xs-center>
           <v-btn color="primary" large class="subheading" @click="showGenerateBackupFileDialog">
-            <v-icon left>far fa-save</v-icon>generate encrypted backup file
+            <v-icon left>insert_drive_file</v-icon>generate encrypted backup file
           </v-btn>
         </v-flex>
         <v-flex xs12 text-xs-center>
