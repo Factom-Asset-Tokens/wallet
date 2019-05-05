@@ -11,7 +11,7 @@
             <img src="@/assets/img/fat-icon.png" width="100px" />
           </v-flex>
         </v-layout>
-        <WalletLogin v-if="accessibleKeyStore"></WalletLogin>
+        <WalletLogin v-if="showLogin" @newWallet="showNewWalletSelection()"></WalletLogin>
         <NewWalletSelection v-else></NewWalletSelection>
       </v-container>
       <KeystoreMissingDialog :keystorePath="keystorePath" ref="keystoreMissingDialog"></KeystoreMissingDialog>
@@ -21,19 +21,21 @@
 
 <script>
 import fs from 'fs';
-import Store from 'electron-store';
-import WalletLogin from '@/components/Start/WalletLogIn';
+import WalletLogin from '@/components/Start/WalletLogin';
 import NewWalletSelection from '@/components/Start/NewWalletSelection';
 import KeystoreMissingDialog from '@/components/Start/KeystoreMissingDialog';
-
-const userConfig = new Store({ name: 'user-config.v1' });
 
 export default {
   name: 'Start',
   components: { WalletLogin, NewWalletSelection, KeystoreMissingDialog },
+  data() {
+    return {
+      showLogin: false
+    };
+  },
   computed: {
     keystorePath() {
-      return userConfig.get('state.keystore.filename');
+      return this.$store.state.keystore.filename;
     },
     accessibleKeyStore() {
       if (this.keystorePath) {
@@ -47,8 +49,15 @@ export default {
       return false;
     }
   },
+  methods: {
+    showNewWalletSelection() {
+      this.showLogin = false;
+    }
+  },
   mounted() {
-    if (this.keystorePath && !this.accessibleKeyStore) {
+    if (this.accessibleKeyStore) {
+      this.showLogin = true;
+    } else if (this.keystorePath && !this.accessibleKeyStore) {
       this.$refs.keystoreMissingDialog.show();
     }
   }
@@ -57,6 +66,6 @@ export default {
 
 <style scoped>
 .header-margin {
-  margin-bottom: 100px;
+  margin-bottom: 80px;
 }
 </style>

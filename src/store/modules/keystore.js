@@ -18,7 +18,8 @@ export default {
   actions: {
     async init({ state, commit }, { password, seed, backup }) {
       if (backup || Array.isArray(seed)) {
-        const filename = `${path.join(USER_DATA_PATH, uuidv4())}.keystore.json`;
+        const keystoreId = 'fat-' + uuidv4();
+        const filename = `${path.join(USER_DATA_PATH, keystoreId)}.keystore.json`;
         const initialData = backup || seed.join(' ');
         const store = await createFileKeyStore(filename, password, initialData);
 
