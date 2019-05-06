@@ -7,6 +7,7 @@ export default {
   state: {
     endpoint: 'http://0.testnet.fat.dbgrow.com:8078',
     status: null,
+    errorMessage: '',
     factomHeight: 1,
     syncHeight: 1,
     version: null,
@@ -36,6 +37,11 @@ export default {
   },
   mutations: {
     updateStatus: (state, status) => (state.status = status),
+    clearError: state => (state.errorMessage = ''),
+    setErrorStatus: (state, errorMessage) => {
+      state.status = 'ko';
+      state.errorMessage = errorMessage;
+    },
     updateFactomHeight: (state, factomHeight) => (state.factomHeight = factomHeight),
     updateSyncHeight: (state, syncHeight) => (state.syncHeight = syncHeight),
     updateVersion: (state, version) => (state.version = version),
@@ -50,22 +56,24 @@ export default {
     async checkStatus({ commit, getters, dispatch }) {
       const cli = getters.cli;
       if (cli) {
+        commit('clearError');
         commit('updateStatus', 'checking');
       } else {
-        return commit('updateStatus', 'ko');
+        return commit('setErrorStatus', 'Invalid URL');
       }
 
       try {
         const { fatdversion } = await cli.getDaemonProperties();
         if (fatdversion) {
           commit('updateStatus', 'ok');
+          commit('clearError');
           commit('updateVersion', fatdversion);
           await dispatch('trackSyncingStatus');
         } else {
-          commit('updateStatus', 'ko');
+          commit('setErrorStatus', 'Not a fatd endpoint');
         }
       } catch (e) {
-        commit('updateStatus', 'ko');
+        commit('setErrorStatus', `Connection error: ${e.message}`);
       }
     },
     async trackSyncingStatus({ state, commit, getters, dispatch }) {
@@ -81,11 +89,13 @@ export default {
         }, 3000);
       }
     },
-    async checkSyncStatus({ getters, commit }) {
+    async checkSyncStatus({ state, getters, commit }) {
       const cli = getters.cli;
-      const status = await cli.call('get-sync-status');
-      commit('updateFactomHeight', status.factomheight);
-      commit('updateSyncHeight', status.syncheight);
+      if (cli && state.status === 'ok') {
+        const status = await cli.call('get-sync-status');
+        commit('updateFactomHeight', status.factomheight);
+        commit('updateSyncHeight', status.syncheight);
+      }
     }
   }
 };

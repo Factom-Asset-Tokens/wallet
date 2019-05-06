@@ -14,7 +14,7 @@
                   <v-text-field
                     label="Endpoint"
                     v-model.trim="factomdEndpoint"
-                    :rules="urlRules"
+                    :error-messages="factomdErrorMessage"
                     single-line
                     box
                   ></v-text-field>
@@ -39,7 +39,7 @@
                   <v-text-field
                     label="Endpoint"
                     v-model.trim="fatdEndpoint"
-                    :rules="urlRules"
+                    :error-messages="fatdErrorMessage"
                     single-line
                     box
                   ></v-text-field>
@@ -51,9 +51,6 @@
         <v-flex xs12 text-xs-center>
           <v-btn class="primary" @click="resetEndpoints">Reset to default endpoints</v-btn>
         </v-flex>
-        <v-flex xs12 text-xs-center>
-          <v-btn class="primary" @click="setLocalHostEndpoints">DEV: localhost</v-btn>
-        </v-flex>
       </v-layout>
     </v-container>
   </v-sheet>
@@ -63,16 +60,11 @@
 import debounce from 'lodash.debounce';
 import DaemonStatus from './DaemonSettings/DaemonStatus.vue';
 import { mapState } from 'vuex';
-import { URL } from 'url';
+import escape from 'escape-html';
 
 export default {
   name: 'DaemonSettings',
   components: { DaemonStatus },
-  data: function() {
-    return {
-      urlRules: [v => isValidUrl(v) || 'Invalid URL scheme']
-    };
-  },
   created: function() {
     this.debouncedUpdateFatd = debounce(this.$store.dispatch.bind(this, 'fatd/update'), 600);
     this.debouncedUpdateFactomd = debounce(this.$store.dispatch.bind(this, 'factomd/update'), 600);
@@ -80,10 +72,12 @@ export default {
   computed: {
     ...mapState({
       fatdStatus: state => state.fatd.status,
+      fatdErrorMessage: state => (state.fatd.errorMessage ? [escape(state.fatd.errorMessage)] : []),
       fatdVersion: state => state.fatd.version,
       fatdSyncHeight: state => state.fatd.syncHeight,
       fatdFactomHeight: state => state.fatd.factomHeight,
       factomdStatus: state => state.factomd.status,
+      factomdErrorMessage: state => (state.factomd.errorMessage ? [escape(state.factomd.errorMessage)] : []),
       factomdVersion: state => state.factomd.version
     }),
     fatdSynced() {
@@ -117,16 +111,6 @@ export default {
     }
   }
 };
-
-function isValidUrl(url) {
-  try {
-    const endpoint = url.includes('://') ? url : `http://${url}`;
-    new URL(endpoint);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
 </script>
 
 <style scoped></style>

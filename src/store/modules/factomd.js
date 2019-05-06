@@ -7,6 +7,7 @@ export default {
   state: {
     endpoint: 'https://dev.factomd.net/v2',
     status: null,
+    errorMessage: '',
     version: null
   },
   getters: {
@@ -32,6 +33,11 @@ export default {
   },
   mutations: {
     updateStatus: (state, status) => (state.status = status),
+    clearError: state => (state.errorMessage = ''),
+    setErrorStatus: (state, errorMessage) => {
+      state.status = 'ko';
+      state.errorMessage = errorMessage;
+    },
     updateVersion: (state, version) => (state.version = version),
     updateEndpoint: (state, endpoint) => (state.endpoint = endpoint)
   },
@@ -43,21 +49,23 @@ export default {
     async checkStatus({ commit, getters }) {
       const cli = getters.cli;
       if (cli) {
+        commit('clearError');
         commit('updateStatus', 'checking');
       } else {
-        return commit('updateStatus', 'ko');
+        return commit('setErrorStatus', 'Invalid URL');
       }
 
       try {
         const { factomdversion } = await cli.factomdApi('properties', null, { timeout: 5000 });
         if (factomdversion) {
           commit('updateStatus', 'ok');
+          commit('clearError');
           commit('updateVersion', factomdversion);
         } else {
-          commit('updateStatus', 'ko');
+          commit('setErrorStatus', 'Not a factomd endpoint');
         }
       } catch (e) {
-        commit('updateStatus', 'ko');
+        commit('setErrorStatus', `Connection error: ${e.message}`);
       }
     }
   }
