@@ -19,6 +19,7 @@ export default {
           port: getIntegerPort(url),
           protocol: url.protocol.slice(0, -1),
           path: url.pathname,
+          timeout: 30000,
           retry: { retries: 0 }
         };
       } catch (e) {
@@ -48,7 +49,7 @@ export default {
       }
 
       try {
-        const { factomdversion } = await cli.factomdApi('properties');
+        const { factomdversion } = await cli.factomdApi('properties', null, { timeout: 5000 });
         if (factomdversion) {
           commit('updateStatus', 'ok');
           commit('updateVersion', factomdversion);
