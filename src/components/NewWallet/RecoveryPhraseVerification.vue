@@ -13,7 +13,7 @@
           </v-flex>
           <v-container grid-list-xl>
             <v-layout wrap>
-              <v-flex v-for="index in seed.length" :key="index" xs6 sm3>
+              <v-flex v-for="index in seed.length" :key="index" xs12 sm4 md3>
                 <v-text-field box validate-on-blur :rules="validateWord(index)" :prefix="index + '.'"></v-text-field>
               </v-flex>
             </v-layout>

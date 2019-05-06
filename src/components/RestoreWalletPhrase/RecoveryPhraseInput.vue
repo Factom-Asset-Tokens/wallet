@@ -18,7 +18,7 @@
           </v-flex>
           <v-container grid-list-xl>
             <v-layout wrap>
-              <v-flex v-for="index in phraseLength" :key="index" xs6 sm3>
+              <v-flex v-for="index in phraseLength" :key="index" xs12 sm4 md3>
                 <v-text-field
                   v-model.trim="words[index - 1]"
                   box
