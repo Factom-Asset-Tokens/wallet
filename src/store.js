@@ -61,17 +61,20 @@ export default new Vuex.Store({
     async init({ dispatch }, { password, seed, backup }) {
       if (backup) {
         await dispatch('restoreFromBackup', backup);
+        await dispatch('keystore/init', { password, seed, backup: backup.keystore });
+      } else {
+        await dispatch('keystore/init', { password, seed });
       }
 
-      const keystoreBackup = backup ? backup.keystore : null;
-      await Promise.all([
-        dispatch('factomd/checkStatus'),
-        dispatch('fatd/checkStatus'),
-        dispatch('keystore/init', { password, seed, backup: keystoreBackup })
-      ]);
-
-      // Address and identity modules require keystore module to be initialized first
-      await Promise.all([dispatch('address/init'), dispatch('identity/init'), dispatch('tokens/init')]);
+      try {
+        await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus')]);
+        // Address and identity modules require keystore module to be initialized first
+        await Promise.all([dispatch('address/init'), dispatch('identity/init'), dispatch('tokens/init')]);
+      } catch (e) {
+        // Do not fail the initialization (and log in) of the wallet because of errors
+        // in getting information from remote sources (factomd/fatd)
+        console.warn(e.message);
+      }
     },
     async backup({ state }) {
       const backup = {};

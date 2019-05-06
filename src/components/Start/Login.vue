@@ -50,6 +50,8 @@ export default {
           await this.$store.dispatch('init', { password: this.password });
           this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
           this.$store.commit('showAppSideBar');
+        } catch (e) {
+          this.$store.commit('snackError', e.message);
         } finally {
           this.loading = false;
         }

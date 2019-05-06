@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="600px" @keydown.esc="display = false">
+  <v-dialog v-model="display" lazy max-width="650px" @keydown.esc="display = false">
     <v-card>
       <v-card-title>
         <span class="headline">Import Address</span>
@@ -74,6 +74,7 @@ export default {
     display() {
       if (this.display) {
         if (this.$refs.form) {
+          this.showAddress = false;
           this.$refs.form.reset();
         }
 
