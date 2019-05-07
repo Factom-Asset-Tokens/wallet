@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      this.$router.replace({ name: 'Start' });
     },
     restore() {
       try {
