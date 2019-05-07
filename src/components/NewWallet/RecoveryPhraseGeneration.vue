@@ -7,8 +7,8 @@
       <v-layout wrap mb-3>
         <v-flex xs12 my-3>
           <blockquote class="blockquote">
-            Copy you recovery phrase to a safe and secret location only you can access. It is highly suggested to have a
-            copy in the physical world, for instance it could be written on paper and put in a bank safe.
+            Copy you recovery phrase to a safe and secret location only you can access. It is highly recommended to have
+            a copy in the physical world, for instance it could be written on paper and put in a bank safe.
           </blockquote>
         </v-flex>
         <v-flex xs12 text-xs-center class="subheading" mb-5>

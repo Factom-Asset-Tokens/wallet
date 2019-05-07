@@ -18,15 +18,15 @@
           <v-flex xs12>
             <blockquote class="blockquote">
               <p>
-                <span class="secondary--text">Wallet password</span>: that password will secure the access to your
-                wallet. It is necessary to log into your wallet. If you forget your password there is no process to
+                <span class="secondary--text">Wallet password</span>: the password that will secure access to your
+                wallet. It is required to log into your wallet. If you forget your password there is no process to
                 recover it.
               </p>
               <p>
-                <span class="secondary--text">Recovery Phrase</span>: it is a 12 or 24-word phrase that allows to
-                recover your addresses if something goes wrong (for instance if you lost access to your wallet). It is
-                strongly recommended that you backup your Recovery Phrase offline and store it in a safe, timeproof
-                place. Anyone with your Recovery Phrase could access or spend your funds.
+                <span class="secondary--text">Recovery Phrase</span>: a 12 or 24-word phrase that allows you to recover
+                your addresses if something goes wrong (for instance if you lose access to your wallet). It is strongly
+                recommended that you backup your Recovery Phrase offline and store it in a safe, timeproof place. Anyone
+                with your Recovery Phrase could access or spend your funds.
               </p>
             </blockquote>
           </v-flex>
@@ -43,7 +43,7 @@
       <v-card-actions>
         <v-btn flat @click="$emit('back')">Back</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" type="submit">I understand my responsability</v-btn>
+        <v-btn color="primary" type="submit">I understand my responsibility</v-btn>
       </v-card-actions>
     </v-card>
   </v-form>
