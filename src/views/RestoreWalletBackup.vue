@@ -31,7 +31,7 @@ export default {
     dialog.showOpenDialog(
       {
         title: 'Open backup file',
-        filters: [{ name: 'Backup File', extensions: ['backup.json'] }, { name: 'All Files', extensions: ['*'] }],
+        filters: [{ name: 'JSON', extensions: ['json'] }, { name: 'All Files', extensions: ['*'] }],
         properties: ['openFile']
       },
       this.openBackupFile.bind(this)
