@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xl>
     <v-layout wrap>
-      <v-flex xs12 sm8 md4 offset-sm2 offset-md4>
+      <v-flex md12 lg4 offset-lg4>
         <slot name="default">
           <v-btn class="button-padding" outline block color="secondary" depressed large :to="{ name: 'NewWallet' }">
             Create a new wallet
@@ -11,7 +11,7 @@
 
       <v-flex xs12>
         <v-layout wrap>
-          <v-flex xs12 sm6 md4 offset-md2>
+          <v-flex sm12 md6 lg4 offset-lg2>
             <v-btn
               class="button-padding"
               outline
@@ -24,7 +24,7 @@
               <v-icon left>settings_backup_restore</v-icon>Restore from recovery phrase
             </v-btn>
           </v-flex>
-          <v-flex xs12 sm6 md4>
+          <v-flex sm12 md6 lg4>
             <v-btn
               class="button-padding"
               outline
