@@ -8,19 +8,34 @@
               Factom Daemon
               <DaemonStatus :status="factomdStatus" :version="factomdVersion"></DaemonStatus>
             </h2>
-            <v-container>
-              <v-layout wrap>
-                <v-flex xs12>
-                  <v-text-field
-                    label="Endpoint"
-                    v-model.trim="factomdEndpoint"
-                    :error-messages="factomdErrorMessage"
-                    single-line
-                    box
-                  ></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
+            <v-layout wrap my-4>
+              <v-flex xs11>
+                <v-text-field
+                  label="Endpoint"
+                  v-model.trim="factomdEndpoint"
+                  :error-messages="factomdErrorMessage"
+                  single-line
+                  box
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs1 text-xs-center>
+                <v-menu offset-y bottom left>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on"><v-icon>keyboard_arrow_down</v-icon></v-btn>
+                  </template>
+                  <v-list dense subheader>
+                    <v-subheader>Suggested endpoints</v-subheader>
+                    <v-list-tile
+                      v-for="item in factomdEndpointList"
+                      :key="item.endpoint"
+                      @click="setFactomdEndpoint(item.endpoint)"
+                    >
+                      <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
+              </v-flex>
+            </v-layout>
           </div>
           <div>
             <h2>
@@ -33,23 +48,36 @@
                 :targetHeight="fatdFactomHeight"
               ></DaemonStatus>
             </h2>
-            <v-container>
-              <v-layout wrap>
-                <v-flex xs12>
-                  <v-text-field
-                    label="Endpoint"
-                    v-model.trim="fatdEndpoint"
-                    :error-messages="fatdErrorMessage"
-                    single-line
-                    box
-                  ></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
+            <v-layout wrap mt-4>
+              <v-flex xs11>
+                <v-text-field
+                  label="Endpoint"
+                  v-model.trim="fatdEndpoint"
+                  :error-messages="fatdErrorMessage"
+                  single-line
+                  box
+                >
+                </v-text-field>
+              </v-flex>
+              <v-flex xs1 text-xs-center>
+                <v-menu offset-y bottom left>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon large v-on="on"><v-icon>keyboard_arrow_down</v-icon></v-btn>
+                  </template>
+                  <v-list dense subheader>
+                    <v-subheader>Suggested endpoints</v-subheader>
+                    <v-list-tile
+                      v-for="item in fatdEndpointList"
+                      :key="item.endpoint"
+                      @click="setFatdEndpoint(item.endpoint)"
+                    >
+                      <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
+              </v-flex>
+            </v-layout>
           </div>
-        </v-flex>
-        <v-flex xs12 text-xs-center>
-          <v-btn class="primary" @click="resetEndpoints">Reset to default endpoints</v-btn>
         </v-flex>
       </v-layout>
     </v-container>
@@ -65,6 +93,18 @@ import escape from 'escape-html';
 export default {
   name: 'DaemonSettings',
   components: { DaemonStatus },
+  data() {
+    return {
+      factomdEndpointList: [
+        { name: 'Open Node Network (testnet)', endpoint: 'https://dev.factomd.net/v2' },
+        { name: 'Localhost', endpoint: 'http://localhost:8088/v2' }
+      ],
+      fatdEndpointList: [
+        { name: 'DBGrow Courtesy node (testnet)', endpoint: 'http://0.testnet.fat.dbgrow.com:8078' },
+        { name: 'Localhost', endpoint: 'http://localhost:8078' }
+      ]
+    };
+  },
   created: function() {
     this.debouncedUpdateFatd = debounce(this.$store.dispatch.bind(this, 'fatd/update'), 600);
     this.debouncedUpdateFactomd = debounce(this.$store.dispatch.bind(this, 'factomd/update'), 600);
@@ -101,13 +141,11 @@ export default {
     }
   },
   methods: {
-    resetEndpoints() {
-      this.$store.dispatch('fatd/update', 'http://0.testnet.fat.dbgrow.com:8078');
-      this.$store.dispatch('factomd/update', 'https://dev.factomd.net/v2');
+    setFactomdEndpoint(endpoint) {
+      this.$store.dispatch('factomd/update', endpoint);
     },
-    setLocalHostEndpoints() {
-      this.$store.dispatch('fatd/update', 'http://localhost:8078');
-      this.$store.dispatch('factomd/update', 'http://localhost:8088/v2');
+    setFatdEndpoint(endpoint) {
+      this.$store.dispatch('fatd/update', endpoint);
     }
   }
 };
