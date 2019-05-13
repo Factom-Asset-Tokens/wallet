@@ -16,34 +16,23 @@ export default {
   props: ['chainId', 'symbol'],
   data() {
     return {
-      stats: {
-        supply: 0,
-        burned: 0,
-        circulating: 0
-      }
+      maxSupply: 0,
+      burnedSupply: 0,
+      circulatingSupply: 0
     };
   },
   computed: {
-    maxSupply() {
-      return this.stats.supply;
-    },
     maxSupplyText() {
       return this.maxSupply === -1 ? 'Infinite' : `${this.maxSupply.toLocaleString()} ${this.symbol}`;
     },
-    burned() {
-      return this.stats.burned;
-    },
-    circulatingSupply() {
-      return this.stats.circulating;
-    },
     burnedText() {
-      return `${this.burned.toLocaleString()} ${this.symbol}`;
+      return `${this.burnedSupply.toLocaleString()} ${this.symbol}`;
     },
     circulatingSupplyText() {
       return `${this.circulatingSupply.toLocaleString()} ${this.symbol}`;
     },
     remainingSupply() {
-      return this.maxSupply === -1 ? -1 : this.maxSupply - this.circulatingSupply - this.burned;
+      return this.maxSupply === -1 ? -1 : this.maxSupply - this.circulatingSupply - this.burnedSupply;
     },
     remainingSupplyText() {
       return this.remainingSupply === -1 ? 'Infinite' : `${this.remainingSupply.toLocaleString()} ${this.symbol}`;
@@ -52,7 +41,10 @@ export default {
   methods: {
     async fetchStats() {
       const tokenCli = this.$store.state.tokens.clis[this.chainId];
-      this.stats = await tokenCli.getStats();
+      const stats = await tokenCli.getStats();
+      this.maxSupply = stats.Issuance.supply;
+      this.burnedSupply = stats.burned;
+      this.circulatingSupply = stats.circulating;
     }
   },
   watch: {

@@ -152,6 +152,7 @@ export default {
   watch: {
     async tokenChainId() {
       const tokenCli = this.$store.state.tokens.clis[this.tokenChainId];
+      // TODO: broken, result format changed
       const { burned, circulating, supply } = await tokenCli.getStats();
 
       if (supply === -1) {
