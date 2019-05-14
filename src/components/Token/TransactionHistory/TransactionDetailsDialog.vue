@@ -21,7 +21,13 @@
             <InoutputDetails :ios="outputs" type="output" :addresses="addresses"></InoutputDetails>
             <template v-if="metadata">
               <v-flex xs12 my-3 class="font-weight-bold secondary--text">Metadata</v-flex>
-              <v-flex xs12 mb-3>{{ metadata }}</v-flex>
+              <v-flex xs12>
+                <v-sheet elevation="1" color="#525252">
+                  <v-container>
+                    <pre>{{ metadata }}</pre>
+                  </v-container>
+                </v-sheet>
+              </v-flex>
             </template>
           </v-layout>
         </v-container>
@@ -56,7 +62,7 @@ export default {
       return this.transaction.getTimestamp();
     },
     metadata() {
-      return this.transaction.getMetadata();
+      return JSON.stringify(this.transaction.getMetadata(), null, 2);
     },
     inputs() {
       return transformInoutputsToArray(this.transaction.getInputs());

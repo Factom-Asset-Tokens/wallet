@@ -10,6 +10,7 @@ export function buildTransactionsMovements(transactions, addresses) {
 function buildTransactionMovements(tx, addressSet) {
   const result = [];
 
+  const hasMetadata = typeof tx.getMetadata() !== 'undefined';
   const isCoinbase = !!tx.getInputs()['FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC'];
   const isBurn = !!tx.getOutputs()['FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC'];
 
@@ -21,7 +22,8 @@ function buildTransactionMovements(tx, addressSet) {
           address,
           sign: '+',
           amount: tx.getOutputs()[address],
-          isCoinbase
+          isCoinbase,
+          hasMetadata
         })
       );
     }
@@ -34,7 +36,8 @@ function buildTransactionMovements(tx, addressSet) {
           address,
           sign: '-',
           amount: tx.getInputs()[address],
-          isBurn
+          isBurn,
+          hasMetadata
         })
       );
     }
@@ -43,7 +46,7 @@ function buildTransactionMovements(tx, addressSet) {
   return result;
 }
 
-function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = false, isBurn = false }) {
+function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = false, isBurn = false, hasMetadata }) {
   return {
     txId: tx.getEntryhash(),
     address,
@@ -51,7 +54,8 @@ function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = fals
     amount: getAmount(amount).toFormat(),
     timestamp: tx.getTimestamp(),
     coinbase: isCoinbase,
-    burn: isBurn
+    burn: isBurn,
+    hasMetadata
   };
 }
 

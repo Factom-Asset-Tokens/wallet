@@ -11,6 +11,7 @@
           :error-messages="errorMessages"
           @input="errorMessages = []"
           autofocus
+          single-line
           box
         ></v-text-field>
       </v-flex>
