@@ -22,7 +22,7 @@
             <template v-if="metadata">
               <v-flex xs12 my-3 class="font-weight-bold secondary--text">Metadata</v-flex>
               <v-flex xs12>
-                <v-sheet elevation="1" color="#525252">
+                <v-sheet color="grey darken-2">
                   <v-container>
                     <pre>{{ metadata }}</pre>
                   </v-container>

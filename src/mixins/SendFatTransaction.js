@@ -43,9 +43,7 @@ export default {
           const factomd = this.$store.getters['factomd/cli'];
           const entry = Entry.builder(tx.getEntry()).build();
 
-          const { entryHash } = await factomd.add(entry, payingEcAddress, {
-            commitTimeout: 10
-          });
+          const { entryHash } = await factomd.add(entry, payingEcAddress);
 
           return entryHash;
         } else {

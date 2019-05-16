@@ -7,9 +7,22 @@
             {{ totalBalance.toFormat() }} {{ symbol }}
           </v-flex>
         </v-layout>
+        <v-layout>
+          <v-flex xs8 offset-xs2>
+            <v-toolbar flat color="grey darken-3">
+              <v-spacer></v-spacer>
+              <v-btn icon>
+                <v-icon title="Attach metadata" :color="metadataIconColor" @click="attachMetadata">more</v-icon>
+              </v-btn>
+              <v-btn icon>
+                <v-icon title="Burn tokens" :color="burnIconColor" @click="toggleBurnAddress">fas fa-fire-alt</v-icon>
+              </v-btn>
+            </v-toolbar>
+          </v-flex>
+        </v-layout>
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap align-baseline>
-            <v-flex xs11 md7 offset-md2>
+            <v-flex xs12 md8 offset-md2>
               <v-text-field
                 v-model="address"
                 label="Recipient address"
@@ -21,9 +34,6 @@
                 box
                 required
               ></v-text-field>
-            </v-flex>
-            <v-flex xs1 md1 text-xs-center>
-              <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
             </v-flex>
             <v-flex xs12 md6 offset-md2>
               <v-text-field
@@ -38,6 +48,7 @@
                 required
               ></v-text-field>
             </v-flex>
+
             <v-flex xs12 md2 text-xs-right>
               <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
                 >Send
@@ -62,14 +73,17 @@
             :amount="amount"
             :address="address"
             :symbol="symbol"
+            :metadata="metadata"
             @confirmed="send"
           ></ConfirmTransactionDialog>
           <ConfirmBurnDialog
             ref="confirmBurnDialog"
             :amount="amount"
             :symbol="symbol"
+            :metadata="metadata"
             @confirmed="send"
           ></ConfirmBurnDialog>
+          <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -89,18 +103,20 @@ const {
 // Components
 import ConfirmTransactionDialog from './CreateBasicTransaction/ConfirmTransactionDialog';
 import ConfirmBurnDialog from './CreateBasicTransaction/ConfirmBurnDialog';
+import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
 import AddressBook from '@/components/AddressBook';
 
 const ZERO = new Big(0);
 
 export default {
-  components: { ConfirmTransactionDialog, ConfirmBurnDialog, AddressBook },
+  components: { ConfirmTransactionDialog, ConfirmBurnDialog, AttachMetadataDialog, AddressBook },
   mixins: [SendFatTransaction],
   props: ['balances', 'totalBalance', 'symbol', 'tokenCli'],
   data() {
     return {
       address: '',
       amount: '',
+      metadata: '',
       burn: false,
       valid: true,
       errorMessage: '',
@@ -108,8 +124,11 @@ export default {
     };
   },
   computed: {
-    fireColor() {
-      return this.burn ? 'error' : 'grey';
+    burnIconColor() {
+      return this.burn ? 'secondary' : 'grey';
+    },
+    metadataIconColor() {
+      return this.metadata ? 'secondary' : 'grey';
     },
     selfAddress() {
       return this.balances.find(b => b.address === this.address);
@@ -146,7 +165,10 @@ export default {
         }
       }
     },
-    clickBurn() {
+    attachMetadata() {
+      this.$refs.attachMetadataDialog.show(this.metadata);
+    },
+    toggleBurnAddress() {
       this.burn = !this.burn;
       if (this.burn) {
         this.address = '🔥🔥 Burn Address 🔥🔥';
@@ -190,6 +212,10 @@ export default {
         txBuilder.input(input.secret, input.amount.toNumber());
       }
 
+      if (this.metadata) {
+        txBuilder.metadata(this.metadata);
+      }
+
       return txBuilder.build();
     },
     async send() {
@@ -197,6 +223,7 @@ export default {
       await this.sendTransaction();
       if (this.transactionSentMessage) {
         this.burn = false;
+        this.metadata = '';
         this.$store.commit('address/addRecentlyUsed', address);
       }
     }

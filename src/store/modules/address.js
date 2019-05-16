@@ -136,10 +136,10 @@ export default {
       await dispatch('fetchEcBalances');
     },
     getPayingEcAddress({ state, rootState }) {
-      if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress]) {
+      if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress].gt(0)) {
         return rootState.keystore.store.getSecretKey(state.preferredEcAddress);
       }
-      const found = state.ecAddresses.find(address => state.ecBalances[address]);
+      const found = state.ecAddresses.find(address => state.ecBalances[address].gt(0));
       if (found) {
         return rootState.keystore.store.getSecretKey(found);
       }
