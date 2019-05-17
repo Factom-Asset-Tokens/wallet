@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap align-baseline>
-    <template v-if="min !== max">
+    <v-layout wrap v-if="min !== max" mb-2>
       <v-flex xs4 text-xs-right>
         <v-btn flat icon color="secondary" @click="decrement">
           <v-icon>chevron_left</v-icon>
@@ -14,8 +14,18 @@
           <v-icon>chevron_right</v-icon>
         </v-btn>
       </v-flex>
+    </v-layout>
+    <v-flex xs12 my-2><span class="font-weight-bold secondary--text">Owner</span> {{ data.owner }} </v-flex>
+    <template v-if="data.metadata">
+      <v-flex xs12 my-2 class="font-weight-bold secondary--text">Metadata</v-flex>
+      <v-flex xs12>
+        <v-sheet color="grey darken-2">
+          <v-container>
+            <pre>{{ data.metadata }}</pre>
+          </v-container>
+        </v-sheet>
+      </v-flex>
     </template>
-    <v-flex xs12>Owner: {{ data.owner }}</v-flex>
   </v-layout>
 </template>
 
@@ -28,7 +38,6 @@ export default {
       data: ''
     };
   },
-  computed: {},
   methods: {
     setId(id) {
       this.id = id;

@@ -62,7 +62,7 @@ export default {
       return this.transaction.getTimestamp();
     },
     metadata() {
-      return JSON.stringify(this.transaction.getMetadata(), null, 2);
+      return this.transaction.getMetadata();
     },
     inputs() {
       return transformInoutputsToArray(this.transaction.getInputs());
