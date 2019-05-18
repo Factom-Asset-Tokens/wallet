@@ -59,15 +59,22 @@ export default {
       ];
     },
     availableAddresses() {
-      const that = this;
       return this.balances
         .filter(
-          b => b.balance.gt(ZERO) && (!this.alreadySelectedAddresses.has(b.address) || b.address === that.address)
+          b => b.balance.gt(ZERO) && (!this.alreadySelectedAddresses.has(b.address) || b.address === this.address)
         )
-        .map(b => ({
-          value: b.address,
-          text: `${b.name || b.address} (${b.balance.toFormat()} ${that.symbol})`
-        }));
+        .map(b => {
+          let text = `${b.name || b.address} (${b.balance.toFormat()}`;
+          if (this.symbol) {
+            text += ` ${this.symbol}`;
+          }
+          text += ')';
+
+          return {
+            value: b.address,
+            text
+          };
+        });
     }
   }
 };
