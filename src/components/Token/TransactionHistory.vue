@@ -50,7 +50,7 @@ export default {
     return {
       movements: [],
       transactions: {},
-      nextPage: 0,
+      nextPage: 1,
       allLoaded: false,
       loading: false
     };
