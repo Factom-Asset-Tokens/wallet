@@ -49,7 +49,7 @@
                 <v-flex xs12 v-else class="font-italic subheading primary--text">
                   Start selecting tokens from the "Available Tokens" section.
                 </v-flex>
-                <v-flex md9 mt-4>
+                <v-flex md8 mt-4>
                   <v-text-field
                     v-model="address"
                     label="Recipient address"
@@ -62,8 +62,15 @@
                     box
                   ></v-text-field>
                 </v-flex>
-                <v-flex md1 mt-4 text-xs-left>
-                  <v-icon title="Burn tokens" :color="fireColor" @click="clickBurn">fas fa-fire-alt</v-icon>
+                <v-flex md2 mt-4 text-xs-left>
+                  <v-btn icon>
+                    <v-icon title="Burn tokens" :color="burnIconColor" @click="toggleBurnAddress">
+                      fas fa-fire-alt
+                    </v-icon>
+                  </v-btn>
+                  <v-btn icon>
+                    <v-icon title="Attach metadata" :color="metadataIconColor" @click="attachMetadata">more</v-icon>
+                  </v-btn>
                 </v-flex>
 
                 <v-flex md2 text-xs-right mt-4>
@@ -102,15 +109,21 @@
 
       <!-- Dialogs -->
       <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
+      <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
       <NfTokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></NfTokenDetailsDialog>
       <ConfirmTransactionDialog
         ref="confirmTransactionDialog"
         :selectedTokens="selectedTokens"
         :address="address"
-        :burn="burn"
+        :metadata="metadata"
         @confirmed="send"
       ></ConfirmTransactionDialog>
-      <ConfirmBurnDialog ref="confirmBurnDialog" :selectedTokens="selectedTokens" @confirmed="send"></ConfirmBurnDialog>
+      <ConfirmBurnDialog
+        ref="confirmBurnDialog"
+        :selectedTokens="selectedTokens"
+        :metadata="metadata"
+        @confirmed="send"
+      ></ConfirmBurnDialog>
     </v-layout>
     <AddressBook type="fct" @address="pickAddressFromAddressBook"></AddressBook>
   </div>
@@ -130,6 +143,7 @@ import ConfirmTransactionDialog from './CreateTransaction/ConfirmTransactionDial
 import ConfirmBurnDialog from './CreateTransaction/ConfirmBurnDialog';
 import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDialog';
 import AddressBook from '@/components/AddressBook';
+import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
 
 export default {
   props: ['symbol', 'tokenCli', 'balances'],
@@ -139,13 +153,15 @@ export default {
     NfTokenDetailsDialog,
     ConfirmTransactionDialog,
     ConfirmBurnDialog,
-    AddressBook
+    AddressBook,
+    AttachMetadataDialog
   },
   data() {
     return {
       address: '',
       burn: false,
       selectedTokens: [],
+      metadata: '',
       valid: true,
       errorMessage: '',
       sendClicked: false,
@@ -154,8 +170,11 @@ export default {
     };
   },
   computed: {
-    fireColor() {
-      return this.burn ? 'error' : 'grey';
+    burnIconColor() {
+      return this.burn ? 'secondary' : 'grey';
+    },
+    metadataIconColor() {
+      return this.metadata ? 'secondary' : 'grey';
     },
     availableTokens() {
       const allTokens = flatmap(this.balances.filter(b => b.ids).map(b => b.ids));
@@ -171,7 +190,7 @@ export default {
       const vuetify = this.$vuetify;
       this.$nextTick(() => vuetify.goTo('#transaction'));
     },
-    clickBurn() {
+    toggleBurnAddress() {
       this.burn = !this.burn;
       if (this.burn) {
         this.address = '🔥🔥 Burn Address 🔥🔥';
@@ -233,6 +252,10 @@ export default {
 
       txBuilder.output(outputAddress, this.selectedTokens.map(id => (id.min === id.max ? id.min : id)));
 
+      if (this.metadata) {
+        txBuilder.metadata(this.metadata);
+      }
+
       return txBuilder.build();
     },
     async send() {
@@ -242,8 +265,12 @@ export default {
       if (this.transactionSentMessage) {
         this.burn = false;
         this.selectedTokens = [];
+        this.metadata = '';
         this.$store.commit('address/addRecentlyUsed', address);
       }
+    },
+    attachMetadata() {
+      this.$refs.attachMetadataDialog.show(this.metadata);
     }
   },
   watch: {

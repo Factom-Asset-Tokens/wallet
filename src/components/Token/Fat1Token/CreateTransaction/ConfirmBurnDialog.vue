@@ -12,8 +12,11 @@
               outline
               color="secondary"
               class="font-weight-bold subheading"
-              >{{ id | displayIds }}</v-chip
-            >
+              >{{ id | displayIds }}
+            </v-chip>
+          </v-flex>
+          <v-flex xs12 v-if="metadata" text-xs-center class="subheading secondary--text" my-2>
+            (with metadata attached)
           </v-flex>
         </v-layout>
       </v-card-text>
@@ -30,7 +33,7 @@
 import { displayIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
-  props: ['selectedTokens'],
+  props: ['selectedTokens', 'metadata'],
   data() {
     return {
       display: false

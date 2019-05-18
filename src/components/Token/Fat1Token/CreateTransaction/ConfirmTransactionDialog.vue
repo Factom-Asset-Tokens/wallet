@@ -17,6 +17,9 @@
           </v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ address }}</v-flex>
+          <v-flex xs12 v-if="metadata" text-xs-center class="subheading secondary--text" my-2>
+            (with metadata attached)
+          </v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -32,7 +35,7 @@
 import { displayIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
-  props: ['selectedTokens', 'address'],
+  props: ['selectedTokens', 'address', 'metadata'],
   data() {
     return {
       display: false
