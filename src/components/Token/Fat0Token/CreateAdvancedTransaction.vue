@@ -4,6 +4,7 @@
       <v-container id="transaction">
         <v-form id="advancedTxForm" v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
+            <!-- Inputs -->
             <v-flex xs12 pb-4>
               <v-toolbar flat color="primary">
                 <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
@@ -27,6 +28,8 @@
                 :alreadySelectedAddresses="selectedInputAddresses"
               ></TransactionInput>
             </v-flex>
+
+            <!-- Outputs -->
             <v-flex xs12 pt-5 pb-4>
               <v-toolbar flat color="primary">
                 <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
@@ -73,14 +76,18 @@
               </v-layout>
             </v-flex>
 
+            <!-- Send & alerts -->
             <v-layout align-center wrap>
-              <v-flex xs12 sm10>
+              <v-flex xs12 sm9>
                 <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
                   {{ transactionError }}
                 </v-alert>
               </v-flex>
 
-              <v-flex xs12 sm2 text-xs-right pt-3>
+              <v-flex xs12 sm3 text-xs-right pt-3>
+                <v-btn icon>
+                  <v-icon title="Attach metadata" :color="metadataIconColor" @click="attachMetadata">more</v-icon>
+                </v-btn>
                 <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
                   >Send
                   <v-icon right>send</v-icon>
@@ -104,8 +111,10 @@
             ref="confirmTransactionDialog"
             :outputs="outputs"
             :symbol="symbol"
+            :metadata="metadata"
             @confirmed="send"
           ></ConfirmTransactionDialog>
+          <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -114,18 +123,20 @@
 </template>
 
 <script>
-import { clipboard } from 'electron';
-import Big from 'bignumber.js';
-import Promise from 'bluebird';
-import { isValidPublicFctAddress } from 'factom';
-import SendFatTransaction from '@/mixins/SendFatTransaction';
-import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
-import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
-import AddressBook from '@/components/AddressBook';
 import { FAT0 } from '@fat-token/fat-js';
 const {
   Transaction: { TransactionBuilder }
 } = FAT0;
+import { clipboard } from 'electron';
+import Big from 'bignumber.js';
+import Promise from 'bluebird';
+import { isValidPublicFctAddress } from 'factom';
+// Components
+import SendFatTransaction from '@/mixins/SendFatTransaction';
+import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
+import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
+import AddressBook from '@/components/AddressBook';
+import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
 
 const newInoutput = (function() {
   let i = 0;
@@ -137,7 +148,7 @@ const newInoutput = (function() {
 const ZERO = new Big(0);
 
 export default {
-  components: { TransactionInput, ConfirmTransactionDialog, AddressBook },
+  components: { TransactionInput, ConfirmTransactionDialog, AddressBook, AttachMetadataDialog },
   mixins: [SendFatTransaction],
   data() {
     return {
@@ -147,6 +158,7 @@ export default {
       transactionError: '',
       inputs: [],
       outputs: [],
+      metadata: '',
       errorMessage: ''
     };
   },
@@ -156,6 +168,9 @@ export default {
     this.add('outputs');
   },
   computed: {
+    metadataIconColor() {
+      return this.metadata ? 'secondary' : 'grey';
+    },
     selectedInputAddresses() {
       return new Set(this.inputs.map(i => i.address));
     },
@@ -218,6 +233,7 @@ export default {
       if (this.transactionSentMessage) {
         this.inputs = [newInoutput()];
         this.outputs = [newInoutput()];
+        this.metadata = '';
         outputAddresses.forEach(address => this.$store.commit('address/addRecentlyUsed', address));
       }
     },
@@ -237,7 +253,14 @@ export default {
         txBuilder.output(output.address, Number(output.amount));
       }
 
+      if (this.metadata) {
+        txBuilder.metadata(this.metadata);
+      }
+
       return txBuilder.build();
+    },
+    attachMetadata() {
+      this.$refs.attachMetadataDialog.show(this.metadata);
     }
   },
   watch: {

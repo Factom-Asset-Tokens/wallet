@@ -11,6 +11,9 @@
             <v-flex xs10 class="title secondary--text" my-2>{{ output.address }}</v-flex>
             <v-flex xs2 class="title secondary--text" text-xs-right my-2>{{ output.amount }} {{ symbol }}</v-flex>
           </v-layout>
+          <v-flex xs12 v-if="metadata" text-xs-center class="subheading secondary--text" my-2>
+            (with metadata attached)
+          </v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -26,7 +29,7 @@
 import Big from 'bignumber.js';
 
 export default {
-  props: ['outputs', 'symbol'],
+  props: ['outputs', 'symbol', 'metadata'],
   data() {
     return {
       display: false
