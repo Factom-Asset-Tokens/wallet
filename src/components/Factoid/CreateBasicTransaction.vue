@@ -178,7 +178,6 @@ export default {
         );
         const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 60 });
-        this.$store.commit('address/addRecentlyUsed', this.outputAddress);
         this.$store.dispatch('address/fetchFctBalances');
         this.$store.dispatch('address/fetchEcBalances');
         this.transactionSentMessage = `Transaction sent. ID: ${txId}`;

@@ -86,7 +86,11 @@ export default new Vuex.Store({
       // 3. Identity chains
       backup.identity = { chainIds: Object.keys(state.identity.identities) };
       // 4. Addresses
-      backup.address = { preferredEcAddress: state.address.preferredEcAddress, names: state.address.names };
+      backup.address = {
+        preferredEcAddress: state.address.preferredEcAddress,
+        names: state.address.names,
+        bookAddresses: state.address.bookAddresses
+      };
       // 5. Keystore backup
       backup.keystore = state.keystore.store.getBackup();
 
@@ -123,6 +127,9 @@ export default new Vuex.Store({
           Object.keys(names).forEach(address =>
             commit('address/updateAddressNames', { address, name: names[address] })
           );
+        }
+        if (Array.isArray(backup.address.bookAddresses)) {
+          backup.address.bookAddresses.forEach(address => commit('address/addAddressToBook', address));
         }
       }
 

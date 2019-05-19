@@ -13,7 +13,7 @@
                 <div class="total-amount">{{ totalInputs.toFormat() }} {{ symbol }}</div>
                 <v-toolbar-items>
                   <v-btn flat @click="add('inputs')">
-                    <v-icon>add_circle_outline</v-icon>
+                    <v-icon>add_box</v-icon>
                   </v-btn>
                 </v-toolbar-items>
               </v-toolbar>
@@ -38,7 +38,7 @@
                 <div class="total-amount">{{ totalOutputs.toFormat() }} {{ symbol }}</div>
                 <v-toolbar-items>
                   <v-btn flat @click="add('outputs')">
-                    <v-icon>add_circle_outline</v-icon>
+                    <v-icon>add_box</v-icon>
                   </v-btn>
                 </v-toolbar-items>
               </v-toolbar>
@@ -228,13 +228,11 @@ export default {
       }
     },
     async send() {
-      const outputAddresses = this.outputs.map(o => o.address);
       await this.sendTransaction();
       if (this.transactionSentMessage) {
         this.inputs = [newInoutput()];
         this.outputs = [newInoutput()];
         this.metadata = '';
-        outputAddresses.forEach(address => this.$store.commit('address/addRecentlyUsed', address));
       }
     },
     async buildTransaction() {

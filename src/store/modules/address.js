@@ -5,16 +5,13 @@ function mapNames(addresses, names) {
   return addresses.map(address => ({ address, name: names[address] }));
 }
 
-const RECENTLY_USED_HISTORY_SIZE = 4;
-
 export default {
   namespaced: true,
   state: {
-    fctRecentlyUsed: [],
-    ecRecentlyUsed: [],
     ecAddresses: [],
     ecBalances: {},
     fctAddresses: [],
+    bookAddresses: [],
     fctBalances: {},
     names: {},
     preferredEcAddress: ''
@@ -23,11 +20,14 @@ export default {
     totalFctBalance: state => Object.values(state.fctBalances).reduce((acc, val) => acc.plus(val), ZERO),
     totalEcBalance: state => Object.values(state.ecBalances).reduce((acc, val) => acc.plus(val), ZERO),
     fctAddressesWithNames: state => mapNames(state.fctAddresses, state.names),
-    ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names)
+    ecAddressesWithNames: state => mapNames(state.ecAddresses, state.names),
+    bookAddressesWithNames: state => mapNames(state.bookAddresses, state.names)
   },
   mutations: {
     addEcAddress: (state, address) => state.ecAddresses.push(address),
     addFctAddress: (state, address) => state.fctAddresses.push(address),
+    addAddressToBook: (state, address) => state.bookAddresses.push(address),
+    removeFromAddressBook: (state, index) => state.bookAddresses.splice(index, 1),
     updateEcAddresses: (state, addresses) => (state.ecAddresses = addresses),
     updateEcBalances: (state, balances) => (state.ecBalances = balances),
     updateFctAddresses: (state, addresses) => (state.fctAddresses = addresses),
@@ -40,27 +40,6 @@ export default {
     },
     setPreferredEcAddress(state, ecAddress) {
       state.preferredEcAddress = ecAddress;
-    },
-    addRecentlyUsed(state, address) {
-      let circularBuffer;
-      if (address[0] === 'F') {
-        circularBuffer = [...state.fctRecentlyUsed];
-      } else {
-        circularBuffer = [...state.ecRecentlyUsed];
-      }
-
-      if (!circularBuffer.includes(address)) {
-        circularBuffer.unshift(address);
-        if (circularBuffer.length > RECENTLY_USED_HISTORY_SIZE) {
-          circularBuffer.pop();
-        }
-      }
-
-      if (address[0] === 'F') {
-        state.fctRecentlyUsed = circularBuffer;
-      } else {
-        state.ecRecentlyUsed = circularBuffer;
-      }
     }
   },
   actions: {

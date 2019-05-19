@@ -259,14 +259,11 @@ export default {
       return txBuilder.build();
     },
     async send() {
-      const address = this.address;
-
       await this.sendTransaction();
       if (this.transactionSentMessage) {
         this.burn = false;
         this.selectedTokens = [];
         this.metadata = '';
-        this.$store.commit('address/addRecentlyUsed', address);
       }
     },
     attachMetadata() {

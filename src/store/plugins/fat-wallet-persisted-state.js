@@ -8,7 +8,8 @@ export default createPersistedState({
   whitelist: [
     'address/updateAddressNames',
     'address/setPreferredEcAddress',
-    'address/addRecentlyUsed',
+    'address/addAddressToBook',
+    'address/removeFromAddressBook',
     'fatd/updateEndpoint',
     'factomd/updateEndpoint',
     'tokens/addToken',
@@ -21,8 +22,7 @@ export default createPersistedState({
   statePick: state => ({
     address: {
       names: state.address.names,
-      fctRecentlyUsed: state.address.fctRecentlyUsed,
-      ecRecentlyUsed: state.address.ecRecentlyUsed,
+      bookAddresses: state.address.bookAddresses,
       preferredEcAddress: state.address.preferredEcAddress
     },
     fatd: {
