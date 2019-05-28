@@ -107,7 +107,9 @@ export default new Vuex.Store({
 
       // 2. Tracked tokens
       if (backup.tokens && Array.isArray(backup.tokens.tracked)) {
-        await Promise.map(backup.tokens.tracked, chainId => dispatch('tokens/track', chainId));
+        await Promise.map(backup.tokens.tracked, chainId =>
+          dispatch('tokens/track', chainId).catch(e => console.error(`Failed to track ${chainId}`, e))
+        );
       }
 
       // 3. Identity chains
