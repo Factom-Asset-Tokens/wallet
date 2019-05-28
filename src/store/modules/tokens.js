@@ -26,7 +26,7 @@ export default {
     },
     addCli(state, cli) {
       const copy = { ...state.clis };
-      copy[cli.getTokenChainId()] = cli;
+      copy[cli.getChainId()] = cli;
       state.clis = copy;
     },
     removeCli(state, tokenChainId) {
@@ -63,8 +63,8 @@ export default {
       const issuance = await tokenCli.getIssuance();
 
       const token = {
-        chainId: issuance.getTokenChainId(),
-        issuer: issuance.getIssuerIdentityRootChainId(),
+        chainId: issuance.getChainId(),
+        issuer: issuance.getIssuerChainId(),
         tokenId: issuance.getTokenId(),
         entryHash: issuance.getEntryhash(),
         timestamp: issuance.getTimestamp(),

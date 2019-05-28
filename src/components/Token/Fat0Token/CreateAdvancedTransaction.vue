@@ -123,10 +123,7 @@
 </template>
 
 <script>
-import { FAT0 } from '@fat-token/fat-js';
-const {
-  Transaction: { TransactionBuilder }
-} = FAT0;
+import TransactionBuilder from '@fat-token/fat-js/0/TransactionBuilder';
 import { clipboard } from 'electron';
 import Big from 'bignumber.js';
 import Promise from 'bluebird';
@@ -236,7 +233,7 @@ export default {
       }
     },
     async buildTransaction() {
-      const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId());
+      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId());
 
       // Get inputs secret keys
       const keystore = this.$store.state.keystore.store;
@@ -244,11 +241,12 @@ export default {
         const secret = keystore.getSecretKey(input.address);
         return { secret, amount: input.amount };
       });
+
       for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, Number(input.amount));
+        txBuilder.input(input.secret, input.amount);
       }
       for (const output of this.outputs) {
-        txBuilder.output(output.address, Number(output.amount));
+        txBuilder.output(output.address, output.amount);
       }
 
       if (this.metadata) {

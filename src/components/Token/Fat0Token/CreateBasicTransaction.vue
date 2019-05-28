@@ -96,10 +96,7 @@ import Big from 'bignumber.js';
 import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
-import { FAT0 } from '@fat-token/fat-js';
-const {
-  Transaction: { TransactionBuilder }
-} = FAT0;
+import TransactionBuilder from '@fat-token/fat-js/0/TransactionBuilder';
 // Components
 import ConfirmTransactionDialog from './CreateBasicTransaction/ConfirmTransactionDialog';
 import ConfirmBurnDialog from './CreateBasicTransaction/ConfirmBurnDialog';
@@ -204,12 +201,9 @@ export default {
       });
 
       // Build transaction object
-      const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId()).output(
-        outputAddress,
-        outputAmount.toNumber()
-      );
+      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId()).output(outputAddress, outputAmount);
       for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.amount.toNumber());
+        txBuilder.input(input.secret, input.amount);
       }
 
       if (this.metadata) {

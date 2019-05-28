@@ -134,7 +134,7 @@ import Promise from 'bluebird';
 import flatmap from 'lodash.flatmap';
 import groupBy from 'lodash.groupby';
 import { isValidPublicFctAddress } from 'factom';
-import { TransactionBuilder } from '@fat-token/fat-js/1/Transaction';
+import TransactionBuilder from '@fat-token/fat-js/1/TransactionBuilder';
 import { displayIds, idsSetDiff, matchOwners } from '@/components/Token/Fat1Token/nf-token-ids.js';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
 // Components
@@ -229,7 +229,7 @@ export default {
       }
     },
     async buildTransaction() {
-      const txBuilder = new TransactionBuilder(this.tokenCli.getTokenChainId());
+      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId());
 
       const idsWithOwner = matchOwners(this.balances, this.selectedTokens);
 

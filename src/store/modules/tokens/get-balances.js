@@ -1,5 +1,4 @@
 import Promise from 'bluebird';
-import Big from 'bignumber.js';
 import { standardizeId } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default function getBalances(cli, addresses) {
@@ -17,8 +16,7 @@ async function getFat0Balances(cli, addresses) {
   return Promise.reduce(
     addresses,
     async function(acc, address) {
-      const balance = await cli.getBalance(address);
-      acc[address] = new Big(balance);
+      acc[address] = await cli.getBalance(address);
       return acc;
     },
     {}
@@ -32,10 +30,11 @@ async function getFat1Balances(cli, addresses) {
       const result = {};
       result.balance = await cli.getBalance(address);
 
-      if (result.balance > 0) {
+      if (result.balance.gt(0)) {
         const nfBalance = await cli.getNFBalance({
           address,
-          limit: result.balance
+          // TODO: not optimal
+          limit: result.balance.toNumber()
         });
 
         result.ids = nfBalance.map(standardizeId);

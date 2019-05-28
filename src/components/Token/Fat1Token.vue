@@ -70,7 +70,7 @@ export default {
     addressesWithNameAndBalance() {
       const addresses = this.$store.getters['address/fctAddressesWithNames'];
       return addresses.map(a => {
-        const b = this.balances[a.address] || { balance: 0, ids: [] };
+        const b = this.balances[a.address] || { balance: ZERO, ids: [] };
         return {
           address: a.address,
           name: a.name,

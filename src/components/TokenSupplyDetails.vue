@@ -12,37 +12,46 @@
 </template>
 
 <script>
+import Big from 'bignumber.js';
+
+const INFINITE_SUPPLY = new Big(-1);
+
 export default {
   props: ['chainId', 'symbol'],
   data() {
     return {
-      maxSupply: 0,
-      burnedSupply: 0,
-      circulatingSupply: 0
+      maxSupply: new Big(0),
+      burnedSupply: new Big(0),
+      circulatingSupply: new Big(0)
     };
   },
   computed: {
     maxSupplyText() {
-      return this.maxSupply === -1 ? 'Infinite' : `${this.maxSupply.toLocaleString()} ${this.symbol}`;
+      return this.maxSupply.isEqualTo(INFINITE_SUPPLY) ? 'Infinite' : `${this.maxSupply.toFormat()} ${this.symbol}`;
     },
     burnedText() {
-      return `${this.burnedSupply.toLocaleString()} ${this.symbol}`;
+      return `${this.burnedSupply.toFormat()} ${this.symbol}`;
     },
     circulatingSupplyText() {
-      return `${this.circulatingSupply.toLocaleString()} ${this.symbol}`;
+      return `${this.circulatingSupply.toFormat()} ${this.symbol}`;
     },
     remainingSupply() {
-      return this.maxSupply === -1 ? -1 : this.maxSupply - this.circulatingSupply - this.burnedSupply;
+      return this.maxSupply.isEqualTo(INFINITE_SUPPLY)
+        ? INFINITE_SUPPLY
+        : this.maxSupply.minus(this.circulatingSupply).minus(this.burnedSupply);
     },
     remainingSupplyText() {
-      return this.remainingSupply === -1 ? 'Infinite' : `${this.remainingSupply.toLocaleString()} ${this.symbol}`;
+      return this.remainingSupply.isEqualTo(INFINITE_SUPPLY)
+        ? 'Infinite'
+        : `${this.remainingSupply.toFormat()} ${this.symbol}`;
     }
   },
   methods: {
     async fetchStats() {
       const tokenCli = this.$store.state.tokens.clis[this.chainId];
       const stats = await tokenCli.getStats();
-      this.maxSupply = stats.Issuance.supply;
+
+      this.maxSupply = new Big(stats.Issuance.supply);
       this.burnedSupply = stats.burned;
       this.circulatingSupply = stats.circulating;
     }

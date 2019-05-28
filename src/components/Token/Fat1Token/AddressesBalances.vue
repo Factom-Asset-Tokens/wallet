@@ -30,8 +30,8 @@
           </td>
           <td>
             <div style="display: flex; justify-content: flex-end; align-items: center">
-              <div>{{ props.item.balance.toLocaleString() }}</div>
-              <v-icon color="primary" @click="props.expanded = !props.expanded" :disabled="props.item.balance === 0"
+              <div>{{ props.item.balance.toFormat() }}</div>
+              <v-icon color="primary" @click="props.expanded = !props.expanded" :disabled="props.item.balance.isZero()"
                 >view_list</v-icon
               >
             </div>
