@@ -27,7 +27,7 @@
   "devDependencies": {
     "@commitlint/cli": "^7.6.1",
     "@commitlint/config-conventional": "^7.6.0",
-    "@fat-token/fat-js": "1.0.0",
+    "@fat-token/fat-js": "^1.0.1",
     "@fortawesome/fontawesome-free": "^5.8.2",
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-eslint": "^3.8.0",

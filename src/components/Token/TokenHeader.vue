@@ -29,22 +29,34 @@
             <v-flex xs10 my-2 pl-3>{{ token.issuer }}</v-flex>
 
             <TokenSupplyDetails :chainId="token.chainId" :symbol="symbol"></TokenSupplyDetails>
+            <template v-if="token.metadata">
+              <v-flex xs2 my-2 class="secondary--text font-weight-bold">Metadata</v-flex>
+              <v-flex xs10 my-2 pl-3>
+                <v-icon color="primary" @click="showMetadata">visibility</v-icon>
+              </v-flex>
+            </template>
             <v-flex xs12 text-xs-right>
-              <v-btn color="primary" @click="untrack">stop tracking</v-btn>
+              <v-btn color="primary" flat outline @click="untrack">stop tracking</v-btn>
             </v-flex>
           </v-layout>
         </v-container>
       </v-sheet>
     </v-card>
+    <ShowMetadataDialog
+      ref="showMetadataDialog"
+      :tokenId="token.tokenId"
+      :metadata="token.metadata"
+    ></ShowMetadataDialog>
   </v-flex>
 </template>
 
 <script>
 import TokenSupplyDetails from '@/components/TokenSupplyDetails';
+import ShowMetadataDialog from './ShowMetadataDialog';
 
 export default {
   name: 'TokenHeader',
-  components: { TokenSupplyDetails },
+  components: { TokenSupplyDetails, ShowMetadataDialog },
   data() {
     return {
       showDetails: false
@@ -60,6 +72,9 @@ export default {
     untrack() {
       this.$store.dispatch('tokens/untrack', this.token.chainId);
       this.$router.push({ name: 'Actions' });
+    },
+    showMetadata() {
+      this.$refs.showMetadataDialog.show();
     }
   }
 };
@@ -74,5 +89,8 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 12px;
+}
+.clickable {
+  cursor: pointer;
 }
 </style>

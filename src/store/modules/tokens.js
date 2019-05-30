@@ -70,7 +70,8 @@ export default {
         timestamp: issuance.getTimestamp(),
         type: issuance.getType(),
         symbol: issuance.getSymbol(),
-        supply: issuance.getSupply()
+        supply: issuance.getSupply(),
+        metadata: issuance.getMetadata()
       };
 
       commit('addCli', tokenCli);
