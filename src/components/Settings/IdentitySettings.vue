@@ -81,7 +81,7 @@ export default {
       identityInfoDialog: false
     };
   },
-  mounted() {
+  created() {
     this.$store.dispatch('identity/refreshIdentitiesActiveKeys');
   },
   computed: {

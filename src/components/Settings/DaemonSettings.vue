@@ -108,6 +108,9 @@ export default {
   created: function() {
     this.debouncedUpdateFatd = debounce(this.$store.dispatch.bind(this, 'fatd/update'), 600);
     this.debouncedUpdateFactomd = debounce(this.$store.dispatch.bind(this, 'factomd/update'), 600);
+    Promise.all([this.$store.dispatch('factomd/checkStatus'), this.$store.dispatch('fatd/checkStatus')]).catch(
+      () => {}
+    );
   },
   computed: {
     ...mapState({
