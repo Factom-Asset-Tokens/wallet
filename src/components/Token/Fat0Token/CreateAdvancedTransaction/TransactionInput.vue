@@ -5,6 +5,7 @@
         :items="availableAddresses"
         label="Address"
         v-model="address"
+        :rules="addressRules"
         @input="$emit('input', { address, amount, id: value.id })"
         dense
         single-line
@@ -36,6 +37,7 @@
 
 <script>
 import Big from 'bignumber.js';
+import { isValidPublicFctAddress } from 'factom';
 
 const ZERO = new Big(0);
 
@@ -43,7 +45,8 @@ export default {
   data() {
     return {
       address: this.value.address,
-      amount: this.value.amount
+      amount: this.value.amount,
+      addressRules: [address => isValidPublicFctAddress(address) || 'Invalid public FCT address']
     };
   },
   props: ['value', 'first', 'balances', 'alreadySelectedAddresses', 'symbol'],
