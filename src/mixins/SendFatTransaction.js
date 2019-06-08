@@ -22,7 +22,6 @@ export default {
         this.$refs.form.reset();
       } catch (e) {
         this.errorMessage = e.message;
-        console.error(e);
       } finally {
         this.sending = false;
       }

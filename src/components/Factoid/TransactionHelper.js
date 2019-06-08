@@ -1,17 +1,22 @@
-import Promise from 'bluebird';
+import Big from 'bignumber.js';
 import { Transaction } from 'factom';
 
-export async function buildTransaction(store, totalBalance, balances, outputAddress, amount) {
+const FACTOSHI_MULTIPLIER = new Big(100000000);
+
+/**
+ * Given a single output address and amount, build a transaction by finding the necessary inputs
+ */
+export async function buildSingleOutputTransaction(store, totalBalance, balances, outputAddress, amount) {
   const ecRate = await store.getters['factomd/cli'].getEntryCreditRate();
   const outputAmount = outputAddress[0] === 'E' ? amount.times(ecRate) : amount;
 
   const tx = getFeeAdjustedTransaction(totalBalance, balances, outputAddress, outputAmount, ecRate);
   // Get inputs secret keys
   const keystore = store.state.keystore.store;
-  const inputsSecrets = await Promise.map(tx.inputs, function(input) {
-    const secret = keystore.getSecretKey(input.address);
-    return { secret, amount: input.amount };
-  });
+  const inputsSecrets = tx.inputs.map(input => ({
+    secret: keystore.getSecretKey(input.address),
+    amount: input.amount
+  }));
 
   // Build signed transaction with correct fees
   const signedTxBuilder = Transaction.builder().output(outputAddress, toInt(outputAmount));
@@ -23,6 +28,9 @@ export async function buildTransaction(store, totalBalance, balances, outputAddr
   return signedTxBuilder.build();
 }
 
+/**
+ * Given a single output address and amount, build a transaction by finding the necessary inputs and fees
+ */
 export function getFeeAdjustedTransaction(totalBalance, balances, outputAddress, outputAmount, ecRate) {
   let inputsAmount = outputAmount;
   // Build initial TX without fee
@@ -81,6 +89,33 @@ function computeInputs(balances, totalBalance, amount, excludedAddress) {
   }
 
   return inputs;
+}
+/**
+ * Compute minimum required fees for a given set of inputs and outputs
+ */
+export function computeRequiredFees(inputs, outputs, ecRate) {
+  return buildTransaction(inputs, outputs).computeRequiredFees(ecRate, { rcdType: 1 });
+}
+
+/**
+ * Build transaction from inputs and outputs denominated if Factoids
+ */
+export function buildTransaction(inputs, outputs, keystore) {
+  const txBuilder = Transaction.builder();
+
+  for (const input of inputs) {
+    if (keystore) {
+      txBuilder.input(keystore.getSecretKey(input.address), toInt(FACTOSHI_MULTIPLIER.times(input.amount)));
+    } else {
+      txBuilder.input(input.address, toInt(FACTOSHI_MULTIPLIER.times(input.amount)));
+    }
+  }
+
+  for (const output of outputs) {
+    txBuilder.output(output.address, toInt(FACTOSHI_MULTIPLIER.times(output.amount)));
+  }
+
+  return txBuilder.build();
 }
 
 function toInt(bn) {

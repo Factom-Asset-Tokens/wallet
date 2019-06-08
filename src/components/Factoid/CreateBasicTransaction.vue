@@ -75,7 +75,7 @@
 import Big from 'bignumber.js';
 import NodeCache from 'node-cache';
 import { isValidPublicFctAddress } from 'factom';
-import { buildTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
+import { buildSingleOutputTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
 import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
 import AddressBook from '@/components/AddressBook';
 
@@ -169,7 +169,7 @@ export default {
       try {
         this.errorMessage = '';
         this.sending = true;
-        const tx = await buildTransaction(
+        const tx = await buildSingleOutputTransaction(
           this.$store,
           this.totalBalance,
           this.balances,

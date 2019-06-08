@@ -10,7 +10,7 @@
                 <v-toolbar-title><v-icon left>fa-sign-in-alt</v-icon>Inputs</v-toolbar-title>
 
                 <v-spacer></v-spacer>
-                <div class="total-amount">{{ totalInputs.toFormat() }} {{ symbol }}</div>
+                <div class="total-amount">{{ totalInputs.toFormat() }} FCT</div>
                 <v-toolbar-items>
                   <v-btn flat @click="addInoutput('inputs')">
                     <v-icon>add_box</v-icon>
@@ -24,7 +24,6 @@
                 @delete="deleteInoutput('inputs', input.id)"
                 :balances="balances"
                 :first="index === 0"
-                :symbol="symbol"
                 :alreadySelectedAddresses="selectedInputAddresses"
               ></TransactionInput>
             </v-flex>
@@ -35,7 +34,7 @@
                 <v-toolbar-title><v-icon left>fa-sign-out-alt</v-icon>Outputs</v-toolbar-title>
 
                 <v-spacer></v-spacer>
-                <div class="total-amount">{{ totalOutputs.toFormat() }} {{ symbol }}</div>
+                <div class="total-amount">{{ totalOutputs.toFormat() }} FCT</div>
                 <v-toolbar-items>
                   <v-btn flat @click="addInoutput('outputs')">
                     <v-icon>add_box</v-icon>
@@ -61,7 +60,7 @@
                   <v-text-field
                     v-model="output.amount"
                     type="number"
-                    :suffix="symbol"
+                    suffix="FCT"
                     :rules="outputAmountRules"
                     min="0"
                     label="Amount"
@@ -76,19 +75,22 @@
               </v-layout>
             </v-flex>
 
-            <!-- Send & alerts -->
+            <!-- Fee indicators -->
+            <v-flex xs12 v-if="showFeeIndicators">
+              <FeeIndicators :transactionFee="transactionFee" :requiredFee="requiredFee"></FeeIndicators>
+            </v-flex>
+
             <v-layout align-center wrap>
-              <v-flex xs12 sm9>
-                <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
+              <!-- Transaction building error -->
+              <v-flex xs12 sm10>
+                <v-alert :value="!validTransaction" color="error" icon="warning" outline>
                   {{ transactionError }}
                 </v-alert>
               </v-flex>
 
-              <v-flex xs12 sm3 text-xs-right pt-3>
-                <v-btn icon>
-                  <v-icon title="Attach metadata" :color="metadataIconColor" @click="attachMetadata">more</v-icon>
-                </v-btn>
-                <v-btn color="primary" large :disabled="!validForm" type="submit" :loading="sending"
+              <!-- Send button -->
+              <v-flex xs12 sm2 text-xs-right pt-3>
+                <v-btn color="primary" large :disabled="!validForm || !validFees" type="submit" :loading="sending"
                   >Send
                   <v-icon right>send</v-icon>
                 </v-btn>
@@ -110,11 +112,9 @@
           <ConfirmTransactionDialog
             ref="confirmTransactionDialog"
             :outputs="outputs"
-            :symbol="symbol"
-            :metadata="metadata"
+            :txFee="transactionFee"
             @confirmed="send"
           ></ConfirmTransactionDialog>
-          <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -123,17 +123,16 @@
 </template>
 
 <script>
-import TransactionBuilder from '@fat-token/fat-js/0/TransactionBuilder';
 import { clipboard } from 'electron';
 import Big from 'bignumber.js';
-import Promise from 'bluebird';
+import NodeCache from 'node-cache';
 import { isValidPublicFctAddress } from 'factom';
+import { computeRequiredFees, buildTransaction } from './TransactionHelper';
 // Components
-import SendFatTransaction from '@/mixins/SendFatTransaction';
 import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
 import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
+import FeeIndicators from './CreateAdvancedTransaction/FeeIndicators';
 import AddressBook from '@/components/AddressBook';
-import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
 
 const newInoutput = (function() {
   let i = 0;
@@ -143,39 +142,39 @@ const newInoutput = (function() {
 })();
 
 const ZERO = new Big(0);
+const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  components: { TransactionInput, ConfirmTransactionDialog, AddressBook, AttachMetadataDialog },
-  mixins: [SendFatTransaction],
+  components: { TransactionInput, FeeIndicators, ConfirmTransactionDialog, AddressBook },
   data() {
     return {
-      sendClicked: false,
       validForm: true,
       validTransaction: true,
+      transactionSentMessage: '',
+      sending: false,
       transactionError: '',
       inputs: [],
       outputs: [],
-      metadata: '',
-      errorMessage: ''
+      errorMessage: '',
+      requiredFee: ZERO
     };
   },
-  props: ['balances', 'symbol', 'tokenCli'],
   created() {
+    this.cache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
     this.addInoutput('inputs');
     this.addInoutput('outputs');
   },
   computed: {
-    metadataIconColor() {
-      return this.metadata ? 'secondary' : 'grey';
+    balances() {
+      const balances = this.$store.state.address.fctBalances;
+      return this.$store.getters['address/fctAddressesWithNames'].map(o => ({
+        address: o.address,
+        balance: balances[o.address] || new Big(0),
+        name: o.name
+      }));
     },
     selectedInputAddresses() {
       return new Set(this.inputs.map(i => i.address));
-    },
-    addressesCount() {
-      return this.inputs.concat(this.outputs).reduce((count, val) => {
-        count[val.address] ? count[val.address]++ : (count[val.address] = 1);
-        return count;
-      }, {});
     },
     outputAddressRules() {
       return [address => isValidPublicFctAddress(address) || 'Invalid public FCT address'];
@@ -189,15 +188,25 @@ export default {
         .filter(a => !!a)
         .reduce((acc, val) => acc.plus(val), ZERO);
     },
-
     totalOutputs() {
       return this.outputs
         .map(o => o.amount)
         .filter(a => !!a)
         .reduce((acc, val) => acc.plus(val), ZERO);
     },
+    showFeeIndicators() {
+      return (
+        this.totalInputs.gt(0) && this.totalOutputs.gt(0) && this.totalOutputs.lte(this.totalInputs) && this.validForm
+      );
+    },
+    transactionFee() {
+      return this.totalInputs.minus(this.totalOutputs);
+    },
+    validFees() {
+      return this.requiredFee.lte(this.transactionFee);
+    },
     validTransactionProperties() {
-      return [this.totalInputs, this.totalOutputs, this.addressesCount];
+      return [this.totalInputs, this.totalOutputs];
     }
   },
   methods: {
@@ -217,72 +226,56 @@ export default {
       this.transactionSentMessage = '';
 
       if (this.$refs.form.validate()) {
-        this.sendClicked = true;
-        if (this.validTransaction) {
-          this.sendClicked = false;
+        if (this.validTransaction && this.validFees) {
           this.$refs.confirmTransactionDialog.show();
         }
       }
     },
+    async getEcRate() {
+      let ecRate = this.cache.get('ecRate');
+      if (!ecRate) {
+        const factomd = this.$store.getters['factomd/cli'];
+        ecRate = await factomd.getEntryCreditRate();
+        this.cache.set('ecRate', ecRate);
+      }
+      return ecRate;
+    },
     async send() {
-      await this.sendTransaction();
-      if (this.transactionSentMessage) {
+      try {
+        this.errorMessage = '';
+        this.sending = true;
+
+        const tx = await buildTransaction(this.inputs, this.outputs, this.$store.state.keystore.store);
+
+        const cli = this.$store.getters['factomd/cli'];
+        const txId = await cli.sendTransaction(tx, { timeout: 60 });
+
+        this.$store.dispatch('address/fetchFctBalances');
+        this.$store.dispatch('address/fetchEcBalances');
+        this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
+        this.$refs.form.reset();
         this.inputs = [newInoutput()];
         this.outputs = [newInoutput()];
-        this.metadata = '';
+      } catch (e) {
+        this.errorMessage = e.message;
+      } finally {
+        this.sending = false;
       }
-    },
-    async buildTransaction() {
-      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId());
-
-      // Get inputs secret keys
-      const keystore = this.$store.state.keystore.store;
-      const inputsSecrets = await Promise.map(this.inputs, async function(input) {
-        const secret = keystore.getSecretKey(input.address);
-        return { secret, amount: input.amount };
-      });
-
-      for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.amount);
-      }
-      for (const output of this.outputs) {
-        txBuilder.output(output.address, output.amount);
-      }
-
-      if (this.metadata) {
-        txBuilder.metadata(this.metadata);
-      }
-
-      return txBuilder.build();
-    },
-    attachMetadata() {
-      this.$refs.attachMetadataDialog.show(this.metadata);
     }
   },
   watch: {
-    validTransactionProperties() {
-      // An address can appear only once accross both inputs and outputs
-      for (const address in this.addressesCount) {
-        if (this.addressesCount[address] > 1) {
-          this.validTransaction = false;
-          this.transactionError = `${address} is used multiple times accross inputs or outputs.`;
-          return;
-        }
-      }
-
-      // Total inputs and outputs must be equal
-      if (!this.totalInputs.eq(this.totalOutputs)) {
+    async validTransactionProperties() {
+      if (this.totalOutputs.gt(this.totalInputs)) {
         this.validTransaction = false;
-        this.transactionError = 'The sum of inputs and outputs must be equal.';
+        this.transactionError = 'Sum of outputs is greater that sum of inputs.';
         return;
       }
 
-      // The amount transferred has to be greater than 0
-      if (this.totalInputs.eq(ZERO)) {
-        this.validTransaction = false;
-        this.transactionError = 'The amount transferred cannot be 0.';
-        return;
-      }
+      const ecRate = await this.getEcRate();
+      const inputs = this.inputs.filter(i => i.address && i.amount);
+      const outputs = this.outputs.filter(i => i.address && i.amount);
+
+      this.requiredFee = new Big(computeRequiredFees(inputs, outputs, ecRate)).div(FACTOSHI_MULTIPLIER);
 
       this.validTransaction = true;
       this.transactionError = '';
