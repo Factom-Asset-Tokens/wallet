@@ -13,7 +13,7 @@
         >
           <img class="token-icon" src="@/assets/img/fct.png" />
         </v-btn>
-        <span>Factoid (FCT)</span>
+        <span>FCT & EC</span>
       </v-tooltip>
 
       <v-tooltip class="token-margin" right v-for="token in trackedTokens" v-bind:key="token.chainId">
