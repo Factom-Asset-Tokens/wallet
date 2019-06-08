@@ -71,7 +71,7 @@ export default {
   methods: {
     untrack() {
       this.$store.dispatch('tokens/untrack', this.token.chainId);
-      this.$router.push({ name: 'Actions' });
+      this.$router.push({ name: 'TrackToken' });
     },
     showMetadata() {
       this.$refs.showMetadataDialog.show();

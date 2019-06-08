@@ -5,7 +5,6 @@ import Settings from './views/Settings.vue';
 import Token from './views/Token.vue';
 import IssueToken from './views/IssueToken.vue';
 import CoinbaseTransaction from './views/CoinbaseTransaction.vue';
-import Actions from './views/Actions.vue';
 import Factoid from './views/Factoid.vue';
 import Start from './views/Start.vue';
 import NewWallet from './views/NewWallet.vue';
@@ -38,11 +37,6 @@ export default new Router({
       path: '/restore-wallet-backup',
       name: 'RestoreWalletBackup',
       component: RestoreWalletBackup
-    },
-    {
-      path: '/actions',
-      name: 'Actions',
-      component: Actions
     },
     {
       path: '/fct',

@@ -41,11 +41,11 @@
           slot="activator"
           active-class="secondary--text"
           color="white"
-          :to="{ name: 'Actions' }"
+          :to="{ name: 'TrackToken' }"
         >
           <v-icon class="fab-button-icon-fix">more_horiz</v-icon>
         </v-btn>
-        <span>Actions</span>
+        <span>Track new token</span>
       </v-tooltip>
 
       <v-tooltip id="settings-link" right>
