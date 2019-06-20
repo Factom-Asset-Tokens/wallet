@@ -10,6 +10,7 @@ import Start from './views/Start.vue';
 import NewWallet from './views/NewWallet.vue';
 import RestoreWalletPhrase from './views/RestoreWalletPhrase.vue';
 import RestoreWalletBackup from './views/RestoreWalletBackup.vue';
+import LedgerModeStart from './views/LedgerModeStart.vue';
 
 Vue.use(Router);
 
@@ -67,6 +68,11 @@ export default new Router({
       path: '/coinbase-transaction',
       name: 'CoinbaseTransaction',
       component: CoinbaseTransaction
+    },
+    {
+      path: '/ledger-mode-start',
+      name: 'LedgerModeStart',
+      component: LedgerModeStart
     }
   ]
 });

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "serve": "vue-cli-service electron:serve",
-    "build": "rm -rf dist_electron && vue-cli-service electron:build",
+    "build": "vue-cli-service electron:build",
     "test": "mocha 'test/**/*.spec.js'",
     "lint": "vue-cli-service lint",
     "format": "prettier --write \"src/**/*.{js,vue}\"",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
+    "@factoid.org/hw-app-fct": "^0.6.1",
     "@fat-token/fat-js": "^1.0.1",
     "@fortawesome/fontawesome-free": "^5.9.0",
     "@ledgerhq/hw-transport-node-hid": "^4.62.0",

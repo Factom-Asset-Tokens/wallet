@@ -13,6 +13,13 @@
         </v-layout>
         <WalletLogin v-if="showLogin" @newWallet="showNewWalletSelection()"></WalletLogin>
         <NewWalletSelection v-else></NewWalletSelection>
+        <v-layout wrap>
+          <v-flex xs12 text-xs-center>
+            <v-btn large color="primary" :to="{ name: 'LedgerModeStart' }">
+              <img src="@/assets/img/ledger.svg" width="120px" />
+            </v-btn>
+          </v-flex>
+        </v-layout>
       </v-container>
       <KeystoreMissingDialog :keystorePath="keystorePath" ref="keystoreMissingDialog"></KeystoreMissingDialog>
     </v-sheet>
