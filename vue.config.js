@@ -1,6 +1,7 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
+      externals: ['usb', 'node-hid'],
       builderOptions: {
         appId: 'factom-asset-tokens.wallet',
         productName: 'FAT Wallet',

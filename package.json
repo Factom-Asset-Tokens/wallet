@@ -8,9 +8,9 @@
     "email": "contact@luciap.ca"
   },
   "scripts": {
-    "test": "mocha 'test/**/*.spec.js'",
     "serve": "vue-cli-service electron:serve",
     "build": "rm -rf dist_electron && vue-cli-service electron:build",
+    "test": "mocha 'test/**/*.spec.js'",
     "lint": "vue-cli-service lint",
     "format": "prettier --write \"src/**/*.{js,vue}\"",
     "generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
@@ -22,19 +22,23 @@
   "dependencies": {
     "@sentry/browser": "^5.4.0",
     "@sentry/electron": "^0.17.1",
-    "@sentry/integrations": "^5.4.1"
+    "@sentry/integrations": "^5.4.1",
+    "node-hid": "^0.7.9",
+    "usb": "^1.6.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
     "@fat-token/fat-js": "^1.0.1",
     "@fortawesome/fontawesome-free": "^5.9.0",
+    "@ledgerhq/hw-transport-node-hid": "^4.62.0",
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-eslint": "^3.8.0",
     "@vue/cli-service": "^3.8.4",
     "ajv": "^6.10.0",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.2",
+    "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "bluebird": "^3.5.5",
