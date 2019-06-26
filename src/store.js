@@ -13,6 +13,7 @@ import tokens from '@/store/modules/tokens';
 import address from '@/store/modules/address';
 import identity from '@/store/modules/identity';
 import keystore from '@/store/modules/keystore';
+import ledger from '@/store/modules/ledger';
 
 // Plugins
 import createPersistedState from '@/store/plugins/fat-wallet-persisted-state';
@@ -26,7 +27,8 @@ export default new Vuex.Store({
     tokens,
     address,
     identity,
-    keystore
+    keystore,
+    ledger
   },
   state: {
     snack: false,

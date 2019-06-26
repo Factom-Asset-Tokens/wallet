@@ -32,7 +32,7 @@
     "@factoid.org/hw-app-fct": "^0.6.1",
     "@fat-token/fat-js": "^1.0.1",
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.62.0",
+    "@ledgerhq/hw-transport-node-hid": "^4.63.2",
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-eslint": "^3.8.0",
     "@vue/cli-service": "^3.8.4",

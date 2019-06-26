@@ -23,7 +23,7 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="deviceOk" color="success">check_circle</v-icon>
+                  <v-icon v-if="deviceConnected" color="success">check_circle</v-icon>
                   <v-icon v-else color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
@@ -38,14 +38,28 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="factomAppOk" color="success">check_circle</v-icon>
+                  <v-icon v-if="factomAppLaunched" color="success">check_circle</v-icon>
+                  <v-icon v-else color="error">cancel</v-icon>
+                </v-list-tile-action>
+              </v-list-tile>
+
+              <v-divider></v-divider>
+
+              <!-- Deviced unlocked (can be queried) -->
+              <v-list-tile>
+                <v-list-tile-content>
+                  <v-list-tile-title>Deviced unlocked and ready</v-list-tile-title>
+                </v-list-tile-content>
+
+                <v-list-tile-action>
+                  <v-icon v-if="ready" color="success">check_circle</v-icon>
                   <v-icon v-else color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
             </v-list>
           </v-flex>
           <v-flex xs12 text-xs-center mt-5>
-            <v-btn @click="testLock" color="primary" :disabled="!ledgerModeOk">Start Ledger Mode</v-btn>
+            <v-btn color="primary" :disabled="!ready">Start Ledger Mode</v-btn>
           </v-flex>
         </v-layout>
       </v-container>
@@ -54,78 +68,46 @@
 </template>
 
 <script>
-import 'babel-polyfill';
-import Transport from '@ledgerhq/hw-transport-node-hid';
-import Fct from '@factoid.org/hw-app-fct';
+import { LEDGER_STATUS } from '@/store/modules/ledger';
+import { setInterval } from 'timers';
 
 export default {
   name: 'LedgerStart',
   data() {
     return {
-      transport: null,
-      factomAppConf: null,
-      fctApp: null
+      intervalId: null,
+      status: LEDGER_STATUS.DISCONNECTED
     };
   },
   computed: {
     productName() {
-      return this.transport ? this.transport.deviceModel.productName : '';
+      return this.$store.state.ledger.productName;
     },
-    deviceOk() {
-      return !!this.transport;
+    factomAppConf() {
+      return this.$store.state.ledger.factomAppConf;
     },
-    factomAppOk() {
-      return !!this.factomAppConf;
+    deviceConnected() {
+      return this.status >= LEDGER_STATUS.DEVICE_CONNECTED;
     },
-    ledgerModeOk() {
-      return this.deviceOk && this.factomAppOk;
+    factomAppLaunched() {
+      return this.status >= LEDGER_STATUS.FCT_APP_LAUNCHED;
+    },
+    ready() {
+      return this.status >= LEDGER_STATUS.UNLOCKED;
     }
   },
   methods: {
-    async handleConnection(descriptor) {
-      try {
-        console.log('Connecting...');
-
-        this.transport = await Transport.open(descriptor);
-        console.log('Connected');
-
-        try {
-          this.fctApp = new Fct(this.transport);
-          this.factomAppConf = await this.fctApp.getAppConfiguration();
-          console.log('Factom App OK');
-        } catch (e) {
-          this.factomAppConf = null;
-        }
-      } catch (e) {
-        this.transport = null;
-        this.factomAppConf = null;
-      }
-    },
-    async testLock() {
-      try {
-        const address = await this.fctApp.getAddress(`44'/131'/0'/0'/0'`);
-        console.log(address);
-      } catch (e) {
-        console.log('Error testLock:', e);
-      }
+    async getLedgerStatus() {
+      this.status = await this.$store.dispatch('ledger/getStatus');
     }
   },
   async created() {
-    Transport.listen({
-      next: async e => {
-        if (e.type === 'add') {
-          this.handleConnection(e.descriptor);
-        } else if (e.type === 'remove') {
-          this.transport = null;
-          this.factomAppConf = null;
-        } else {
-          throw e;
-        }
-      },
-      error: error => {
-        throw error;
-      }
-    });
+    await this.$store.dispatch('ledger/init');
+    this.getLedgerStatus();
+    this.intervalId = setInterval(() => this.getLedgerStatus(), 700);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   }
 };
 </script>
