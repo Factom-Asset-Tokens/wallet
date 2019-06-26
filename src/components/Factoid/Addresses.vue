@@ -29,10 +29,10 @@
         <v-spacer></v-spacer>
 
         <v-toolbar-items v-if="ledgerMode">
-          <v-btn flat @click="generateAddress()">Fetch another address</v-btn>
+          <v-btn flat @click="generateAddress()" :disabled="generatingAddress">Fetch another address</v-btn>
         </v-toolbar-items>
         <v-toolbar-items v-else>
-          <v-btn flat @click="generateAddress()">Generate</v-btn>
+          <v-btn flat @click="generateAddress()" :disabled="generatingAddress">Generate</v-btn>
           <v-btn flat @click.stop="$refs.addressImportDialog.show()">Import</v-btn>
         </v-toolbar-items>
 
@@ -133,6 +133,7 @@ export default {
     return {
       tab: null,
       loading: false,
+      generatingAddress: false,
       fctPagination: {
         descending: true,
         rowsPerPage: 10,
@@ -212,11 +213,14 @@ export default {
     async generateAddress() {
       try {
         const type = this.selectedAddressType;
+        this.generatingAddress = true;
         await this.$store.dispatch('address/generateAddress', type);
         const message = `New ${type} address generated`;
         this.$store.commit('snackSuccess', message);
       } catch (e) {
         this.$store.commit('snackError', e.message);
+      } finally {
+        this.generatingAddress = false;
       }
     },
     updateAddressName(address, name) {
