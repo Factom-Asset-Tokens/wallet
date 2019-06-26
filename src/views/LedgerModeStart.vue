@@ -81,13 +81,21 @@
 <script>
 import { LEDGER_STATUS } from '@/store/modules/ledger';
 
+function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+}
+
 export default {
   name: 'LedgerStart',
   data() {
     return {
       timeoutId: null,
       initializing: false,
-      status: LEDGER_STATUS.UNKNOWN
+      status: LEDGER_STATUS.UNKNOWN,
+      ledgerBeingAccessed: false,
+      poll: true
     };
   },
   computed: {
@@ -112,12 +120,19 @@ export default {
   },
   methods: {
     async getLedgerStatus() {
+      this.ledgerBeingAccessed = true;
       this.status = await this.$store.dispatch('ledger/getStatus');
+      this.ledgerBeingAccessed = false;
     },
     async initialize() {
       try {
         this.initializing = true;
         this.stopPollingLedgerStatus();
+        // If the Ledger is being accessed at the same time for status
+        // wait for a few ms to finish and avoid 'initLedgerMode' calls to collide
+        if (this.ledgerBeingAccessed) {
+          await sleep(300);
+        }
         await this.$store.dispatch('initLedgerMode');
         this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
         this.$store.commit('showAppSideBar');
@@ -130,11 +145,14 @@ export default {
     },
     stopPollingLedgerStatus() {
       clearTimeout(this.timeoutId);
+      this.poll = false;
       this.timeoutId = null;
     },
     async pollLedgerStatus() {
       await this.getLedgerStatus();
-      this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 800);
+      if (this.poll) {
+        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 800);
+      }
     }
   },
   async created() {
