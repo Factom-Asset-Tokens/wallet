@@ -48,7 +48,7 @@ export default {
       if (await this.validatePassword()) {
         try {
           this.loading = true;
-          await this.$store.dispatch('init', { password: this.password });
+          await this.$store.dispatch('initKeystoreMode', { password: this.password });
           this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
           this.$store.commit('showAppSideBar');
         } catch (e) {

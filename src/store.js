@@ -31,6 +31,7 @@ export default new Vuex.Store({
     ledger
   },
   state: {
+    ledgerMode: false,
     snack: false,
     snackMessage: '',
     snackColor: '',
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     daemonsSyncing: (state, getters) => state.fatd.status === 'ok' && !getters['fatd/synced']
   },
   mutations: {
+    setLedgerNode: state => (state.ledgerMode = true),
     showAppSideBar: state => (state.displayAppSideBar = true),
     updateSnack: (state, value) => (state.snack = value),
     snackError(state, message) {
@@ -60,7 +62,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async init({ dispatch }, { password, seed, backup }) {
+    async initKeystoreMode({ dispatch }, { password, seed, backup }) {
       if (backup) {
         await dispatch('restoreFromBackup', backup);
         await dispatch('keystore/init', { password, seed, backup: backup.keystore });
@@ -70,10 +72,20 @@ export default new Vuex.Store({
 
       try {
         await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus')]);
-        // Address and identity modules require keystore module to be initialized first
         await Promise.all([dispatch('address/init'), dispatch('identity/init'), dispatch('tokens/init')]);
       } catch (e) {
         // Do not fail the initialization (and log in) of the wallet because of errors
+        // in getting information from remote sources (factomd/fatd)
+        console.warn(e.message);
+      }
+    },
+    async initLedgerMode({ commit, dispatch }) {
+      commit('setLedgerNode');
+      try {
+        await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus')]);
+        await Promise.all([dispatch('address/init'), dispatch('tokens/init')]);
+      } catch (e) {
+        // Do not fail the initialization of the wallet because of errors
         // in getting information from remote sources (factomd/fatd)
         console.warn(e.message);
       }

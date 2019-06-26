@@ -33,7 +33,7 @@ export default {
       } catch (e) {
         const code = tryParseApiErrorCode(e);
         if (code === -32806) {
-          const payingEcAddress = await this.$store.dispatch('address/getPayingEcAddress');
+          const payingEcAddress = await this.$store.dispatch('address/getPayingEcSecretKey');
 
           if (!payingEcAddress) {
             throw new Error('No Entry Credit available to pay for the transaction.');

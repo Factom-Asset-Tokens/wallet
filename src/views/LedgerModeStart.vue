@@ -23,7 +23,8 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="deviceConnected" color="success">check_circle</v-icon>
+                  <v-icon v-if="unknownStatus" color="grey">help_outline</v-icon>
+                  <v-icon v-else-if="deviceConnected" color="success">check_circle</v-icon>
                   <v-icon v-else color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
@@ -38,7 +39,8 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="factomAppLaunched" color="success">check_circle</v-icon>
+                  <v-icon v-if="unknownStatus" color="grey">help_outline</v-icon>
+                  <v-icon v-else-if="factomAppLaunched" color="success">check_circle</v-icon>
                   <v-icon v-else color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
@@ -52,31 +54,40 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="ready" color="success">check_circle</v-icon>
+                  <v-icon v-if="unknownStatus" color="grey">help_outline</v-icon>
+                  <v-icon v-else-if="ready" color="success">check_circle</v-icon>
                   <v-icon v-else color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
             </v-list>
           </v-flex>
           <v-flex xs12 text-xs-center mt-5>
-            <v-btn color="primary" :disabled="!ready">Start Ledger Mode</v-btn>
+            <v-btn color="primary" @click="initialize" :disabled="!ready">Start Ledger Mode</v-btn>
           </v-flex>
         </v-layout>
       </v-container>
     </v-sheet>
+    <v-dialog v-model="initializing" persistent width="300">
+      <v-card color="primary">
+        <v-card-text>
+          Initializing the wallet with your Ledger...
+          <v-progress-linear indeterminate color="white"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { LEDGER_STATUS } from '@/store/modules/ledger';
-import { setInterval } from 'timers';
 
 export default {
   name: 'LedgerStart',
   data() {
     return {
-      intervalId: null,
-      status: LEDGER_STATUS.DISCONNECTED
+      timeoutId: null,
+      initializing: false,
+      status: LEDGER_STATUS.UNKNOWN
     };
   },
   computed: {
@@ -85,6 +96,9 @@ export default {
     },
     factomAppConf() {
       return this.$store.state.ledger.factomAppConf;
+    },
+    unknownStatus() {
+      return this.status === LEDGER_STATUS.UNKNOWN;
     },
     deviceConnected() {
       return this.status >= LEDGER_STATUS.DEVICE_CONNECTED;
@@ -99,15 +113,36 @@ export default {
   methods: {
     async getLedgerStatus() {
       this.status = await this.$store.dispatch('ledger/getStatus');
+    },
+    async initialize() {
+      try {
+        this.initializing = true;
+        this.stopPollingLedgerStatus();
+        await this.$store.dispatch('initLedgerMode');
+        this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
+        this.$store.commit('showAppSideBar');
+      } catch (e) {
+        this.pollLedgerStatus();
+        this.$store.commit('snackError', e.message);
+      } finally {
+        this.initializing = false;
+      }
+    },
+    stopPollingLedgerStatus() {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    },
+    async pollLedgerStatus() {
+      await this.getLedgerStatus();
+      this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 800);
     }
   },
   async created() {
     await this.$store.dispatch('ledger/init');
-    this.getLedgerStatus();
-    this.intervalId = setInterval(() => this.getLedgerStatus(), 700);
+    this.pollLedgerStatus();
   },
   beforeDestroy() {
-    clearInterval(this.intervalId);
+    this.stopPollingLedgerStatus();
   }
 };
 </script>

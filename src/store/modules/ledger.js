@@ -4,6 +4,7 @@ import Transport from '@ledgerhq/hw-transport-node-hid';
 import Fct from '@factoid.org/hw-app-fct';
 
 export const LEDGER_STATUS = {
+  UNKNOWN: -1,
   DISCONNECTED: 0,
   DEVICE_CONNECTED: 1,
   FCT_APP_LAUNCHED: 2,
@@ -79,6 +80,9 @@ export default {
         return false;
       }
     },
+
+    ////////////
+
     async fetchNextFctAddresses({ state, commit }, nb = 1) {
       try {
         const range = [];
@@ -88,9 +92,9 @@ export default {
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/131'/0'/0'/${n}'`));
         commit('setNextFctAddress', state.nextFctAddress + nb);
-        return addresses;
+        return addresses.map(a => a.address);
       } catch (e) {
-        return [];
+        throw new Error('Failed to fetch next FCT addresses from Ledger');
       }
     },
     async fetchNextEcAddresses({ state, commit }, nb = 1) {
@@ -102,9 +106,9 @@ export default {
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/132'/0'/0'/${n}'`));
         commit('setNextEcAddress', state.nextEcAddress + nb);
-        return addresses;
+        return addresses.map(a => a.address);
       } catch (e) {
-        return [];
+        throw new Error('Failed to fetch next EC addresses from Ledger');
       }
     }
   }

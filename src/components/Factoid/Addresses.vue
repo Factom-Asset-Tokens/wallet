@@ -28,7 +28,10 @@
 
         <v-spacer></v-spacer>
 
-        <v-toolbar-items>
+        <v-toolbar-items v-if="ledgerMode">
+          <v-btn flat @click="generateAddress()">Fetch another address</v-btn>
+        </v-toolbar-items>
+        <v-toolbar-items v-else>
           <v-btn flat @click="generateAddress()">Generate</v-btn>
           <v-btn flat @click.stop="$refs.addressImportDialog.show()">Import</v-btn>
         </v-toolbar-items>
@@ -151,6 +154,9 @@ export default {
     }
   },
   computed: {
+    ledgerMode() {
+      return this.$store.state.ledgerMode;
+    },
     totalFctBalanceText() {
       const fctSum = this.$store.getters['address/totalFctBalance'].div(FACTOSHI_MULTIPLIER);
       return {

@@ -67,7 +67,7 @@ export default {
         this.createLoading = true;
         this.createError = '';
         try {
-          const payingEcAddress = await this.$store.dispatch('address/getPayingEcAddress');
+          const payingEcAddress = await this.$store.dispatch('address/getPayingEcSecretKey');
 
           if (!payingEcAddress) {
             throw new Error('No Entry Credit available to pay for the transaction.');

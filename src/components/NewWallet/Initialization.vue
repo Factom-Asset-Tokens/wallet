@@ -21,7 +21,7 @@ export default {
     async active() {
       if (this.active) {
         setTimeout(async () => {
-          await this.$store.dispatch('init', {
+          await this.$store.dispatch('initKeystoreMode', {
             password: this.password,
             seed: this.seed,
             backup: this.backup

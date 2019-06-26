@@ -51,17 +51,24 @@ export default {
         dispatch('clearBalances');
       }
     },
-    clearAddresses({ commit }) {
-      commit('updateEcAddresses', []);
-      commit('updateFctAddresses', []);
-    },
     clearBalances({ commit }) {
       commit('updateFctBalances', {});
       commit('updateEcBalances', {});
     },
-    async fetchAddresses({ rootState, commit }) {
-      commit('updateFctAddresses', rootState.keystore.store.getAllFactoidAddresses());
-      commit('updateEcAddresses', rootState.keystore.store.getAllEntryCreditAddresses());
+    async fetchAddresses({ rootState, commit, dispatch }) {
+      let fctAddresses = [],
+        ecAddresses = [];
+
+      if (rootState.ledgerMode) {
+        fctAddresses = await dispatch('ledger/fetchNextFctAddresses', 5, { root: true });
+        ecAddresses = await dispatch('ledger/fetchNextEcAddresses', 5, { root: true });
+      } else {
+        fctAddresses = rootState.keystore.store.getAllFactoidAddresses();
+        ecAddresses = rootState.keystore.store.getAllEntryCreditAddresses();
+      }
+
+      commit('updateFctAddresses', fctAddresses);
+      commit('updateEcAddresses', ecAddresses);
     },
     async fetchBalances({ dispatch }) {
       await Promise.all([dispatch('fetchFctBalances'), dispatch('fetchEcBalances')]);
@@ -91,37 +98,65 @@ export default {
       commit('updateEcBalances', ecBalances);
     },
     async importAddress({ rootState, dispatch }, address) {
-      await rootState.keystore.store.import(address);
-      await dispatch('init');
+      if (!rootState.ledgerMode) {
+        await rootState.keystore.store.import(address);
+        await dispatch('init');
+      } else {
+        throw new Error('Cannot import address in Ledger mode');
+      }
     },
     async generateAddress({ dispatch }, type) {
       switch (type) {
         case 'factoid':
-          dispatch('generateFctAddress');
+          await dispatch('generateFctAddress');
           break;
         case 'ec':
-          dispatch('generateEcAddress');
+          await dispatch('generateEcAddress');
           break;
       }
     },
     async generateFctAddress({ rootState, commit, dispatch }) {
-      const { public: fctPub } = await rootState.keystore.store.generateFactoidAddress();
+      let fctPub;
+      if (rootState.ledgerMode) {
+        [fctPub] = await dispatch('ledger/fetchNextFctAddresses', 1, { root: true });
+      } else {
+        const fctAddress = await rootState.keystore.store.generateFactoidAddress();
+        fctPub = fctAddress.public;
+      }
+
       commit('addFctAddress', fctPub);
       await dispatch('fetchFctBalances');
     },
     async generateEcAddress({ rootState, commit, dispatch }) {
-      const { public: ecPub } = await rootState.keystore.store.generateEntryCreditAddress();
+      let ecPub;
+      if (rootState.ledgerMode) {
+        [ecPub] = await dispatch('ledger/fetchNextEcAddresses', 1, { root: true });
+      } else {
+        const ecAddress = await rootState.keystore.store.generateEntryCreditAddress();
+        ecPub = ecAddress.public;
+      }
+
       commit('addEcAddress', ecPub);
       await dispatch('fetchEcBalances');
     },
-    getPayingEcAddress({ state, rootState }) {
+    async getPayingEcSecretKey({ dispatch, rootState }) {
+      if (rootState.ledgerMode) {
+        throw new Error('Unexpected call to getPayingEcSecretKey in ledger mode');
+      }
+
+      const address = await dispatch('getPayingEcAddress');
+      if (address) {
+        return rootState.keystore.store.getSecretKey(address);
+      }
+    },
+    getPayingEcAddress({ state }) {
+      // If there is a preferred address and it is funded
       if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress].gt(0)) {
-        return rootState.keystore.store.getSecretKey(state.preferredEcAddress);
+        return state.preferredEcAddress;
       }
-      const found = state.ecAddresses.find(address => state.ecBalances[address].gt(0));
-      if (found) {
-        return rootState.keystore.store.getSecretKey(found);
-      }
+
+      // Otherwise take any address with some funds (return undefined if there is none)
+      return state.ecAddresses.find(address => state.ecBalances[address].gt(0));
     }
   }
 };
