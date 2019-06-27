@@ -61,6 +61,14 @@
               </v-list-tile>
             </v-list>
           </v-flex>
+          <v-flex v-if="!deviceConnected" xs12 md6 offset-md3 text-xs-center mt-4>
+            <v-alert :value="!deviceConnected" icon="info" color="primary" outline>
+              Trouble connecting your device?
+              <a @click="openLedgerHelpPage">
+                Open Ledger help instructions.
+              </a>
+            </v-alert>
+          </v-flex>
           <v-flex xs12 text-xs-center mt-5>
             <v-btn color="primary" @click="initialize" :disabled="!ready">Start Ledger Mode</v-btn>
           </v-flex>
@@ -79,6 +87,8 @@
 </template>
 
 <script>
+import { shell } from 'electron';
+
 import { LEDGER_STATUS } from '@/store/modules/ledger';
 
 function sleep(ms) {
@@ -128,6 +138,9 @@ export default {
     }
   },
   methods: {
+    openLedgerHelpPage() {
+      shell.openExternal('https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues');
+    },
     async getLedgerStatus() {
       this.ledgerBeingAccessed = true;
       const status = await this.$store.dispatch('ledger/getStatus');
@@ -175,4 +188,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+a {
+  color: #cccccc;
+}
+</style>
