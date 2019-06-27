@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 import Promise from 'bluebird';
-import Transport from '@ledgerhq/hw-transport-node-hid';
+import Transport from '@ledgerhq/hw-transport-node-hid-noevents';
 import Fct from '@factoid.org/hw-app-fct';
 
 export const LEDGER_STATUS = {
@@ -10,10 +10,6 @@ export const LEDGER_STATUS = {
   FCT_APP_LAUNCHED: 2,
   UNLOCKED: 3
 };
-
-// Transport cannot be stored as a state because it seems
-// to modify its own state internally (which vuex doesn't like)
-let transport = null;
 
 export default {
   namespaced: true,
@@ -31,34 +27,14 @@ export default {
     setNextEcAddress: (state, nextEcAddress) => (state.nextEcAddress = nextEcAddress)
   },
   actions: {
-    async init({ commit }) {
-      Transport.listen({
-        next: async e => {
-          if (e.type === 'add') {
-            try {
-              transport = await Transport.open(e.descriptor);
-            } catch (e) {
-              transport = null;
-            }
-          } else if (e.type === 'remove') {
-            transport = null;
-            commit('setProductName', null);
-            commit('setFctAppConfig', null);
-          } else {
-            throw e;
-          }
-        },
-        error: error => {
-          throw error;
-        }
-      });
-    },
     async getStatus({ commit, dispatch }) {
-      if (transport) {
+      try {
+        const transport = await Transport.create();
         commit('setProductName', transport.deviceModel.productName);
-        if (await dispatch('isFctAppOpen')) {
+        const fctApp = new Fct(transport);
+        if (await dispatch('isFctAppOpen', fctApp)) {
           try {
-            await new Fct(transport).getAddress(`44'/131'/0'/0'/0'`);
+            await fctApp.getAddress(`44'/131'/0'/0'/0'`);
             return LEDGER_STATUS.UNLOCKED;
           } catch (e) {
             return LEDGER_STATUS.FCT_APP_LAUNCHED;
@@ -66,13 +42,13 @@ export default {
         } else {
           return LEDGER_STATUS.DEVICE_CONNECTED;
         }
-      } else {
+      } catch (e) {
         return LEDGER_STATUS.DISCONNECTED;
       }
     },
-    async isFctAppOpen({ commit }) {
+    async isFctAppOpen({ commit }, fctApp) {
       try {
-        const factomAppConf = await new Fct(transport).getAppConfiguration();
+        const factomAppConf = await fctApp.getAppConfiguration();
         commit('setFctAppConfig', factomAppConf);
         return true;
       } catch (e) {
@@ -89,6 +65,8 @@ export default {
         for (let i = state.nextFctAddress; i < state.nextFctAddress + nb; ++i) {
           range.push(i);
         }
+
+        const transport = await Transport.create();
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/131'/0'/0'/${n}'`));
         commit('setNextFctAddress', state.nextFctAddress + nb);
@@ -103,6 +81,8 @@ export default {
         for (let i = state.nextEcAddress; i < state.nextEcAddress + nb; ++i) {
           range.push(i);
         }
+
+        const transport = await Transport.create();
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/132'/0'/0'/${n}'`));
         commit('setNextEcAddress', state.nextEcAddress + nb);

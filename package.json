@@ -23,8 +23,7 @@
     "@sentry/browser": "^5.4.0",
     "@sentry/electron": "^0.17.1",
     "@sentry/integrations": "^5.4.1",
-    "node-hid": "^0.7.9",
-    "usb": "^1.6.0"
+    "node-hid": "^0.7.9"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.0.0",
@@ -32,7 +31,7 @@
     "@factoid.org/hw-app-fct": "^0.6.1",
     "@fat-token/fat-js": "^1.0.1",
     "@fortawesome/fontawesome-free": "^5.9.0",
-    "@ledgerhq/hw-transport-node-hid": "^4.63.2",
+    "@ledgerhq/hw-transport-node-hid-noevents": "^4.63.2",
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-eslint": "^3.8.0",
     "@vue/cli-service": "^3.8.4",

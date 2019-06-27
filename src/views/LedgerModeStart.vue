@@ -93,12 +93,21 @@ export default {
     return {
       timeoutId: null,
       initializing: false,
-      status: LEDGER_STATUS.UNKNOWN,
+      previousStatus: LEDGER_STATUS.UNKNOWN,
+      latestStatus: LEDGER_STATUS.UNKNOWN,
       ledgerBeingAccessed: false,
       poll: true
     };
   },
   computed: {
+    status() {
+      // Small hack to smooth the UI and avoid flickering of the displayed state:
+      // when exiting the Factom app the ledger status go to "disconnected" for few ms before reconnecting
+      if (this.latestStatus === LEDGER_STATUS.DISCONNECTED && this.previousStatus > LEDGER_STATUS.DISCONNECTED) {
+        return LEDGER_STATUS.DEVICE_CONNECTED;
+      }
+      return this.latestStatus;
+    },
     productName() {
       return this.$store.state.ledger.productName;
     },
@@ -121,8 +130,10 @@ export default {
   methods: {
     async getLedgerStatus() {
       this.ledgerBeingAccessed = true;
-      this.status = await this.$store.dispatch('ledger/getStatus');
+      const status = await this.$store.dispatch('ledger/getStatus');
       this.ledgerBeingAccessed = false;
+      this.previousStatus = this.latestStatus;
+      this.latestStatus = status;
     },
     async initialize() {
       try {
@@ -151,12 +162,11 @@ export default {
     async pollLedgerStatus() {
       await this.getLedgerStatus();
       if (this.poll) {
-        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 800);
+        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 600);
       }
     }
   },
   async created() {
-    await this.$store.dispatch('ledger/init');
     this.pollLedgerStatus();
   },
   beforeDestroy() {
