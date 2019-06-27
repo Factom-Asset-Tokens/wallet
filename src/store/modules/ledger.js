@@ -35,11 +35,14 @@ export default {
         if (await dispatch('isFctAppOpen', fctApp)) {
           try {
             await fctApp.getAddress(`44'/131'/0'/0'/0'`);
+            transport.close();
             return LEDGER_STATUS.UNLOCKED;
           } catch (e) {
+            transport.close();
             return LEDGER_STATUS.FCT_APP_LAUNCHED;
           }
         } else {
+          transport.close();
           return LEDGER_STATUS.DEVICE_CONNECTED;
         }
       } catch (e) {
@@ -70,6 +73,7 @@ export default {
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/131'/0'/0'/${n}'`));
         commit('setNextFctAddress', state.nextFctAddress + nb);
+        transport.close();
         return addresses.map(a => a.address);
       } catch (e) {
         throw new Error('Failed to fetch next FCT addresses from Ledger');
@@ -86,6 +90,7 @@ export default {
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/132'/0'/0'/${n}'`));
         commit('setNextEcAddress', state.nextEcAddress + nb);
+        transport.close();
         return addresses.map(a => a.address);
       } catch (e) {
         throw new Error('Failed to fetch next EC addresses from Ledger');

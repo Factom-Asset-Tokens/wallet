@@ -190,6 +190,7 @@ export default {
 
 <style scoped>
 a {
+  text-decoration: underline;
   color: #cccccc;
 }
 </style>
