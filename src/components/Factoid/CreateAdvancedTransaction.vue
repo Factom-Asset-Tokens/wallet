@@ -195,9 +195,7 @@ export default {
         .reduce((acc, val) => acc.plus(val), ZERO);
     },
     showFeeIndicators() {
-      return (
-        this.totalInputs.gt(0) && this.totalOutputs.gt(0) && this.totalOutputs.lte(this.totalInputs) && this.validForm
-      );
+      return this.validTransaction && this.validForm && this.outputs.some(i => i.address && i.amount);
     },
     transactionFee() {
       return this.totalInputs.minus(this.totalOutputs);
@@ -206,7 +204,7 @@ export default {
       return this.requiredFee.lte(this.transactionFee);
     },
     validTransactionProperties() {
-      return [this.totalInputs, this.totalOutputs];
+      return [this.inputs, this.outputs];
     }
   },
   methods: {
@@ -264,21 +262,28 @@ export default {
     }
   },
   watch: {
-    async validTransactionProperties() {
-      if (this.totalOutputs.gt(this.totalInputs)) {
-        this.validTransaction = false;
-        this.transactionError = 'Sum of outputs is greater that sum of inputs.';
-        return;
-      }
+    validTransactionProperties: {
+      async handler() {
+        if (this.totalOutputs.gt(this.totalInputs)) {
+          this.validTransaction = false;
+          this.transactionError = 'Sum of outputs is greater that sum of inputs.';
+          return;
+        } else {
+          this.validTransaction = true;
+          this.transactionError = '';
+        }
 
-      const ecRate = await this.getEcRate();
-      const inputs = this.inputs.filter(i => i.address && i.amount);
-      const outputs = this.outputs.filter(i => i.address && i.amount);
+        const ecRate = await this.getEcRate();
+        const inputs = this.inputs.filter(i => i.address && i.amount);
+        const outputs = this.outputs.filter(i => i.address && i.amount);
 
-      this.requiredFee = new Big(computeRequiredFees(inputs, outputs, ecRate)).div(FACTOSHI_MULTIPLIER);
+        if (inputs.length === 0 || outputs.length === 0) {
+          return;
+        }
 
-      this.validTransaction = true;
-      this.transactionError = '';
+        this.requiredFee = new Big(computeRequiredFees(inputs, outputs, ecRate)).div(FACTOSHI_MULTIPLIER);
+      },
+      deep: true
     }
   }
 };
