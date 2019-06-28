@@ -27,10 +27,14 @@ export default {
     setNextEcAddress: (state, nextEcAddress) => (state.nextEcAddress = nextEcAddress)
   },
   actions: {
-    async getStatus({ commit, dispatch }) {
+    async getStatus({ state, commit, dispatch }) {
       try {
         const transport = await Transport.create();
-        commit('setProductName', transport.deviceModel.productName);
+        if (!state.productName) {
+          const info = transport.device.getDeviceInfo();
+          commit('setProductName', `${info.manufacturer} ${info.product}`);
+        }
+
         const fctApp = new Fct(transport);
         if (await dispatch('isFctAppOpen', fctApp)) {
           try {
