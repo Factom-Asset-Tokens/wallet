@@ -19,13 +19,13 @@
               <v-list-tile color="lightGrey">
                 <v-list-tile-content>
                   <v-list-tile-title>Ledger device connected</v-list-tile-title>
-                  <v-list-tile-sub-title>{{ productName }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-show="deviceConnected">{{ productName }}</v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="unknownStatus" color="grey">help_outline</v-icon>
-                  <v-icon v-else-if="deviceConnected" color="success">check_circle</v-icon>
-                  <v-icon v-else color="error">cancel</v-icon>
+                  <v-icon v-show="unknownStatus" color="grey">help_outline</v-icon>
+                  <v-icon v-show="deviceConnected" color="success">check_circle</v-icon>
+                  <v-icon v-show="!deviceConnected && !unknownStatus" color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
 
@@ -35,13 +35,13 @@
               <v-list-tile>
                 <v-list-tile-content>
                   <v-list-tile-title>Factom App launched on the device</v-list-tile-title>
-                  <v-list-tile-sub-title>{{ factomAppConf }}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title v-show="deviceConnected">{{ factomAppConf }}</v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="unknownStatus" color="grey">help_outline</v-icon>
-                  <v-icon v-else-if="factomAppLaunched" color="success">check_circle</v-icon>
-                  <v-icon v-else color="error">cancel</v-icon>
+                  <v-icon v-show="unknownStatus" color="grey">help_outline</v-icon>
+                  <v-icon v-show="factomAppLaunched" color="success">check_circle</v-icon>
+                  <v-icon v-show="!factomAppLaunched && !unknownStatus" color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
 
@@ -54,16 +54,16 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-icon v-if="unknownStatus" color="grey">help_outline</v-icon>
-                  <v-icon v-else-if="ready" color="success">check_circle</v-icon>
-                  <v-icon v-else color="error">cancel</v-icon>
+                  <v-icon v-show="unknownStatus" color="grey">help_outline</v-icon>
+                  <v-icon v-show="ready" color="success">check_circle</v-icon>
+                  <v-icon v-show="!ready && !unknownStatus" color="error">cancel</v-icon>
                 </v-list-tile-action>
               </v-list-tile>
             </v-list>
           </v-flex>
-          <v-flex v-if="!deviceConnected" xs12 md6 offset-md3 text-xs-center mt-4>
-            <v-alert :value="!deviceConnected" icon="info" color="primary" outline>
-              Trouble connecting your device?
+          <v-flex v-show="!deviceConnected" xs12 md6 offset-md3 mt-4>
+            <v-alert :value="!deviceConnected" icon="info" color="primary" outline
+              >Trouble connecting your device?
               <a @click="openLedgerHelpPage">
                 Open Ledger help instructions.
               </a>
@@ -175,7 +175,7 @@ export default {
     async pollLedgerStatus() {
       await this.getLedgerStatus();
       if (this.poll) {
-        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 600);
+        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 800);
       }
     }
   },

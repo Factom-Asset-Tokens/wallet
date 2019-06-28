@@ -46,6 +46,7 @@ export default {
           return LEDGER_STATUS.DEVICE_CONNECTED;
         }
       } catch (e) {
+        commit('setFctAppConfig', null);
         return LEDGER_STATUS.DISCONNECTED;
       }
     },
