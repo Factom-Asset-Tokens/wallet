@@ -76,7 +76,7 @@
             </v-flex>
 
             <!-- Fee indicators -->
-            <v-flex xs12 v-if="showFeeIndicators">
+            <v-flex xs12 v-show="showFeeIndicators">
               <FeeIndicators :transactionFee="transactionFee" :requiredFee="requiredFee"></FeeIndicators>
             </v-flex>
 
@@ -97,7 +97,7 @@
               </v-flex>
 
               <!-- Alerts transaction success/failure-->
-              <v-flex v-if="errorMessage" xs12>
+              <v-flex v-show="errorMessage" xs12>
                 <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
               </v-flex>
               <v-flex xs12>
