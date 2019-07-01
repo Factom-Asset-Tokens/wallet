@@ -2,7 +2,7 @@
   <div>
     <v-sheet class="elevation-1 vsheet-bottom-margin">
       <v-container id="transaction">
-        <v-form v-model="validForm" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
+        <v-form v-model="validForm" ref="form" @submit.prevent="sendTransactionForConfirmation" lazy-validation>
           <v-layout wrap>
             <!-- Inputs -->
             <v-flex xs12 pb-4>
@@ -90,15 +90,15 @@
 
               <!-- Send button -->
               <v-flex xs12 sm2 text-xs-right pt-3>
-                <v-btn color="primary" large :disabled="!validForm || !validFees" type="submit" :loading="sending"
-                  >Send
+                <v-btn color="primary" large :disabled="!validForm || !validFees" type="submit" :loading="sending">
+                  Send
                   <v-icon right>send</v-icon>
                 </v-btn>
               </v-flex>
 
               <!-- Alerts transaction success/failure-->
               <v-flex v-show="errorMessage" xs12>
-                <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+                <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
               </v-flex>
               <v-flex xs12>
                 <v-alert :value="transactionSentMessage" type="success" outline dismissible>
@@ -109,12 +109,12 @@
           </v-layout>
 
           <!-- Dialogs -->
-          <ConfirmTransactionDialog
-            ref="confirmTransactionDialog"
-            :outputs="outputs"
-            :txFee="transactionFee"
+          <ConfirmTransactionDialog ref="confirmTransactionDialog" @confirmed="send"></ConfirmTransactionDialog>
+          <LedgerConfirmTransactionDialog
+            ref="ledgerConfirmTransactionDialog"
             @confirmed="send"
-          ></ConfirmTransactionDialog>
+            @error="displayError"
+          ></LedgerConfirmTransactionDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -131,6 +131,7 @@ import { computeRequiredFees, buildTransaction } from './TransactionHelper';
 // Components
 import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
 import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
+import LedgerConfirmTransactionDialog from './CreateAdvancedTransaction/LedgerConfirmTransactionDialog';
 import FeeIndicators from './CreateAdvancedTransaction/FeeIndicators';
 import AddressBook from '@/components/AddressBook';
 
@@ -145,7 +146,13 @@ const ZERO = new Big(0);
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  components: { TransactionInput, FeeIndicators, ConfirmTransactionDialog, AddressBook },
+  components: {
+    TransactionInput,
+    FeeIndicators,
+    ConfirmTransactionDialog,
+    LedgerConfirmTransactionDialog,
+    AddressBook
+  },
   data() {
     return {
       validForm: true,
@@ -214,18 +221,32 @@ export default {
       const vuetify = this.$vuetify;
       this.$nextTick(() => vuetify.goTo('#transaction'));
     },
+    displayError(e) {
+      this.errorMessage = e.message;
+    },
     addInoutput: function(type) {
       this[type].push(newInoutput());
     },
     deleteInoutput(type, id) {
       this[type] = this[type].filter(v => v.id !== id);
     },
-    confirmTransaction() {
+    async sendTransactionForConfirmation() {
+      this.errorMessage = '';
       this.transactionSentMessage = '';
 
-      if (this.$refs.form.validate()) {
-        if (this.validTransaction && this.validFees) {
-          this.$refs.confirmTransactionDialog.show();
+      if (this.$refs.form.validate() && this.validTransaction && this.validFees) {
+        try {
+          if (this.$store.state.ledgerMode) {
+            // This build an unsigned transaction that will be signed in the confirmation dialog
+            const tx = await buildTransaction(this.inputs, this.outputs);
+            this.$refs.ledgerConfirmTransactionDialog.show(tx);
+          } else {
+            // This build a signed transaction that just needs to be visually acknowledged by the user
+            const tx = await buildTransaction(this.inputs, this.outputs, this.$store.state.keystore.store);
+            this.$refs.confirmTransactionDialog.show(tx);
+          }
+        } catch (e) {
+          this.errorMessage = e.message;
         }
       }
     },
@@ -238,15 +259,12 @@ export default {
       }
       return ecRate;
     },
-    async send() {
+    async send(signedTransaction) {
       try {
-        this.errorMessage = '';
         this.sending = true;
 
-        const tx = await buildTransaction(this.inputs, this.outputs, this.$store.state.keystore.store);
-
         const cli = this.$store.getters['factomd/cli'];
-        const txId = await cli.sendTransaction(tx, { timeout: 60 });
+        const txId = await cli.sendTransaction(signedTransaction, { timeout: 60 });
 
         this.$store.dispatch('address/fetchFctBalances');
         this.$store.dispatch('address/fetchEcBalances');

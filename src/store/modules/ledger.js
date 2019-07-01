@@ -67,6 +67,33 @@ export default {
 
     ////////////
 
+    async signTransactionForInput({ rootState }, { unsignedTX, inputIndex }) {
+      const addresses = [...rootState.address.fctAddresses];
+      const inputAddress = unsignedTX.inputs[inputIndex].address;
+      const index = addresses.findIndex(a => a === inputAddress);
+      const path = `44'/131'/0'/0'/${index}'`;
+
+      const txHex = unsignedTX.marshalBinarySig.toString('hex');
+
+      try {
+        const transport = await Transport.create();
+        const fctApp = new Fct(transport);
+        const signed = await fctApp.signTransaction(path, txHex);
+        transport.close();
+
+        return {
+          rcd: signed.r,
+          signature: signed.s
+        };
+      } catch (e) {
+        if (e.statusCode === 27013) {
+          throw new Error('Transaction declined by the user.');
+        } else {
+          throw new Error('Failed to sign transaction with Ledger.');
+        }
+      }
+    },
+
     async fetchNextFctAddresses({ state, commit }, nb = 1) {
       try {
         const range = [];
