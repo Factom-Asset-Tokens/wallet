@@ -9,8 +9,10 @@
           <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2
             >(+ {{ feeText }} FCT of fee burned)</v-flex
           >
+          <v-flex xs12 text-xs-center class="subheading" my-2>from</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ inputAddress }}</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
-          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ address }}</v-flex>
+          <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ outputAddress }}</v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
@@ -24,32 +26,58 @@
 
 <script>
 import Big from 'bignumber.js';
+const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  props: ['amount', 'address', 'feeText'],
   data() {
     return {
+      transaction: null,
       display: false
     };
   },
   computed: {
-    amountText() {
-      try {
-        return new Big(this.amount).toFormat();
-      } catch (e) {
-        return '??';
+    inputAddress() {
+      if (this.transaction) {
+        return this.transaction.inputs[0].address;
       }
+      return '??';
+    },
+    outputAddress() {
+      if (this.transaction) {
+        return this.transaction.factoidOutputs[0].address;
+      }
+      return '??';
+    },
+    feeText() {
+      if (this.transaction) {
+        return new Big(this.transaction.feesPaid).div(FACTOSHI_MULTIPLIER).toFormat();
+      }
+      return '??';
+    },
+    amountText() {
+      if (this.transaction) {
+        return new Big(this.transaction.totalFactoidOutputs).div(FACTOSHI_MULTIPLIER).toFormat();
+      }
+      return '??';
     }
   },
   methods: {
-    show() {
+    show(transaction) {
+      if (
+        transaction.inputs.length !== 1 ||
+        transaction.factoidOutputs.length !== 1 ||
+        transaction.entryCreditOutputs.length !== 0
+      ) {
+        throw new Error('Factoid siso transaction only expected in this dialog');
+      }
+      this.transaction = transaction;
       this.display = true;
     },
     close() {
       this.display = false;
     },
     confirm() {
-      this.$emit('confirmed');
+      this.$emit('confirmed', this.transaction);
       this.close();
     }
   }

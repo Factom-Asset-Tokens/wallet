@@ -2,6 +2,7 @@ import Big from 'bignumber.js';
 import { Transaction } from 'factom';
 
 const FACTOSHI_MULTIPLIER = new Big(100000000);
+const DUMMY_IO = { address: 'FA3syRxpYEvFFvoN4ZfNRJVQdumLpTK4CMmMUFmKGeqyTNgsg4uH', amount: new Big(0) };
 
 /**
  * Given a single output address and amount, build a transaction by finding the necessary inputs
@@ -90,15 +91,30 @@ function computeInputs(balances, totalBalance, amount, excludedAddress) {
 
   return inputs;
 }
+
+export function getFeeAdjustedSisoTransaction({ inputAddress, outputAddress, amount, ecRate, keystore }) {
+  const input = { address: inputAddress, amount };
+  const output = { address: outputAddress, amount };
+
+  const fee = computeRequiredFees([input], [output], ecRate).div(FACTOSHI_MULTIPLIER);
+  const inputWithFees = { address: inputAddress, amount: fee.plus(amount) };
+
+  return buildTransaction([inputWithFees], [output], keystore);
+}
+
+export function computeSisoRequiredFees(ecRate) {
+  return new Big(buildTransaction([DUMMY_IO], [DUMMY_IO]).computeRequiredFees(ecRate, { rcdType: 1 }));
+}
+
 /**
  * Compute minimum required fees for a given set of inputs and outputs
  */
 export function computeRequiredFees(inputs, outputs, ecRate) {
-  return buildTransaction(inputs, outputs).computeRequiredFees(ecRate, { rcdType: 1 });
+  return new Big(buildTransaction(inputs, outputs).computeRequiredFees(ecRate, { rcdType: 1 }));
 }
 
 /**
- * Build transaction from inputs and outputs denominated if Factoids
+ * Build transaction from inputs and outputs denominated if **Factoids**
  */
 export function buildTransaction(inputs, outputs, keystore) {
   const txBuilder = Transaction.builder();

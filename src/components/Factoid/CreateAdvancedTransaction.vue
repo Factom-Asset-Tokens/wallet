@@ -299,7 +299,7 @@ export default {
           return;
         }
 
-        this.requiredFee = new Big(computeRequiredFees(inputs, outputs, ecRate)).div(FACTOSHI_MULTIPLIER);
+        this.requiredFee = computeRequiredFees(inputs, outputs, ecRate).div(FACTOSHI_MULTIPLIER);
       },
       deep: true
     }

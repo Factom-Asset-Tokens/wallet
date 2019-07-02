@@ -8,6 +8,17 @@
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
             <v-flex xs12 md8 offset-md2>
+              <v-select
+                :items="inputAddresses"
+                label="Sending FCT address"
+                :rules="addressRules"
+                v-model="inputAddress"
+                single-line
+                box
+              ></v-select>
+            </v-flex>
+
+            <v-flex xs12 md8 offset-md2>
               <v-text-field
                 v-model="outputAddress"
                 label="Recipient FCT address"
@@ -27,28 +38,27 @@
                 min="0"
                 suffix="FCT"
                 :rules="amountRules"
-                :error-messages="amountErrors"
                 required
                 single-line
                 box
               ></v-text-field>
             </v-flex>
             <v-flex xs12 md2 text-xs-right>
-              <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
-                >Send
+              <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">
+                Send
                 <v-icon right>send</v-icon>
               </v-btn>
             </v-flex>
             <!-- Alerts -->
-            <v-flex v-if="valid && outputAddress && feeText" xs12 md8 offset-md2>
-              <v-alert :value="true" type="info" outline>
+            <v-flex xs12 md8 offset-md2>
+              <v-alert :value="true" icon="info" color="primary" outline>
                 An additional transaction fee of
                 <strong>{{ feeText }} FCT</strong>
                 will be deducted.
               </v-alert>
             </v-flex>
             <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+              <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
             </v-flex>
             <v-flex xs12>
               <v-alert :value="transactionSentMessage" type="success" outline dismissible>
@@ -59,9 +69,6 @@
           <!-- Dialogs -->
           <ConfirmBasicTransactionDialog
             ref="confirmTransactionDialog"
-            :address="outputAddress"
-            :amount="outputAmount"
-            :feeText="feeText"
             @confirmed="send"
           ></ConfirmBasicTransactionDialog>
         </v-form>
@@ -75,7 +82,7 @@
 import Big from 'bignumber.js';
 import NodeCache from 'node-cache';
 import { isValidPublicFctAddress } from 'factom';
-import { buildSingleOutputTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
+import { computeSisoRequiredFees, getFeeAdjustedSisoTransaction } from './TransactionHelper';
 import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
 import AddressBook from '@/components/AddressBook';
 
@@ -86,12 +93,12 @@ export default {
   components: { ConfirmBasicTransactionDialog, AddressBook },
   data() {
     return {
+      inputAddress: '',
       outputAddress: '',
       outputAmount: '',
-      feeText: '',
+      fee: ZERO,
       valid: true,
       errorMessage: '',
-      amountErrors: [],
       transactionSentMessage: '',
       sending: false,
       addressRules: [v => isValidPublicFctAddress(v) || 'Invalid public FCT address']
@@ -101,44 +108,55 @@ export default {
     this.cache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
   },
   computed: {
-    isAddressOk() {
-      return this.addressRules.every(f => typeof f(this.outputAddress) !== 'string');
-    },
-    isAmountsOk() {
-      return this.amountRules.every(f => typeof f(this.outputAmount) !== 'string');
-    },
-    factoshiOutputAmount() {
-      return FACTOSHI_MULTIPLIER.times(this.outputAmount);
+    feeText() {
+      return this.fee.div(FACTOSHI_MULTIPLIER).toFormat();
     },
     balances() {
       return this.$store.state.address.fctBalances;
     },
+    balancesWithNames() {
+      return this.$store.getters['address/fctAddressesWithNames'].map(o => ({
+        address: o.address,
+        balance: this.balances[o.address] || new Big(0),
+        name: o.name
+      }));
+    },
     totalBalance() {
       return this.$store.getters['address/totalFctBalance'];
+    },
+    inputAddresses() {
+      return this.balancesWithNames
+        .filter(b => b.balance.gt(ZERO))
+        .map(b => {
+          const text = `${b.name || b.address} (${b.balance.div(FACTOSHI_MULTIPLIER).toFormat()} FCT)`;
+
+          return {
+            value: b.address,
+            text
+          };
+        });
     },
     totalBalanceText() {
       return this.totalBalance.div(FACTOSHI_MULTIPLIER).toFormat();
     },
-    transactionProperties() {
-      return [this.outputAmount, this.outputAddress];
-    },
     amountRules() {
-      const totalBalance = this.totalBalance;
-      const selfAddressBalance = this.balances[this.outputAddress] || ZERO;
       return [
         amount => (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
-        function(amount) {
-          if (!amount) {
-            return 'Amount must be strictly positive';
+        amount => {
+          if (!this.inputAddress) {
+            return true;
           }
 
-          if (selfAddressBalance) {
-            return (
-              FACTOSHI_MULTIPLIER.times(amount).lte(totalBalance.minus(selfAddressBalance)) ||
-              'Not enough funds available'
-            );
+          const availableBalance = this.balances[this.inputAddress];
+          const factoshiAmount = FACTOSHI_MULTIPLIER.times(amount);
+          if (availableBalance.gte(factoshiAmount.plus(this.fee))) {
+            return true;
+          }
+
+          if (availableBalance.gte(factoshiAmount)) {
+            return 'Not enough funds to pay the transaction fee';
           } else {
-            return FACTOSHI_MULTIPLIER.times(amount).lte(totalBalance) || 'Not enough funds available';
+            return 'Not enough funds available';
           }
         }
       ];
@@ -151,9 +169,19 @@ export default {
       this.$nextTick(() => vuetify.goTo('#transaction'));
     },
     async confirmTransaction() {
+      this.errorMessage = '';
       this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
-        this.$refs.confirmTransactionDialog.show();
+        const ecRate = await this.getEcRate();
+
+        const tx = getFeeAdjustedSisoTransaction({
+          inputAddress: this.inputAddress,
+          outputAddress: this.outputAddress,
+          amount: this.outputAmount,
+          ecRate,
+          keystore: this.$store.state.keystore.store
+        });
+        this.$refs.confirmTransactionDialog.show(tx);
       }
     },
     async getEcRate() {
@@ -165,17 +193,10 @@ export default {
       }
       return ecRate;
     },
-    async send() {
+    async send(tx) {
       try {
-        this.errorMessage = '';
         this.sending = true;
-        const tx = await buildSingleOutputTransaction(
-          this.$store,
-          this.totalBalance,
-          this.balances,
-          this.outputAddress,
-          this.factoshiOutputAmount
-        );
+
         const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 60 });
         this.$store.dispatch('address/fetchFctBalances');
@@ -187,37 +208,15 @@ export default {
       } finally {
         this.sending = false;
       }
+      this.refreshFee();
+    },
+    async refreshFee() {
+      const ecRate = await this.getEcRate();
+      this.fee = computeSisoRequiredFees(ecRate);
     }
   },
-  watch: {
-    async transactionProperties() {
-      // Unfortunately the value of `valid` is not up to date when reaching this point
-      // so we have to re-compute the validity of inputs manually.
-      if (this.isAddressOk && this.isAmountsOk) {
-        const ecRate = await this.getEcRate();
-
-        try {
-          const tx = getFeeAdjustedTransaction(
-            this.totalBalance,
-            this.balances,
-            this.outputAddress,
-            this.factoshiOutputAmount,
-            ecRate
-          );
-
-          this.amountErrors = [];
-          this.feeText = new Big(tx.feesPaid).div(FACTOSHI_MULTIPLIER).toFormat();
-        } catch (e) {
-          // This corner case happens if outputAmount + fees > totalBalance
-          // which cannot be detected until we try to evaluate the fees
-          if (e.message.includes('Not enough funds')) {
-            this.amountErrors = ['Not enough FCT availables'];
-          } else {
-            throw e;
-          }
-        }
-      }
-    }
+  mounted() {
+    this.refreshFee();
   },
   beforeDestroy() {
     this.cache.close();
