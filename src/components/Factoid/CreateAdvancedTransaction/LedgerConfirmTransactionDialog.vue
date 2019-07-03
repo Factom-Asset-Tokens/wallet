@@ -100,14 +100,6 @@ export default {
     }
   },
   methods: {
-    signingError(e) {
-      this.$emit('error', e);
-      this.close();
-    },
-    emitSignedTransaction(tx) {
-      this.$emit('confirmed', tx);
-      this.close();
-    },
     show(transaction) {
       this.transaction = transaction;
       this.display = true;
@@ -117,8 +109,12 @@ export default {
       this.display = false;
       this.$refs.ledgerSigning.deactivate();
     },
-    confirm() {
-      this.$emit('confirmed', this.transaction);
+    signingError(e) {
+      this.$emit('error', e);
+      this.close();
+    },
+    emitSignedTransaction(tx) {
+      this.$emit('confirmed', tx);
       this.close();
     }
   }

@@ -75,6 +75,11 @@
             ref="confirmTransactionDialog"
             @confirmed="send"
           ></ConfirmBasicTransactionDialog>
+          <LedgerConfirmBasicTransactionDialog
+            ref="ledgerConfirmTransactionDialog"
+            @error="displayError"
+            @confirmed="send"
+          ></LedgerConfirmBasicTransactionDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -88,13 +93,14 @@ import NodeCache from 'node-cache';
 import { isValidPublicFctAddress } from 'factom';
 import { computeSisoRequiredFees, getFeeAdjustedSisoTransaction } from './TransactionHelper';
 import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
+import LedgerConfirmBasicTransactionDialog from './CreateBasicTransaction/LedgerConfirmBasicTransactionDialog';
 import AddressBook from '@/components/AddressBook';
 
 const ZERO = new Big(0);
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  components: { ConfirmBasicTransactionDialog, AddressBook },
+  components: { ConfirmBasicTransactionDialog, LedgerConfirmBasicTransactionDialog, AddressBook },
   data() {
     return {
       inputAddress: '',
@@ -170,6 +176,9 @@ export default {
     }
   },
   methods: {
+    displayError(e) {
+      this.errorMessage = e.message;
+    },
     pickAddressFromAddressBook(address) {
       this.outputAddress = address;
       const vuetify = this.$vuetify;
@@ -179,16 +188,23 @@ export default {
       this.errorMessage = '';
       this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
+        const ledgerMode = this.$store.state.ledgerMode;
         const ecRate = await this.getEcRate();
+        const keystore = ledgerMode ? null : this.$store.state.keystore.store;
 
         const tx = getFeeAdjustedSisoTransaction({
           inputAddress: this.inputAddress,
           outputAddress: this.outputAddress,
           amount: this.outputAmount,
           ecRate,
-          keystore: this.$store.state.keystore.store
+          keystore
         });
-        this.$refs.confirmTransactionDialog.show(tx);
+
+        if (ledgerMode) {
+          this.$refs.ledgerConfirmTransactionDialog.show(tx);
+        } else {
+          this.$refs.confirmTransactionDialog.show(tx);
+        }
       }
     },
     async getEcRate() {
