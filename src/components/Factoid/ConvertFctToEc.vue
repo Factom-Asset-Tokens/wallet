@@ -8,28 +8,42 @@
         </v-layout>
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
+            <!-- Input address selection -->
+            <v-flex xs12 md8 offset-md2>
+              <v-select
+                :items="inputAddresses"
+                label="Paying FCT address"
+                :rules="fctAddressRules"
+                v-model="inputAddress"
+                single-line
+                box
+              ></v-select>
+            </v-flex>
+
+            <!-- Output address -->
             <v-flex xs12 md8 offset-md2>
               <v-text-field
                 v-model="outputAddress"
                 label="Recipient EC address"
                 counter="52"
-                :rules="addressRules"
+                :rules="ecAddressRules"
                 clearable
                 required
                 single-line
                 box
               ></v-text-field>
             </v-flex>
+
+            <!-- Amount -->
             <v-flex xs12 md6 offset-md2>
               <v-text-field
                 placeholder="Amount"
                 type="number"
-                v-model="outputAmount"
+                v-model="ecAmount"
                 min="0"
                 step="1"
                 suffix="EC"
                 :rules="amountRules"
-                :error-messages="amountErrors"
                 required
                 single-line
                 box
@@ -42,15 +56,15 @@
               </v-btn>
             </v-flex>
             <!-- Alerts -->
-            <v-flex v-if="valid && outputAddress && fctCost" xs12 md8 offset-md2>
-              <v-alert :value="true" type="info" outline>
-                <strong>{{ fctCost }} FCT</strong>
+            <v-flex v-if="valid && outputAddress && ecAmount" xs12 md8 offset-md2>
+              <v-alert :value="true" icon="info" color="primary" outline>
+                <strong>{{ fctCostText }} FCT</strong>
                 will be converted to entry credits (rate: 1 FCT =
-                {{ rate.toLocaleString() }} EC).
+                {{ ecRateText }} EC).
               </v-alert>
             </v-flex>
             <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+              <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
             </v-flex>
             <v-flex xs12>
               <v-alert :value="transactionSentMessage" type="success" outline dismissible>
@@ -61,9 +75,6 @@
           <!-- Dialogs -->
           <ConfirmFctToEcConversionDialog
             ref="confirmTransactionDialog"
-            :address="outputAddress"
-            :ecAmount="outputAmount"
-            :fctCost="fctCost"
             @confirmed="send"
           ></ConfirmFctToEcConversionDialog>
         </v-form>
@@ -76,27 +87,30 @@
 <script>
 import Big from 'bignumber.js';
 import NodeCache from 'node-cache';
-import { isValidPublicEcAddress } from 'factom';
-import { buildSingleOutputTransaction, getFeeAdjustedTransaction } from './TransactionHelper';
+import { isValidPublicEcAddress, isValidPublicFctAddress } from 'factom';
+import { computeSisoRequiredFees, getFeeAdjustedSisoTransaction } from './TransactionHelper';
 import ConfirmFctToEcConversionDialog from './ConvertFctToEc/ConfirmFctToEcConversionDialog';
 import AddressBook from '@/components/AddressBook';
 
 const FACTOSHI_MULTIPLIER = new Big(100000000);
+const ZERO = new Big(0);
 
 export default {
   components: { ConfirmFctToEcConversionDialog, AddressBook },
   data() {
     return {
+      inputAddress: '',
       outputAddress: '',
-      outputAmount: '',
-      fctCost: '',
-      rate: 0,
+      ecAmount: '',
+      fctCostText: '',
+      ecRate: 0,
+      ecRateText: '',
       valid: true,
       errorMessage: '',
-      amountErrors: [],
       transactionSentMessage: '',
       sending: false,
-      addressRules: [v => isValidPublicEcAddress(v) || 'Invalid public EC address']
+      ecAddressRules: [v => isValidPublicEcAddress(v) || 'Invalid public EC address'],
+      fctAddressRules: [v => isValidPublicFctAddress(v) || 'Invalid public FCT address']
     };
   },
   created() {
@@ -105,6 +119,13 @@ export default {
   computed: {
     balances() {
       return this.$store.state.address.fctBalances;
+    },
+    balancesWithNames() {
+      return this.$store.getters['address/fctAddressesWithNames'].map(o => ({
+        address: o.address,
+        balance: this.balances[o.address] || ZERO,
+        name: o.name
+      }));
     },
     totalFctBalance() {
       return this.$store.getters['address/totalFctBalance'];
@@ -117,17 +138,27 @@ export default {
     },
     amountRules() {
       return [
-        amount => (new Big(amount).isInteger() && new Big(amount).gt(0)) || 'Amount must be strictly positive integer'
+        amount => (new Big(amount).isInteger() && new Big(amount).gt(0)) || 'Amount must be strictly positive integer',
+        amount => {
+          if (!this.inputAddress) {
+            return true;
+          }
+
+          const availableBalance = this.balances[this.inputAddress];
+          return new Big(amount).times(this.ecRate).lte(availableBalance) || 'Not enough funds available';
+        }
       ];
     },
-    transactionProperties() {
-      return [this.outputAmount, this.outputAddress];
-    },
-    isAddressOk() {
-      return this.addressRules.every(f => typeof f(this.outputAddress) !== 'string');
-    },
-    isAmountsOk() {
-      return this.amountRules.every(f => typeof f(this.outputAmount) !== 'string');
+    inputAddresses() {
+      return this.balancesWithNames
+        .filter(b => b.balance.gt(ZERO))
+        .map(b => {
+          const text = `${b.name || b.address} (${b.balance.div(FACTOSHI_MULTIPLIER).toFormat()} FCT)`;
+          return {
+            value: b.address,
+            text
+          };
+        });
     }
   },
   methods: {
@@ -138,8 +169,20 @@ export default {
     },
     async confirmTransaction() {
       this.transactionSentMessage = '';
+      this.errorMessage = '';
+
       if (this.$refs.form.validate()) {
-        this.$refs.confirmTransactionDialog.show();
+        const ecRate = await this.getEcRate();
+        const fctAmount = new Big(this.ecAmount).times(ecRate).div(FACTOSHI_MULTIPLIER);
+
+        const tx = getFeeAdjustedSisoTransaction({
+          inputAddress: this.inputAddress,
+          outputAddress: this.outputAddress,
+          amount: fctAmount,
+          ecRate,
+          keystore: this.$store.state.keystore.store
+        });
+        this.$refs.confirmTransactionDialog.show(tx, ecRate);
       }
     },
     async getEcRate() {
@@ -151,19 +194,13 @@ export default {
       }
       return ecRate;
     },
-    async send() {
+    async send(tx) {
       try {
-        this.errorMessage = '';
         this.sending = true;
-        const tx = await buildSingleOutputTransaction(
-          this.$store,
-          this.totalFctBalance,
-          this.balances,
-          this.outputAddress,
-          new Big(this.outputAmount)
-        );
+
         const cli = this.$store.getters['factomd/cli'];
         const txId = await cli.sendTransaction(tx, { timeout: 60 });
+
         this.$store.dispatch('address/fetchFctBalances');
         this.$store.dispatch('address/fetchEcBalances');
         this.transactionSentMessage = `Transaction sent. ID: ${txId}`;
@@ -176,41 +213,16 @@ export default {
     }
   },
   watch: {
-    async transactionProperties() {
-      // Unfortunately the value of `valid` is not up to date when reaching this point
-      // so we have to re-compute the validity of inputs manually.
-      if (this.isAddressOk && this.isAmountsOk) {
-        const ecRate = await this.getEcRate();
-        const factoshiCost = new Big(this.outputAmount).times(ecRate);
-
-        // Fast approximation that doesn't take into account fees
-        if (factoshiCost.lt(this.totalFctBalance)) {
-          try {
-            const tx = getFeeAdjustedTransaction(
-              this.totalFctBalance,
-              this.balances,
-              this.outputAddress,
-              factoshiCost,
-              ecRate
-            );
-
-            this.amountErrors = [];
-            this.fctCost = new Big(tx.totalInputs).div(FACTOSHI_MULTIPLIER).toFormat();
-            this.rate = FACTOSHI_MULTIPLIER.div(ecRate).toFormat();
-          } catch (e) {
-            // In case if the total with fees did exceed the funds available
-            if (e.message.includes('Not enough funds')) {
-              this.amountErrors = ['Not enough FCT availables'];
-            } else {
-              throw e;
-            }
-          }
-        } else {
-          this.amountErrors = ['Not enough FCT availables'];
-        }
-      } else {
-        this.amountErrors = [];
-      }
+    async ecAmount() {
+      const ecRate = await this.getEcRate();
+      this.ecRate = ecRate;
+      this.ecRateText = FACTOSHI_MULTIPLIER.div(ecRate).toFormat();
+      const fee = computeSisoRequiredFees(ecRate);
+      this.fctCostText = new Big(this.ecAmount)
+        .times(ecRate)
+        .plus(fee)
+        .div(FACTOSHI_MULTIPLIER)
+        .toFormat();
     }
   },
   beforeDestroy() {

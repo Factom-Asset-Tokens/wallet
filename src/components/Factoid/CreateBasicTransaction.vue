@@ -7,10 +7,11 @@
         </v-layout>
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
+            <!-- Input address selection -->
             <v-flex xs12 md8 offset-md2>
               <v-select
                 :items="inputAddresses"
-                label="Sending FCT address"
+                label="Paying FCT address"
                 :rules="addressRules"
                 v-model="inputAddress"
                 single-line
@@ -18,6 +19,7 @@
               ></v-select>
             </v-flex>
 
+            <!-- Output address -->
             <v-flex xs12 md8 offset-md2>
               <v-text-field
                 v-model="outputAddress"
@@ -30,6 +32,8 @@
                 box
               ></v-text-field>
             </v-flex>
+
+            <!-- Amount -->
             <v-flex xs12 md6 offset-md2>
               <v-text-field
                 placeholder="Amount"
@@ -50,7 +54,7 @@
               </v-btn>
             </v-flex>
             <!-- Alerts -->
-            <v-flex xs12 md8 offset-md2>
+            <v-flex v-show="showFee" xs12 md8 offset-md2>
               <v-alert :value="true" icon="info" color="primary" outline>
                 An additional transaction fee of
                 <strong>{{ feeText }} FCT</strong>
@@ -106,8 +110,12 @@ export default {
   },
   created() {
     this.cache = new NodeCache({ stdTTL: 60, checkperiod: 10 });
+    this.refreshFee();
   },
   computed: {
+    showFee() {
+      return this.inputAddress && this.outputAddress && this.outputAmount;
+    },
     feeText() {
       return this.fee.div(FACTOSHI_MULTIPLIER).toFormat();
     },
@@ -129,7 +137,6 @@ export default {
         .filter(b => b.balance.gt(ZERO))
         .map(b => {
           const text = `${b.name || b.address} (${b.balance.div(FACTOSHI_MULTIPLIER).toFormat()} FCT)`;
-
           return {
             value: b.address,
             text
@@ -214,9 +221,6 @@ export default {
       const ecRate = await this.getEcRate();
       this.fee = computeSisoRequiredFees(ecRate);
     }
-  },
-  mounted() {
-    this.refreshFee();
   },
   beforeDestroy() {
     this.cache.close();
