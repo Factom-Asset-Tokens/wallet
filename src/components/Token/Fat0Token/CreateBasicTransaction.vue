@@ -22,9 +22,23 @@
         </v-layout>
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap align-baseline>
+            <!-- Input address selection -->
+            <v-flex xs12 md8 offset-md2>
+              <v-select
+                v-model="inputAddress"
+                :items="inputAddresses"
+                label="Paying address"
+                :rules="addressRules"
+                single-line
+                box
+                required
+              ></v-select>
+            </v-flex>
+
+            <!-- Output address -->
             <v-flex xs12 md8 offset-md2>
               <v-text-field
-                v-model="address"
+                v-model="outputAddress"
                 label="Recipient address"
                 counter="52"
                 :rules="addressRules"
@@ -35,6 +49,8 @@
                 required
               ></v-text-field>
             </v-flex>
+
+            <!-- Amount -->
             <v-flex xs12 md6 offset-md2>
               <v-text-field
                 placeholder="Amount"
@@ -71,7 +87,7 @@
           <ConfirmTransactionDialog
             ref="confirmTransactionDialog"
             :amount="amount"
-            :address="address"
+            :address="outputAddress"
             :symbol="symbol"
             :metadata="metadata"
             @confirmed="send"
@@ -93,7 +109,6 @@
 
 <script>
 import Big from 'bignumber.js';
-import Promise from 'bluebird';
 import { isValidPublicFctAddress } from 'factom';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
 import TransactionBuilder from '@fat-token/fat-js/0/TransactionBuilder';
@@ -111,7 +126,8 @@ export default {
   props: ['balances', 'totalBalance', 'symbol', 'tokenCli'],
   data() {
     return {
-      address: '',
+      inputAddress: '',
+      outputAddress: '',
       amount: '',
       metadata: '',
       burn: false,
@@ -127,28 +143,34 @@ export default {
     metadataIconColor() {
       return this.metadata ? 'secondary' : 'grey';
     },
-    selfAddress() {
-      return this.balances.find(b => b.address === this.address);
+    inputAddresses() {
+      return this.balances
+        .filter(b => b.balance.gt(ZERO))
+        .map(b => {
+          const text = `${b.name || b.address} (${b.balance.toFormat()}${this.symbol ? ' ' + this.symbol : ''})`;
+          return {
+            value: b.address,
+            text
+          };
+        });
     },
     amountRules() {
-      const totalBalance = this.totalBalance;
-      const selfAddress = this.selfAddress;
       return [
         amount => (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
-        function(val) {
-          const amount = new Big(val);
-          if (selfAddress) {
-            return amount.lte(totalBalance.minus(selfAddress.balance)) || 'Not enough funds available';
-          } else {
-            return amount.lte(totalBalance) || 'Not enough funds available';
+        amount => {
+          if (!this.inputAddress) {
+            return true;
           }
+
+          const availableBalance = this.balances.find(b => b.address === this.inputAddress).balance;
+          return availableBalance.gte(amount) || 'Not enough funds available';
         }
       ];
     }
   },
   methods: {
     pickAddressFromAddressBook(address) {
-      this.address = address;
+      this.outputAddress = address;
       const vuetify = this.$vuetify;
       this.$nextTick(() => vuetify.goTo('#transaction'));
     },
@@ -168,43 +190,23 @@ export default {
     toggleBurnAddress() {
       this.burn = !this.burn;
       if (this.burn) {
-        this.address = '🔥🔥 Burn Address 🔥🔥';
+        this.outputAddress = '🔥🔥 Burn Address 🔥🔥';
       } else {
-        this.address = '';
+        this.outputAddress = '';
       }
     },
     async buildTransaction() {
-      const outputAmount = new Big(this.amount);
-      const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.address;
-      // Greedy algorithm to select inputs
-      const inputs = [];
-      let amountToCover = outputAmount;
-      for (const b of this.balances) {
-        // Output address must be excluded from the choices of inputs
-        // otherwise it would be an invalid transaction as per fat0 standard
-        if (b.address !== outputAddress && b.balance.gt(0)) {
-          if (amountToCover.minus(b.balance).gt(0)) {
-            inputs.push({ address: b.address, amount: b.balance });
-            amountToCover = amountToCover.minus(b.balance);
-          } else {
-            inputs.push({ address: b.address, amount: amountToCover });
-            break;
-          }
-        }
-      }
+      const amount = new Big(this.amount);
+      const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.outputAddress;
 
-      // Get inputs secret keys
+      // Get input secret key
       const keystore = this.$store.state.keystore.store;
-      const inputsSecrets = await Promise.map(inputs, async function(input) {
-        const secret = keystore.getSecretKey(input.address);
-        return { secret, amount: input.amount };
-      });
+      const inputSecret = keystore.getSecretKey(this.inputAddress);
 
       // Build transaction object
-      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId()).output(outputAddress, outputAmount);
-      for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.amount);
-      }
+      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId())
+        .input(inputSecret, amount)
+        .output(outputAddress, amount);
 
       if (this.metadata) {
         txBuilder.metadata(this.metadata);
