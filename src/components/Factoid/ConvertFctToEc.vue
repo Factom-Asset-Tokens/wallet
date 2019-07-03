@@ -77,6 +77,11 @@
             ref="confirmTransactionDialog"
             @confirmed="send"
           ></ConfirmFctToEcConversionDialog>
+          <LedgerConfirmFctToEcConversionDialog
+            ref="ledgerConfirmTransactionDialog"
+            @error="displayError"
+            @confirmed="send"
+          ></LedgerConfirmFctToEcConversionDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -90,13 +95,14 @@ import NodeCache from 'node-cache';
 import { isValidPublicEcAddress, isValidPublicFctAddress } from 'factom';
 import { computeSisoRequiredFees, getFeeAdjustedSisoTransaction } from './TransactionHelper';
 import ConfirmFctToEcConversionDialog from './ConvertFctToEc/ConfirmFctToEcConversionDialog';
+import LedgerConfirmFctToEcConversionDialog from './ConvertFctToEc/LedgerConfirmFctToEcConversionDialog';
 import AddressBook from '@/components/AddressBook';
 
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 const ZERO = new Big(0);
 
 export default {
-  components: { ConfirmFctToEcConversionDialog, AddressBook },
+  components: { ConfirmFctToEcConversionDialog, LedgerConfirmFctToEcConversionDialog, AddressBook },
   data() {
     return {
       inputAddress: '',
@@ -162,6 +168,9 @@ export default {
     }
   },
   methods: {
+    displayError(e) {
+      this.errorMessage = e.message;
+    },
     pickAddressFromAddressBook(address) {
       this.outputAddress = address;
       const vuetify = this.$vuetify;
@@ -172,17 +181,25 @@ export default {
       this.errorMessage = '';
 
       if (this.$refs.form.validate()) {
+        const ledgerMode = this.$store.state.ledgerMode;
+
         const ecRate = await this.getEcRate();
         const fctAmount = new Big(this.ecAmount).times(ecRate).div(FACTOSHI_MULTIPLIER);
+        const keystore = ledgerMode ? null : this.$store.state.keystore.store;
 
         const tx = getFeeAdjustedSisoTransaction({
           inputAddress: this.inputAddress,
           outputAddress: this.outputAddress,
           amount: fctAmount,
           ecRate,
-          keystore: this.$store.state.keystore.store
+          keystore
         });
-        this.$refs.confirmTransactionDialog.show(tx, ecRate);
+
+        if (ledgerMode) {
+          this.$refs.ledgerConfirmTransactionDialog.show(tx, ecRate);
+        } else {
+          this.$refs.confirmTransactionDialog.show(tx, ecRate);
+        }
       }
     },
     async getEcRate() {
