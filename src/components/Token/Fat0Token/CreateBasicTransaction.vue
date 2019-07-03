@@ -41,7 +41,7 @@
                 v-model="outputAddress"
                 label="Recipient address"
                 counter="52"
-                :rules="addressRules"
+                :rules="outputAddressRules"
                 :disabled="burn"
                 clearable
                 single-line
@@ -66,8 +66,8 @@
             </v-flex>
 
             <v-flex xs12 md2 text-xs-right>
-              <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending"
-                >Send
+              <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">
+                Send
                 <v-icon right>send</v-icon>
               </v-btn>
             </v-flex>
@@ -137,6 +137,20 @@ export default {
     };
   },
   computed: {
+    outputAddressRules() {
+      return [
+        v => this.burn || isValidPublicFctAddress(v) || 'Invalid public FCT address',
+        v => {
+          if (this.burn || !this.inputAddress) {
+            return true;
+          }
+          if (this.inputAddress === v) {
+            return 'Input and output addresses cannot be the same';
+          }
+          return true;
+        }
+      ];
+    },
     burnIconColor() {
       return this.burn ? 'secondary' : 'grey';
     },
