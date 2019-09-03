@@ -8,7 +8,7 @@
         <v-layout wrap mb-3>
           <v-flex xs12 my-5>
             <blockquote class="blockquote">
-              Choose a unique and secure password. It must be at least 9 character long, any character is allowed.
+              Choose a unique and secure password. It must be at least 8 character long, any character is allowed.
               <span class="secondary--text font-weight-medium">DO NOT FORGET</span> your password, you will need it to
               log into your wallet.
             </blockquote>
@@ -59,7 +59,7 @@ export default {
       displayPassword: false,
       passwordConfirm: '',
       displayPasswordConfirm: false,
-      passwordRules: [v => v.length >= 9 || 'Must be at least 9 character long'],
+      passwordRules: [v => v.length >= 8 || 'Must be at least 8 character long'],
       passwordConfirmRules: [v => v === this.password || 'Does not match password']
     };
   },

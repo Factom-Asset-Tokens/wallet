@@ -61,7 +61,7 @@ export default {
       displayCurrentPassword: false,
       currentPasswordErrors: [],
       newPassword: '',
-      newPasswordRules: [v => (v && v.length >= 9) || 'Must be at least 9 character long'],
+      newPasswordRules: [v => (v && v.length >= 8) || 'Must be at least 8 character long'],
       displayNewPassword: false,
       newPasswordConfirm: '',
       displayNewPasswordConfirm: false
