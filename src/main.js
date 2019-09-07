@@ -35,9 +35,11 @@ new Vue({
   router,
   store,
   mounted() {
-    // Prevent blank screen in Electron builds
-    if (this.$route.name !== 'Start') {
+    if (this.$store.state.licenseAccepted) {
+      // Prevent blank screen in Electron builds
       this.$router.replace({ name: 'Start' });
+    } else {
+      this.$router.replace({ name: 'AcceptLicense' });
     }
   },
   render: h => h(App)

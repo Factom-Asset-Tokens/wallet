@@ -6,6 +6,7 @@ const appStore = new Store({ name: 'user-config.v1' });
 export default createPersistedState({
   storage: appStore,
   whitelist: [
+    'acceptLicense',
     'address/updateAddressNames',
     'address/setPreferredEcAddress',
     'address/addAddressToBook',
@@ -20,6 +21,7 @@ export default createPersistedState({
     'keystore/updateFilename'
   ],
   statePick: state => ({
+    licenseAccepted: state.licenseAccepted,
     address: {
       names: state.address.names,
       bookAddresses: state.address.bookAddresses,

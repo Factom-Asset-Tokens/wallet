@@ -31,6 +31,7 @@ export default new Vuex.Store({
     ledger
   },
   state: {
+    licenseAccepted: false,
     ledgerMode: false,
     snack: false,
     snackMessage: '',
@@ -42,6 +43,7 @@ export default new Vuex.Store({
     daemonsSyncing: (state, getters) => state.fatd.status === 'ok' && !getters['fatd/synced']
   },
   mutations: {
+    acceptLicense: state => (state.licenseAccepted = true),
     setLedgerNode: state => (state.ledgerMode = true),
     showAppSideBar: state => (state.displayAppSideBar = true),
     updateSnack: (state, value) => (state.snack = value),

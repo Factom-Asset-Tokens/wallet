@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+
 import TrackToken from './views/TrackToken.vue';
+import AcceptLicense from './views/AcceptLicense.vue';
 import Settings from './views/Settings.vue';
 import Token from './views/Token.vue';
 import IssueToken from './views/IssueToken.vue';
@@ -22,6 +24,11 @@ export default new Router({
       path: '/',
       name: 'Start',
       component: Start
+    },
+    {
+      path: '/accept-license',
+      name: 'AcceptLicense',
+      component: AcceptLicense
     },
     {
       path: '/new-wallet',
