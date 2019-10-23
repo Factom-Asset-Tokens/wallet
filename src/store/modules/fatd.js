@@ -20,6 +20,7 @@ export default {
         const endpoint = state.endpoint.includes('://') ? state.endpoint : `http://${state.endpoint}`;
         const url = new URL(endpoint);
         return {
+          protocol: url.protocol.slice(0, -1),
           hostname: url.hostname,
           port: getIntegerPort(url)
         };
@@ -32,6 +33,7 @@ export default {
         ? new CLIBuilder()
             .host(getters.config.hostname)
             .port(getters.config.port)
+            .protocol(getters.config.protocol)
             .build()
         : undefined
   },
