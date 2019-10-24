@@ -85,13 +85,6 @@
                   </v-btn>
                 </v-flex>
 
-                <!-- Extra validation rules errors (not dismissable) -->
-                <v-flex xs12>
-                  <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
-                    {{ transactionError }}
-                  </v-alert>
-                </v-flex>
-
                 <!-- Alerts transaction success/failure-->
                 <v-flex v-if="errorMessage" xs12>
                   <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
@@ -111,19 +104,8 @@
       <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
       <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
       <NfTokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></NfTokenDetailsDialog>
-      <ConfirmTransactionDialog
-        ref="confirmTransactionDialog"
-        :selectedTokens="selectedTokens"
-        :address="address"
-        :metadata="metadata"
-        @confirmed="send"
-      ></ConfirmTransactionDialog>
-      <ConfirmBurnDialog
-        ref="confirmBurnDialog"
-        :selectedTokens="selectedTokens"
-        :metadata="metadata"
-        @confirmed="send"
-      ></ConfirmBurnDialog>
+      <ConfirmTransactionDialog ref="confirmTransactionDialog" @confirmed="send"></ConfirmTransactionDialog>
+      <ConfirmBurnDialog ref="confirmBurnDialog" @confirmed="send"></ConfirmBurnDialog>
     </v-layout>
     <AddressBook type="fct" @address="pickAddressFromAddressBook"></AddressBook>
   </div>
@@ -164,8 +146,6 @@ export default {
       metadata: '',
       valid: true,
       errorMessage: '',
-      sendClicked: false,
-      validTransaction: true,
       addressRules: [v => this.burn || isValidPublicFctAddress(v) || 'Invalid public FCT address']
     };
   },
@@ -211,17 +191,18 @@ export default {
     showTokenDetails(id) {
       this.$refs.detailsDialog.show(id);
     },
-    confirmTransaction() {
+    async confirmTransaction() {
       if (this.$refs.form.validate()) {
-        this.sendClicked = true;
-        // Additional validation rules check
-        if (this.validTransaction) {
-          this.sendClicked = false;
+        try {
+          const tx = await this.buildTransaction();
+
           if (this.burn) {
-            this.$refs.confirmBurnDialog.show();
+            this.$refs.confirmBurnDialog.show(tx);
           } else {
-            this.$refs.confirmTransactionDialog.show();
+            this.$refs.confirmTransactionDialog.show(tx);
           }
+        } catch (e) {
+          this.errorMessage = e.message;
         }
       }
     },
@@ -255,8 +236,8 @@ export default {
 
       return txBuilder.build();
     },
-    async send() {
-      await this.sendTransaction();
+    async send(tx) {
+      await this.sendTransaction(tx);
       if (this.transactionSentMessage) {
         this.burn = false;
         this.selectedTokens = [];

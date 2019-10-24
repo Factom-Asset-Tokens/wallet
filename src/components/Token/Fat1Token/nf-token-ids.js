@@ -3,7 +3,9 @@ export function standardizeId(id) {
 }
 
 export function displayIds(value) {
-  if (value.min === value.max) {
+  if (typeof value == 'number') {
+    return value.toLocaleString();
+  } else if (value.min === value.max) {
     return value.min.toLocaleString();
   } else {
     return `${value.min.toLocaleString()} to ${value.max.toLocaleString()}`;

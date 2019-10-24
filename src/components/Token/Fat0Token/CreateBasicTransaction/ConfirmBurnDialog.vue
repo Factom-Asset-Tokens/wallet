@@ -21,32 +21,50 @@
 </template>
 
 <script>
-import Big from 'bignumber.js';
+import Transaction from '@fat-token/fat-js/0/Transaction';
+
 export default {
-  props: ['amount', 'symbol', 'metadata'],
+  props: ['symbol'],
   data() {
     return {
+      transaction: null,
       display: false
     };
   },
   computed: {
     amountText() {
-      try {
-        return new Big(this.amount).toFormat();
-      } catch (e) {
-        return '??';
+      if (this.transaction) {
+        for (let [, amount] of Object.entries(this.transaction.getOutputs())) {
+          return amount.toFormat();
+        }
       }
+      return '??';
+    },
+    metadata() {
+      if (this.transaction) {
+        return this.transaction.getMetadata();
+      }
+      return null;
     }
   },
   methods: {
-    show() {
+    show(transaction) {
+      if (
+        !(transaction instanceof Transaction) ||
+        Object.keys(transaction.getInputs()).length !== 1 ||
+        Object.keys(transaction.getOutputs()).length !== 1
+      ) {
+        throw new Error('Signed FAT-0 burn transaction only expected in this dialog');
+      }
+      transaction.validateSignatures();
+      this.transaction = transaction;
       this.display = true;
     },
     close() {
       this.display = false;
     },
     confirm() {
-      this.$emit('confirmed');
+      this.$emit('confirmed', this.transaction);
       this.close();
     }
   }

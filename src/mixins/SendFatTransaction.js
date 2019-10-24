@@ -9,13 +9,12 @@ export default {
     };
   },
   methods: {
-    async sendTransaction() {
+    async sendTransaction(tx) {
       try {
         this.sending = true;
         this.transactionSentMessage = '';
         this.errorMessage = '';
 
-        const tx = await this.buildTransaction();
         const txId = await this.broadcastTransaction(tx);
 
         this.transactionSentMessage = `Transaction successfully sent. Transaction ID: ${txId}`;

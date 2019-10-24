@@ -86,19 +86,10 @@
           <!-- Dialogs -->
           <ConfirmTransactionDialog
             ref="confirmTransactionDialog"
-            :amount="amount"
-            :address="outputAddress"
             :symbol="symbol"
-            :metadata="metadata"
             @confirmed="send"
           ></ConfirmTransactionDialog>
-          <ConfirmBurnDialog
-            ref="confirmBurnDialog"
-            :amount="amount"
-            :symbol="symbol"
-            :metadata="metadata"
-            @confirmed="send"
-          ></ConfirmBurnDialog>
+          <ConfirmBurnDialog ref="confirmBurnDialog" :symbol="symbol" @confirmed="send"></ConfirmBurnDialog>
           <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
         </v-form>
       </v-container>
@@ -180,10 +171,16 @@ export default {
     async confirmTransaction() {
       this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
-        if (this.burn) {
-          this.$refs.confirmBurnDialog.show();
-        } else {
-          this.$refs.confirmTransactionDialog.show();
+        try {
+          const tx = await this.buildTransaction();
+
+          if (this.burn) {
+            this.$refs.confirmBurnDialog.show(tx);
+          } else {
+            this.$refs.confirmTransactionDialog.show(tx);
+          }
+        } catch (e) {
+          this.errorMessage = e.message;
         }
       }
     },
@@ -217,8 +214,8 @@ export default {
 
       return txBuilder.build();
     },
-    async send() {
-      await this.sendTransaction();
+    async send(tx) {
+      await this.sendTransaction(tx);
       if (this.transactionSentMessage) {
         this.burn = false;
         this.metadata = '';

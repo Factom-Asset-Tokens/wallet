@@ -30,21 +30,47 @@
 </template>
 
 <script>
+import Transaction from '@fat-token/fat-js/1/Transaction';
 import { displayIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
-  props: ['selectedTokens', 'metadata'],
   data() {
     return {
-      display: false
+      display: false,
+      transaction: null
     };
   },
+  computed: {
+    selectedTokens() {
+      if (this.transaction) {
+        for (let [, tokens] of Object.entries(this.transaction.getOutputs())) {
+          return tokens;
+        }
+      }
+      return [];
+    },
+    metadata() {
+      if (this.transaction) {
+        return this.transaction.getMetadata();
+      }
+      return null;
+    }
+  },
   methods: {
-    show() {
+    show(transaction) {
+      if (
+        !(transaction instanceof Transaction) ||
+        Object.keys(transaction.getInputs()).length === 0 ||
+        Object.keys(transaction.getOutputs()).length !== 1
+      ) {
+        throw new Error('Signed FAT-1 miso transaction only expected in this dialog');
+      }
+      transaction.validateSignatures();
+      this.transaction = transaction;
       this.display = true;
     },
     confirm() {
-      this.$emit('confirmed');
+      this.$emit('confirmed', this.transaction);
       this.display = false;
     }
   },

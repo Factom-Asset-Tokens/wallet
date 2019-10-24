@@ -26,36 +26,54 @@
 </template>
 
 <script>
+import Transaction from '@fat-token/fat-js/0/Transaction';
 import Big from 'bignumber.js';
 
 export default {
-  props: ['outputs', 'symbol', 'metadata'],
+  props: ['symbol'],
   data() {
     return {
+      transaction: null,
       display: false
     };
   },
   computed: {
+    outputs() {
+      if (this.transaction) {
+        return Object.entries(this.transaction.getOutputs()).map(([address, amount]) => ({ address, amount }));
+      }
+      return [];
+    },
     amountText() {
-      try {
+      if (this.outputs) {
         return this.outputs
           .map(o => o.amount)
           .reduce((acc, val) => acc.plus(val), new Big(0))
           .toFormat();
-      } catch (e) {
-        return '??';
       }
+      return '??';
+    },
+    metadata() {
+      if (this.transaction) {
+        return this.transaction.getMetadata();
+      }
+      return null;
     }
   },
   methods: {
-    show() {
+    show(transaction) {
+      if (!(transaction instanceof Transaction)) {
+        throw new Error('Signed FAT-0 mimo transaction only expected in this dialog');
+      }
+      transaction.validateSignatures();
+      this.transaction = transaction;
       this.display = true;
     },
     close() {
       this.display = false;
     },
     confirm() {
-      this.$emit('confirmed');
+      this.$emit('confirmed', this.transaction);
       this.close();
     }
   }

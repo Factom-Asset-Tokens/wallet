@@ -109,9 +109,7 @@
           <!-- Dialogs -->
           <ConfirmTransactionDialog
             ref="confirmTransactionDialog"
-            :outputs="outputs"
             :symbol="symbol"
-            :metadata="metadata"
             @confirmed="send"
           ></ConfirmTransactionDialog>
           <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
@@ -207,19 +205,25 @@ export default {
     deleteInoutput(type, id) {
       this[type] = this[type].filter(v => v.id !== id);
     },
-    confirmTransaction() {
+    async confirmTransaction() {
       this.transactionSentMessage = '';
 
       if (this.$refs.form.validate()) {
         this.sendClicked = true;
         if (this.validTransaction) {
           this.sendClicked = false;
-          this.$refs.confirmTransactionDialog.show();
+          try {
+            const tx = await this.buildTransaction();
+
+            this.$refs.confirmTransactionDialog.show(tx);
+          } catch (e) {
+            this.errorMessage = e.message;
+          }
         }
       }
     },
-    async send() {
-      await this.sendTransaction();
+    async send(tx) {
+      await this.sendTransaction(tx);
       if (this.transactionSentMessage) {
         this.inputs = [newInoutput()];
         this.outputs = [newInoutput()];
