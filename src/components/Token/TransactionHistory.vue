@@ -2,7 +2,7 @@
   <div>
     <v-list v-if="movements.length > 0">
       <template v-for="(mvt, index) in movements">
-        <v-list-tile :key="mvt.txId + mvt.address" @click.stop="openDetails(mvt.txId)">
+        <v-list-tile :key="mvt.txId + mvt.sign + mvt.address" @click.stop="openDetails(mvt.txId)">
           <v-layout wrap>
             <v-flex xs2>{{ mvt.timestamp | formatTimestamp }}</v-flex>
             <v-flex xs7 class="font-italic">{{ displayAddress(mvt.address) }}</v-flex>
