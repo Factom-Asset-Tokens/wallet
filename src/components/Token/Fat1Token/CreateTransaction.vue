@@ -179,9 +179,6 @@ export default {
     availableTokens() {
       const allTokens = flatmap(this.balances.filter(b => b.ids).map(b => b.ids));
       return idsSetDiff(allTokens, this.selectedTokens);
-    },
-    validTransactionProperties() {
-      return [this.selectedTokens, this.address];
     }
   },
   methods: {
@@ -268,22 +265,6 @@ export default {
     },
     attachMetadata() {
       this.$refs.attachMetadataDialog.show(this.metadata);
-    }
-  },
-  watch: {
-    validTransactionProperties() {
-      // Validate that the output address is not part of the input addresses
-      const matchedOwners = matchOwners(this.balances, this.selectedTokens);
-      const inputAddresses = new Set(matchedOwners.map(o => o.owner));
-      if (inputAddresses.has(this.address)) {
-        this.validTransaction = false;
-        this.transactionError =
-          'Some of the tokens selected for sending are already owned by the recipient address, you must remove them.';
-        return;
-      }
-
-      this.validTransaction = true;
-      this.transactionError = '';
     }
   },
   filters: {

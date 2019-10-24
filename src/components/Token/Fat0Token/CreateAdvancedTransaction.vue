@@ -171,12 +171,6 @@ export default {
     selectedInputAddresses() {
       return new Set(this.inputs.map(i => i.address));
     },
-    addressesCount() {
-      return this.inputs.concat(this.outputs).reduce((count, val) => {
-        count[val.address] ? count[val.address]++ : (count[val.address] = 1);
-        return count;
-      }, {});
-    },
     outputAddressRules() {
       return [address => isValidPublicFctAddress(address) || 'Invalid public FCT address'];
     },
@@ -197,7 +191,7 @@ export default {
         .reduce((acc, val) => acc.plus(val), ZERO);
     },
     validTransactionProperties() {
-      return [this.totalInputs, this.totalOutputs, this.addressesCount];
+      return [this.inputs, this.outputs];
     }
   },
   methods: {
@@ -260,32 +254,43 @@ export default {
     }
   },
   watch: {
-    validTransactionProperties() {
-      // An address can appear only once accross both inputs and outputs
-      for (const address in this.addressesCount) {
-        if (this.addressesCount[address] > 1) {
+    validTransactionProperties: {
+      deep: true,
+      handler() {
+        // Check duplicate among inputs
+        const inputAddresses = this.inputs.map(i => i.address);
+        const duplicateInputs = inputAddresses.filter((v, i) => inputAddresses.indexOf(v) !== i);
+        if (duplicateInputs.length > 0) {
           this.validTransaction = false;
-          this.transactionError = `${address} is used multiple times accross inputs or outputs.`;
+          this.transactionError = `${duplicateInputs[0]} is used multiple times in inputs.`;
           return;
         }
-      }
+        // Check duplicate among outputs
+        const outputAddresses = this.outputs.map(i => i.address);
+        const duplicateOutputs = outputAddresses.filter((v, i) => outputAddresses.indexOf(v) !== i);
+        if (duplicateOutputs.length > 0) {
+          this.validTransaction = false;
+          this.transactionError = `${duplicateOutputs[0]} is used multiple times in outputs.`;
+          return;
+        }
 
-      // Total inputs and outputs must be equal
-      if (!this.totalInputs.eq(this.totalOutputs)) {
-        this.validTransaction = false;
-        this.transactionError = 'The sum of inputs and outputs must be equal.';
-        return;
-      }
+        // Total inputs and outputs must be equal
+        if (!this.totalInputs.eq(this.totalOutputs)) {
+          this.validTransaction = false;
+          this.transactionError = 'The sum of inputs and outputs must be equal.';
+          return;
+        }
 
-      // The amount transferred has to be greater than 0
-      if (this.totalInputs.eq(ZERO)) {
-        this.validTransaction = false;
-        this.transactionError = 'The amount transferred cannot be 0.';
-        return;
-      }
+        // The amount transferred has to be greater than 0
+        if (this.totalInputs.eq(ZERO)) {
+          this.validTransaction = false;
+          this.transactionError = 'The amount transferred cannot be 0.';
+          return;
+        }
 
-      this.validTransaction = true;
-      this.transactionError = '';
+        this.validTransaction = true;
+        this.transactionError = '';
+      }
     }
   }
 };

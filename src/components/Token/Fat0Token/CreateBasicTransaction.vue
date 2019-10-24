@@ -138,18 +138,7 @@ export default {
   },
   computed: {
     outputAddressRules() {
-      return [
-        v => this.burn || isValidPublicFctAddress(v) || 'Invalid public FCT address',
-        v => {
-          if (this.burn || !this.inputAddress) {
-            return true;
-          }
-          if (this.inputAddress === v) {
-            return 'Input and output addresses cannot be the same';
-          }
-          return true;
-        }
-      ];
+      return [v => this.burn || isValidPublicFctAddress(v) || 'Invalid public FCT address'];
     },
     burnIconColor() {
       return this.burn ? 'secondary' : 'grey';
