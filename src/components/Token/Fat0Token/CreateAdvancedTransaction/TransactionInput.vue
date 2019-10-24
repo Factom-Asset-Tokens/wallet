@@ -57,7 +57,7 @@ export default {
     amountRules() {
       const maxAmount = this.balance;
       return [
-        amount => (amount && new Big(amount).gt(0)) || 'Amount must be strictly positive',
+        amount => (amount && new Big(amount).gte(0)) || 'Amount must be positive',
         amount => maxAmount.gte(amount) || "Address doesn't hold enough funds"
       ];
     },

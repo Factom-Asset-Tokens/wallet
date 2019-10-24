@@ -159,7 +159,7 @@ export default {
     },
     amountRules() {
       return [
-        amount => (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
+        amount => (amount && ZERO.lte(amount)) || 'Amount must be positive',
         amount => {
           if (!this.inputAddress) {
             return true;

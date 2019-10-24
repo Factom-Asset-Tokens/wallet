@@ -175,7 +175,7 @@ export default {
       return [address => isValidPublicFctAddress(address) || 'Invalid public FCT address'];
     },
     outputAmountRules() {
-      return [v => v > 0 || 'Amount must be strictly positive'];
+      return [v => v >= 0 || 'Amount must be positive'];
     },
     totalInputs() {
       return this.inputs
@@ -278,13 +278,6 @@ export default {
         if (!this.totalInputs.eq(this.totalOutputs)) {
           this.validTransaction = false;
           this.transactionError = 'The sum of inputs and outputs must be equal.';
-          return;
-        }
-
-        // The amount transferred has to be greater than 0
-        if (this.totalInputs.eq(ZERO)) {
-          this.validTransaction = false;
-          this.transactionError = 'The amount transferred cannot be 0.';
           return;
         }
 
