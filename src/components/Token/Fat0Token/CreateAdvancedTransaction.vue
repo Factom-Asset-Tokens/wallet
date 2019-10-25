@@ -96,7 +96,7 @@
 
               <!-- Alerts transaction success/failure-->
               <v-flex v-if="errorMessage" xs12>
-                <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+                <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
               </v-flex>
               <v-flex xs12>
                 <v-alert :value="transactionSentMessage" type="success" outline dismissible>
@@ -110,9 +110,11 @@
           <ConfirmTransactionDialog
             ref="confirmTransactionDialog"
             :symbol="symbol"
+            @error="displayError"
             @confirmed="send"
           ></ConfirmTransactionDialog>
           <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
+          <LedgerSignEntryDialog ref="ledgerSignEntryDialog"></LedgerSignEntryDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -130,6 +132,7 @@ import { isValidPublicFctAddress } from 'factom';
 import SendFatTransaction from '@/mixins/SendFatTransaction';
 import TransactionInput from './CreateAdvancedTransaction/TransactionInput';
 import ConfirmTransactionDialog from './CreateAdvancedTransaction/ConfirmTransactionDialog';
+import LedgerSignEntryDialog from '@/components/Token/LedgerSignEntryDialog';
 import AddressBook from '@/components/AddressBook';
 import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
 
@@ -143,7 +146,7 @@ const newInoutput = (function() {
 const ZERO = new Big(0);
 
 export default {
-  components: { TransactionInput, ConfirmTransactionDialog, AddressBook, AttachMetadataDialog },
+  components: { TransactionInput, ConfirmTransactionDialog, AddressBook, AttachMetadataDialog, LedgerSignEntryDialog },
   mixins: [SendFatTransaction],
   data() {
     return {
@@ -193,6 +196,15 @@ export default {
     }
   },
   methods: {
+    displayError(e) {
+      this.errorMessage = e.message;
+    },
+    showLedgerSignEntryDialog() {
+      this.$refs.ledgerSignEntryDialog.show();
+    },
+    closeLedgerSignEntryDialog() {
+      this.$refs.ledgerSignEntryDialog.close();
+    },
     pickAddressFromAddressBook(address) {
       clipboard.writeText(address);
       this.$store.commit('snackInfo', 'Address copied to the clipboard');
@@ -206,6 +218,7 @@ export default {
       this[type] = this[type].filter(v => v.id !== id);
     },
     async confirmTransaction() {
+      this.errorMessage = '';
       this.transactionSentMessage = '';
 
       if (this.$refs.form.validate()) {
@@ -213,9 +226,9 @@ export default {
         if (this.validTransaction) {
           this.sendClicked = false;
           try {
-            const tx = await this.buildTransaction();
-
-            this.$refs.confirmTransactionDialog.show(tx);
+            const ledgerMode = this.$store.state.ledgerMode;
+            const tx = await this.buildTransaction(ledgerMode);
+            this.$refs.confirmTransactionDialog.show(tx, ledgerMode);
           } catch (e) {
             this.errorMessage = e.message;
           }
@@ -230,19 +243,27 @@ export default {
         this.metadata = '';
       }
     },
-    async buildTransaction() {
+    async buildTransaction(ledgerMode) {
       const txBuilder = new TransactionBuilder(this.tokenCli.getChainId());
 
-      // Get inputs secret keys
-      const keystore = this.$store.state.keystore.store;
-      const inputsSecrets = await Promise.map(this.inputs, async function(input) {
-        const secret = keystore.getSecretKey(input.address);
-        return { secret, amount: input.amount };
-      });
+      if (ledgerMode) {
+        // Put public keus as input addresses
+        for (const input of this.inputs) {
+          txBuilder.input(input.address, input.amount);
+        }
+      } else {
+        // Get inputs secret keys from on-disk keystore
+        const keystore = this.$store.state.keystore.store;
+        const inputsSecrets = await Promise.map(this.inputs, async function(input) {
+          const secret = keystore.getSecretKey(input.address);
+          return { secret, amount: input.amount };
+        });
 
-      for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.amount);
+        for (const input of inputsSecrets) {
+          txBuilder.input(input.secret, input.amount);
+        }
       }
+
       for (const output of this.outputs) {
         txBuilder.output(output.address, output.amount);
       }
