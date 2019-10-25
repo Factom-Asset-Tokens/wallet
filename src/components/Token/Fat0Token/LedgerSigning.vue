@@ -10,10 +10,12 @@ export default {
       addressesToSign: []
     };
   },
-  methods: {
+  computed: {
     signatureCompleted() {
       return !this.active || this.addressesToSign.length === 0;
-    },
+    }
+  },
+  methods: {
     async signTransactionForNextInput() {
       const nextAddress = this.addressesToSign.pop();
       const signature = await this.$store.dispatch('ledger/signFatTransactionForInput', {
