@@ -7,22 +7,25 @@ export default {
   extends: LedgerSigning,
   data() {
     return {
+      nextInputIndex: 0,
       addressesToSign: []
     };
   },
   computed: {
     signatureCompleted() {
-      return !this.active || this.addressesToSign.length === 0;
+      return !this.active || this.signatures.length === this.addressesToSign.length;
     }
   },
   methods: {
     async signTransactionForNextInput() {
-      const nextAddress = this.addressesToSign.pop();
+      const nextAddress = this.addressesToSign[this.nextInputIndex];
       const signature = await this.$store.dispatch('ledger/signFatTransactionForInput', {
         type: 0,
         unsignedTx: this.transaction,
         inputAddress: nextAddress
       });
+
+      this.nextInputIndex++;
       return signature;
     },
     buildSignedTransaction() {
