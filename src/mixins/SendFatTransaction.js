@@ -26,13 +26,20 @@ export default {
       }
     },
     async broadcastTransaction(tx) {
+      const ledgerMode = this.$store.state.ledgerMode;
+
       try {
         const { entryhash } = await this.tokenCli.sendTransaction(tx);
         return entryhash;
       } catch (e) {
         const code = tryParseApiErrorCode(e);
         if (code === -32806) {
-          const payingEcAddress = await this.$store.dispatch('address/getPayingEcSecretKey');
+          let payingEcAddress;
+          if (ledgerMode) {
+            payingEcAddress = await this.$store.dispatch('address/getPayingEcAddress');
+          } else {
+            payingEcAddress = await this.$store.dispatch('address/getPayingEcSecretKey');
+          }
 
           if (!payingEcAddress) {
             throw new Error('No Entry Credit available to pay for the transaction.');
@@ -40,12 +47,24 @@ export default {
 
           const factomd = this.$store.getters['factomd/cli'];
           const entry = Entry.builder(tx.getEntry()).build();
+          const options = {};
 
-          const { entryHash } = await factomd.add(entry, payingEcAddress);
+          if (ledgerMode) {
+            options.sign = (entryDataToSign, ecPublicAddress) => {
+              this.showLedgerSignEntryDialog();
+              return this.$store.dispatch('ledger/signEntry', { entryDataToSign, ecPublicAddress });
+            };
+          }
+
+          const { entryHash } = await factomd.add(entry, payingEcAddress, options);
 
           return entryHash;
         } else {
           throw e;
+        }
+      } finally {
+        if (ledgerMode) {
+          this.closeLedgerSignEntryDialog();
         }
       }
     }

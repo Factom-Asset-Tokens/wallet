@@ -94,6 +94,50 @@ export default {
       }
     },
 
+    async signFatTransactionForInput({ rootState }, { unsignedTx, type, inputAddress }) {
+      const addresses = [...rootState.address.fctAddresses];
+      const pathIndex = addresses.findIndex(a => a === inputAddress);
+      const path = `44'/131'/0'/0'/${pathIndex}'`;
+
+      try {
+        const transport = await Transport.create();
+        const fctApp = new Fct(transport);
+        const inputIndex = Object.keys(unsignedTx.getInputs()).findIndex(a => {
+          return a === inputAddress;
+        });
+
+        const signed = await fctApp.signFatTransaction(path, type, unsignedTx.getMarshalDataSig(inputIndex));
+        transport.close();
+
+        return signed;
+      } catch (e) {
+        if (e.statusCode === 27013) {
+          throw new Error('Transaction declined by the user.');
+        } else {
+          throw new Error('Failed to sign transaction with Ledger.');
+        }
+      }
+    },
+    async signEntry({ rootState }, { entryDataToSign, ecPublicAddress }) {
+      const addresses = [...rootState.address.ecAddresses];
+      const pathIndex = addresses.findIndex(a => a === ecPublicAddress);
+      const path = `44'/132'/0'/0'/${pathIndex}'`;
+
+      try {
+        const transport = await Transport.create();
+        const fctApp = new Fct(transport);
+        const signed = await fctApp.signCommit(path, entryDataToSign.toString('hex'), false);
+        transport.close();
+
+        return signed.s;
+      } catch (e) {
+        if (e.statusCode === 27013) {
+          throw new Error('Transaction declined by the user.');
+        } else {
+          throw new Error('Failed to sign transaction with Ledger.');
+        }
+      }
+    },
     async fetchNextFctAddresses({ state, commit }, nb = 1) {
       try {
         const range = [];

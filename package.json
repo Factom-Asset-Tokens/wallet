@@ -49,7 +49,7 @@
     "electron-store": "^5.0.0",
     "eslint": "^6.5.1",
     "eslint-plugin-vue": "^5.2.3",
-    "factom": "1.2.6",
+    "factom": "1.2.7",
     "factom-identity-lib": "^0.2.0-rc6",
     "factom-keystore": "^0.4.0",
     "fast-sha256": "^1.1.0",

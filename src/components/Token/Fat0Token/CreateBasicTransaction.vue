@@ -73,8 +73,8 @@
             </v-flex>
 
             <!-- Alerts transaction success/failure-->
-            <v-flex v-if="errorMessage" xs12 md8 offset-md2>
-              <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+            <v-flex v-show="errorMessage" xs12 md8 offset-md2>
+              <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
             </v-flex>
             <v-flex xs12>
               <v-alert :value="transactionSentMessage" type="success" outline dismissible>
@@ -87,10 +87,17 @@
           <ConfirmTransactionDialog
             ref="confirmTransactionDialog"
             :symbol="symbol"
+            @error="displayError"
             @confirmed="send"
           ></ConfirmTransactionDialog>
-          <ConfirmBurnDialog ref="confirmBurnDialog" :symbol="symbol" @confirmed="send"></ConfirmBurnDialog>
+          <ConfirmBurnDialog
+            ref="confirmBurnDialog"
+            :symbol="symbol"
+            @error="displayError"
+            @confirmed="send"
+          ></ConfirmBurnDialog>
           <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
+          <LedgerSignEntryDialog ref="ledgerSignEntryDialog"></LedgerSignEntryDialog>
         </v-form>
       </v-container>
     </v-sheet>
@@ -107,12 +114,19 @@ import TransactionBuilder from '@fat-token/fat-js/0/TransactionBuilder';
 import ConfirmTransactionDialog from './CreateBasicTransaction/ConfirmTransactionDialog';
 import ConfirmBurnDialog from './CreateBasicTransaction/ConfirmBurnDialog';
 import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
+import LedgerSignEntryDialog from '@/components/Token/LedgerSignEntryDialog';
 import AddressBook from '@/components/AddressBook';
 
 const ZERO = new Big(0);
 
 export default {
-  components: { ConfirmTransactionDialog, ConfirmBurnDialog, AttachMetadataDialog, AddressBook },
+  components: {
+    ConfirmTransactionDialog,
+    ConfirmBurnDialog,
+    AttachMetadataDialog,
+    LedgerSignEntryDialog,
+    AddressBook
+  },
   mixins: [SendFatTransaction],
   props: ['balances', 'totalBalance', 'symbol', 'tokenCli'],
   data() {
@@ -163,21 +177,32 @@ export default {
     }
   },
   methods: {
+    displayError(e) {
+      this.errorMessage = e.message;
+    },
+    showLedgerSignEntryDialog() {
+      this.$refs.ledgerSignEntryDialog.show();
+    },
+    closeLedgerSignEntryDialog() {
+      this.$refs.ledgerSignEntryDialog.close();
+    },
     pickAddressFromAddressBook(address) {
       this.outputAddress = address;
       const vuetify = this.$vuetify;
       this.$nextTick(() => vuetify.goTo('#transaction'));
     },
     async confirmTransaction() {
+      this.errorMessage = '';
       this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
         try {
-          const tx = await this.buildTransaction();
+          const ledgerMode = this.$store.state.ledgerMode;
+          const tx = await this.buildTransaction(ledgerMode);
 
           if (this.burn) {
-            this.$refs.confirmBurnDialog.show(tx);
+            this.$refs.confirmBurnDialog.show(tx, ledgerMode);
           } else {
-            this.$refs.confirmTransactionDialog.show(tx);
+            this.$refs.confirmTransactionDialog.show(tx, ledgerMode);
           }
         } catch (e) {
           this.errorMessage = e.message;
@@ -195,18 +220,21 @@ export default {
         this.outputAddress = '';
       }
     },
-    async buildTransaction() {
+    async buildTransaction(ledgerMode) {
       const amount = new Big(this.amount);
       const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.outputAddress;
 
-      // Get input secret key
-      const keystore = this.$store.state.keystore.store;
-      const inputSecret = keystore.getSecretKey(this.inputAddress);
-
       // Build transaction object
-      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId())
-        .input(inputSecret, amount)
-        .output(outputAddress, amount);
+      const txBuilder = new TransactionBuilder(this.tokenCli.getChainId()).output(outputAddress, amount);
+
+      if (ledgerMode) {
+        txBuilder.input(this.inputAddress, amount);
+      } else {
+        // Get input secret key
+        const keystore = this.$store.state.keystore.store;
+        const inputSecret = keystore.getSecretKey(this.inputAddress);
+        txBuilder.input(inputSecret, amount);
+      }
 
       if (this.metadata) {
         txBuilder.metadata(this.metadata);

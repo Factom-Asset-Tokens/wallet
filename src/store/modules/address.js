@@ -152,7 +152,11 @@ export default {
     async getPayingEcAddress({ state, dispatch }) {
       await dispatch('fetchEcBalances');
       // If there is a preferred address and it is funded
-      if (state.preferredEcAddress && state.ecBalances[state.preferredEcAddress].gt(0)) {
+      if (
+        state.preferredEcAddress &&
+        state.ecBalances[state.preferredEcAddress] &&
+        state.ecBalances[state.preferredEcAddress].gt(0)
+      ) {
         return state.preferredEcAddress;
       }
 
