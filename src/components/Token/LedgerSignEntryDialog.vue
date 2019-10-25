@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="800px" @keydown.esc="close" @keydown.enter="confirm" persistent>
+  <v-dialog v-model="display" max-width="800px" persistent>
     <v-card>
       <v-card-text>
         <v-layout wrap>

@@ -1,7 +1,7 @@
 <script>
 import LedgerSigning from '@/components/LedgerSigning.vue';
 
-import TransactionBuilder from '@fat-token/fat-js/0/TransactionBuilder';
+import TransactionBuilder from '@fat-token/fat-js/1/TransactionBuilder';
 
 export default {
   extends: LedgerSigning,
@@ -20,7 +20,7 @@ export default {
     async signTransactionForNextInput() {
       const nextAddress = this.addressesToSign[this.nextInputIndex];
       const signature = await this.$store.dispatch('ledger/signFatTransactionForInput', {
-        type: 0,
+        type: 1,
         unsignedTx: this.transaction,
         inputAddress: nextAddress
       });

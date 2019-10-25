@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="800px" @keydown.esc="close" @keydown.enter="confirm">
+  <v-dialog v-model="display" max-width="800px" @keydown.esc="close" persistent>
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>Confirm transaction</v-card-title>
       <v-card-text>

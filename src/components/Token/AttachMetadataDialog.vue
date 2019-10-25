@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" lazy max-width="800px" persistent @keydown.esc="close" @keydown.enter="confirm">
+  <v-dialog v-model="display" lazy max-width="800px" persistent @keydown.esc="close" @keydown.enter="attach">
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>Attach metadata</v-card-title>
       <v-card-text>

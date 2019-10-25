@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="display" max-width="800px" @keydown.esc="display = false" @keydown.enter="confirm">
+  <v-dialog v-model="display" max-width="800px" @keydown.esc="close" persistent>
     <v-card>
       <v-card-title class="headline primary white--text" primary-title>Confirm burn</v-card-title>
       <v-card-text>
@@ -18,24 +18,38 @@
           <v-flex xs12 v-if="metadata" text-xs-center class="subheading secondary--text" my-2>
             (with metadata attached)
           </v-flex>
+          <v-flex xs12 my-3 v-show="withLedger"> <v-divider></v-divider> </v-flex>
+          <v-flex xs12 v-show="withLedger">
+            <LedgerSigning
+              ref="ledgerSigning"
+              :transaction="transaction"
+              @error="error"
+              @signedTx="emitSignedTransaction"
+            ></LedgerSigning>
+          </v-flex>
         </v-layout>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" flat outline @click="display = false">Cancel</v-btn>
-        <v-btn color="error" @click="confirm"><v-icon left>fas fa-fire-alt</v-icon>burn</v-btn>
+        <v-btn color="primary" flat outline @click="close">Cancel</v-btn>
+        <v-btn color="error" v-if="!withLedger" @click="emitSignedTransaction(transaction)"
+          ><v-icon left>fas fa-fire-alt</v-icon>burn</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+import LedgerSigning from '@/components/Token/Fat1Token/LedgerSigning.vue';
 import Transaction from '@fat-token/fat-js/1/Transaction';
 import { displayIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
 
 export default {
+  components: { LedgerSigning },
   data() {
     return {
+      withLedger: false,
       display: false,
       transaction: null
     };
@@ -57,7 +71,7 @@ export default {
     }
   },
   methods: {
-    show(transaction) {
+    show(transaction, withLedger) {
       if (
         !(transaction instanceof Transaction) ||
         Object.keys(transaction.getInputs()).length === 0 ||
@@ -65,13 +79,28 @@ export default {
       ) {
         throw new Error('Signed FAT-1 miso transaction only expected in this dialog');
       }
-      transaction.validateSignatures();
+      this.withLedger = withLedger;
       this.transaction = transaction;
       this.display = true;
+      if (withLedger) {
+        this.$refs.ledgerSigning.activate();
+      } else {
+        transaction.validateSignatures();
+      }
     },
-    confirm() {
-      this.$emit('confirmed', this.transaction);
+    close() {
       this.display = false;
+      if (this.withLedger) {
+        this.$refs.ledgerSigning.deactivate();
+      }
+    },
+    error(e) {
+      this.$emit('error', e);
+      this.close();
+    },
+    emitSignedTransaction(tx) {
+      this.$emit('confirmed', tx);
+      this.close();
     }
   },
   filters: {

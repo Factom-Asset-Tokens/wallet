@@ -87,7 +87,7 @@
 
                 <!-- Alerts transaction success/failure-->
                 <v-flex v-if="errorMessage" xs12>
-                  <v-alert :value="true" type="error" outline dismissible>{{ errorMessage }}</v-alert>
+                  <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
                 </v-flex>
                 <v-flex xs12>
                   <v-alert :value="transactionSentMessage" type="success" outline dismissible>
@@ -104,8 +104,13 @@
       <SelectIdRangeDialog ref="rangeSelectDialog" @add="addToken"></SelectIdRangeDialog>
       <AttachMetadataDialog ref="attachMetadataDialog" @update:metadata="metadata = $event"> </AttachMetadataDialog>
       <NfTokenDetailsDialog ref="detailsDialog" :tokenCli="tokenCli" :symbol="symbol"></NfTokenDetailsDialog>
-      <ConfirmTransactionDialog ref="confirmTransactionDialog" @confirmed="send"></ConfirmTransactionDialog>
-      <ConfirmBurnDialog ref="confirmBurnDialog" @confirmed="send"></ConfirmBurnDialog>
+      <ConfirmTransactionDialog
+        ref="confirmTransactionDialog"
+        @error="displayError"
+        @confirmed="send"
+      ></ConfirmTransactionDialog>
+      <ConfirmBurnDialog ref="confirmBurnDialog" @error="displayError" @confirmed="send"></ConfirmBurnDialog>
+      <LedgerSignEntryDialog ref="ledgerSignEntryDialog"></LedgerSignEntryDialog>
     </v-layout>
     <AddressBook type="fct" @address="pickAddressFromAddressBook"></AddressBook>
   </div>
@@ -125,6 +130,7 @@ import ConfirmTransactionDialog from './CreateTransaction/ConfirmTransactionDial
 import ConfirmBurnDialog from './CreateTransaction/ConfirmBurnDialog';
 import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDialog';
 import AddressBook from '@/components/AddressBook';
+import LedgerSignEntryDialog from '@/components/Token/LedgerSignEntryDialog';
 import AttachMetadataDialog from '@/components/Token/AttachMetadataDialog';
 
 export default {
@@ -136,7 +142,8 @@ export default {
     ConfirmTransactionDialog,
     ConfirmBurnDialog,
     AddressBook,
-    AttachMetadataDialog
+    AttachMetadataDialog,
+    LedgerSignEntryDialog
   },
   data() {
     return {
@@ -162,6 +169,15 @@ export default {
     }
   },
   methods: {
+    displayError(e) {
+      this.errorMessage = e.message;
+    },
+    showLedgerSignEntryDialog() {
+      this.$refs.ledgerSignEntryDialog.show();
+    },
+    closeLedgerSignEntryDialog() {
+      this.$refs.ledgerSignEntryDialog.close();
+    },
     pickAddressFromAddressBook(address) {
       this.address = address;
       const vuetify = this.$vuetify;
@@ -192,21 +208,24 @@ export default {
       this.$refs.detailsDialog.show(id);
     },
     async confirmTransaction() {
+      this.errorMessage = '';
+      this.transactionSentMessage = '';
       if (this.$refs.form.validate()) {
         try {
-          const tx = await this.buildTransaction();
+          const ledgerMode = this.$store.state.ledgerMode;
+          const tx = await this.buildTransaction(ledgerMode);
 
           if (this.burn) {
-            this.$refs.confirmBurnDialog.show(tx);
+            this.$refs.confirmBurnDialog.show(tx, ledgerMode);
           } else {
-            this.$refs.confirmTransactionDialog.show(tx);
+            this.$refs.confirmTransactionDialog.show(tx, ledgerMode);
           }
         } catch (e) {
           this.errorMessage = e.message;
         }
       }
     },
-    async buildTransaction() {
+    async buildTransaction(ledgerMode) {
       const txBuilder = new TransactionBuilder(this.tokenCli.getChainId());
 
       const idsWithOwner = matchOwners(this.balances, this.selectedTokens);
@@ -214,16 +233,23 @@ export default {
       // Consolidate inputs by owner (address)
       const inputs = groupBy(idsWithOwner, e => e.owner);
 
-      // Get inputs with secret keys
-      const keystore = this.$store.state.keystore.store;
-      const inputsSecrets = await Promise.map(Object.keys(inputs), async function(address) {
-        const secret = keystore.getSecretKey(address);
-        const ids = inputs[address].map(i => (i.id.min === i.id.max ? i.id.min : i.id));
-        return { secret, ids };
-      });
+      if (ledgerMode) {
+        for (const address of Object.keys(inputs)) {
+          const ids = inputs[address].map(i => (i.id.min === i.id.max ? i.id.min : i.id));
+          txBuilder.input(address, ids);
+        }
+      } else {
+        // Get inputs with secret keys
+        const keystore = this.$store.state.keystore.store;
+        const inputsSecrets = await Promise.map(Object.keys(inputs), async function(address) {
+          const secret = keystore.getSecretKey(address);
+          const ids = inputs[address].map(i => (i.id.min === i.id.max ? i.id.min : i.id));
+          return { secret, ids };
+        });
 
-      for (const input of inputsSecrets) {
-        txBuilder.input(input.secret, input.ids);
+        for (const input of inputsSecrets) {
+          txBuilder.input(input.secret, input.ids);
+        }
       }
 
       const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.address;
