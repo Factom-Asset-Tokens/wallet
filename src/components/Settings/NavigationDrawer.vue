@@ -25,7 +25,7 @@ export default {
       } else {
         return [
           { text: 'Connection', icon: 'wifi', to: 'connection' },
-          { text: 'Identity', icon: 'fingerprint', to: 'identity' },
+          // { text: 'Identity', icon: 'fingerprint', to: 'identity' },
           { text: 'Change password', icon: 'lock', to: 'password' },
           { text: 'Backup', icon: 'settings_backup_restore', to: 'backup' }
         ];
