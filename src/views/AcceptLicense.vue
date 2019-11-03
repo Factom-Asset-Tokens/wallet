@@ -52,7 +52,7 @@ export default {
       licenseAgreement: false,
       license: `<p>MIT License</p>
 
-<p>Copyright (c) 2018 Luciap Technology Inc.</p>
+<p>Copyright (c) 2019 Luciap Technology Inc.</p>
 
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
