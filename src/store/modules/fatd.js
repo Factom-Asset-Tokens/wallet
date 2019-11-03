@@ -34,6 +34,7 @@ export default {
             .host(getters.config.hostname)
             .port(getters.config.port)
             .protocol(getters.config.protocol)
+            .pending(true)
             .build()
         : undefined
   },

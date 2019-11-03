@@ -29,7 +29,7 @@
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
     "@factoid.org/hw-app-fct": "^0.7.5",
-    "@fat-token/fat-js": "^1.2.0",
+    "@fat-token/fat-js": "^1.3.0",
     "@fortawesome/fontawesome-free": "^5.11.2",
     "@ledgerhq/hw-transport-node-hid-noevents": "^4.72.2",
     "@vue/cli-plugin-babel": "^3.12.1",

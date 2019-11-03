@@ -10,6 +10,7 @@
               <v-icon v-if="mvt.coinbase" color="secondary" title="Coinbase transaction" left>star</v-icon>
               <v-icon v-if="mvt.burn" color="secondary" title="Burn transaction" left>fas fa-fire-alt</v-icon>
               <v-icon v-if="mvt.hasMetadata" color="secondary" title="Metadata attached" left>more</v-icon>
+              <v-icon v-if="mvt.pending" color="secondary" title="Pending confirmation" left>schedule</v-icon>
               {{ mvt.sign }}
               {{ mvt.amount }}
             </v-flex>

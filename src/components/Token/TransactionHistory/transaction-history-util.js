@@ -55,7 +55,8 @@ function buildTransactionMovement({ tx, address, sign, amount, isCoinbase = fals
     timestamp: tx.getTimestamp(),
     coinbase: isCoinbase,
     burn: isBurn,
-    hasMetadata
+    hasMetadata,
+    pending: tx.getPending()
   };
 }
 

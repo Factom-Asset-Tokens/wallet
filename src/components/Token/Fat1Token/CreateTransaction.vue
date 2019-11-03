@@ -90,8 +90,13 @@
                   <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
                 </v-flex>
                 <v-flex xs12>
-                  <v-alert :value="transactionSentMessage" type="success" outline dismissible>
-                    {{ transactionSentMessage }}
+                  <v-alert
+                    :value="transactionSentMessage"
+                    type="success"
+                    outline
+                    dismissible
+                    v-html="transactionSentMessage"
+                  >
                   </v-alert>
                 </v-flex>
               </v-layout>

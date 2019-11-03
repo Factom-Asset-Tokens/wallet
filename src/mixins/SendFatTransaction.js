@@ -17,7 +17,7 @@ export default {
 
         const txId = await this.broadcastTransaction(tx);
 
-        this.transactionSentMessage = `Transaction successfully sent. Transaction ID: ${txId}`;
+        this.transactionSentMessage = `<div>Transaction successfully sent. Transaction ID: ${txId}<div><div class="font-weight-black">Note it can take a few seconds for your balance to be updated</div>`;
         this.$refs.form.reset();
       } catch (e) {
         this.errorMessage = e.message;
