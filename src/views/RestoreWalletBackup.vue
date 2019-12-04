@@ -27,33 +27,34 @@ export default {
       password: ''
     };
   },
-  mounted() {
-    dialog.showOpenDialog(
-      {
-        title: 'Open backup file',
-        filters: [{ name: 'JSON', extensions: ['json'] }, { name: 'All Files', extensions: ['*'] }],
-        properties: ['openFile']
-      },
-      this.openBackupFile.bind(this)
-    );
+  async mounted() {
+    const result = await dialog.showOpenDialog({
+      title: 'Open backup file',
+      filters: [
+        { name: 'JSON', extensions: ['json'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      properties: ['openFile']
+    });
+    if (result.canceled || !result.filePaths || result.filePaths.length === 0) {
+      this.back();
+    } else {
+      this.openBackupFile(result.filePaths);
+    }
   },
   methods: {
     back() {
       this.$router.replace({ name: 'Start' });
     },
     openBackupFile(filePaths) {
-      if (filePaths && filePaths.length > 0) {
-        this.validateBackupFile(filePaths[0], (err, data) => {
-          if (err) {
-            this.$store.commit('snackError', err.message);
-            this.back();
-            return;
-          }
-          this.encryptedBackup = data;
-        });
-      } else {
-        this.back();
-      }
+      this.validateBackupFile(filePaths[0], (err, data) => {
+        if (err) {
+          this.$store.commit('snackError', err.message);
+          this.back();
+          return;
+        }
+        this.encryptedBackup = data;
+      });
     },
     validateBackupFile(filePath, callback) {
       readFile(filePath, (err, data) => {

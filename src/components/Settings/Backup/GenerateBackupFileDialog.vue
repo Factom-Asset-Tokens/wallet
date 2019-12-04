@@ -67,9 +67,12 @@ export default {
       try {
         const backup = await this.$store.dispatch('backup');
         const data = JSON.stringify(BACKUP_CYPHER.cypherBackup(backup, this.password));
-
-        dialog.showSaveDialog({ defaultPath: 'fat-wallet.backup.json' }, this.writeBackupFile.bind(null, data));
         this.display = false;
+
+        const result = await dialog.showSaveDialog({ defaultPath: 'fat-wallet.backup.json' });
+        if (!result.canceled && result.filePath) {
+          this.writeBackupFile(data, result.filePath);
+        }
       } catch (e) {
         this.$store.commit('snackError', e.message);
       }
