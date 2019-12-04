@@ -82,7 +82,7 @@ export default {
       try {
         await this.$store.dispatch('tokens/fetchBalances', this.token.chainId);
       } catch (e) {
-        console.error(`Failed to fetch balances: ${e.message}`);
+        //
       }
     }
   },

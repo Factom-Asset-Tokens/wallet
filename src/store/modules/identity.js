@@ -76,7 +76,6 @@ export default {
             if (e.message === 'Chain not yet included in a Directory Block') {
               identities[chainId] = Object.assign({}, state.identities[chainId]);
             } else {
-              console.error(e);
               identities[chainId].keys = [];
               identities[chainId].name = [];
             }

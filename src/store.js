@@ -78,7 +78,6 @@ export default new Vuex.Store({
       } catch (e) {
         // Do not fail the initialization (and log in) of the wallet because of errors
         // in getting information from remote sources (factomd/fatd)
-        console.warn(e.message);
       }
     },
     async initLedgerMode({ commit, dispatch }) {
@@ -89,7 +88,6 @@ export default new Vuex.Store({
       } catch (e) {
         // Do not fail the initialization of the wallet because of errors
         // in getting information from remote sources (factomd/fatd)
-        console.warn(e.message);
       }
     },
     async backup({ state }) {
@@ -123,9 +121,7 @@ export default new Vuex.Store({
 
       // 2. Tracked tokens
       if (backup.tokens && Array.isArray(backup.tokens.tracked)) {
-        await Promise.map(backup.tokens.tracked, chainId =>
-          dispatch('tokens/track', chainId).catch(e => console.error(`Failed to track ${chainId}`, e))
-        );
+        await Promise.map(backup.tokens.tracked, chainId => dispatch('tokens/track', chainId).catch(() => {}));
       }
 
       // 3. Identity chains

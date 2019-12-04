@@ -112,7 +112,6 @@ export default {
     },
     issue() {
       // TODO
-      console.log('issue');
     }
   }
 };

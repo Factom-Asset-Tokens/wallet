@@ -60,7 +60,6 @@ export default {
             this.$store.commit('snackError', 'Token not found.');
           } else {
             this.$store.commit('snackError', 'Unknown error encountered.');
-            console.error(e);
           }
         } finally {
           this.loading = false;
