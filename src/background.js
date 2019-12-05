@@ -6,6 +6,7 @@ import path from 'path';
 import Store from 'electron-store';
 import * as Sentry from '@sentry/electron/dist/main';
 import { version } from '../package.json';
+import contextMenu from 'electron-context-menu';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -27,6 +28,7 @@ let win;
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true } }]);
 
 function createWindow() {
+  contextMenu();
   // Create the browser window.
   win = new BrowserWindow({
     icon: path.join(__static, '/icon.png'),
