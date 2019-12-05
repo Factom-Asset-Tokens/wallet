@@ -26,7 +26,7 @@
               :addresses="addresses"
             ></InoutputDetails>
             <v-flex v-if="fctOutputs.length > 0" xs12 class="font-weight-bold secondary--text">
-              <v-icon left color="secondary">fa-sign-out-alt</v-icon>Factoid Outputs
+              <v-icon left color="secondary">fa-sign-out-alt</v-icon>FCT Outputs
             </v-flex>
             <InoutputDetails
               v-if="fctOutputs.length > 0"
@@ -35,7 +35,7 @@
               :addresses="addresses"
             ></InoutputDetails>
             <v-flex v-if="ecOutputs.length > 0" xs12 class="font-weight-bold secondary--text">
-              <v-icon left color="secondary">fa-sign-out-alt</v-icon>Entry Credit Outputs
+              <v-icon left color="secondary">fa-sign-out-alt</v-icon>EC Outputs
             </v-flex>
             <InoutputDetails
               v-if="ecOutputs.length > 0"

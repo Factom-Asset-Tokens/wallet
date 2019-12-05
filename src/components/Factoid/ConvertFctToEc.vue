@@ -59,7 +59,7 @@
             <v-flex v-if="valid && outputAddress && ecAmount" xs12 md8 offset-md2>
               <v-alert :value="true" icon="info" color="primary" outline>
                 <strong>{{ fctCostText }} FCT</strong>
-                will be converted to entry credits (rate: 1 FCT =
+                will be converted to Entry Credits (rate: 1 FCT =
                 {{ ecRateText }} EC).
               </v-alert>
             </v-flex>

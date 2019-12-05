@@ -27,8 +27,7 @@
                     </p>
                     <ul class="margin-bottom">
                       <li>
-                        All Factoid and Entry Credit addresses manually imported (addresses not generated from within
-                        the FAT wallet).
+                        All FCT and EC addresses manually imported (addresses not generated from within the FAT wallet).
                       </li>
                       <li>
                         All the identity keys manually imported (i.e. identity keys not associated with an identity that

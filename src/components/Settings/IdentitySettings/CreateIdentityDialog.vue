@@ -26,7 +26,7 @@
                 <v-select v-model="numberOfKeys" :items="numberOfKeysSelect" label="Number of identity keys"></v-select>
               </v-flex>
               <v-flex xs12 mt-1>
-                <v-alert :value="true" type="info" outline>Creating an identity costs 11 Entry Credits.</v-alert>
+                <v-alert :value="true" type="info" outline>Creating an identity costs 11 EC.</v-alert>
               </v-flex>
               <v-flex>
                 <v-alert :value="createError" color="error" icon="warning" outline>{{ createError }}</v-alert>
@@ -70,7 +70,7 @@ export default {
           const payingEcAddress = await this.$store.dispatch('address/getPayingEcSecretKey');
 
           if (!payingEcAddress) {
-            throw new Error('No Entry Credit available to pay for the transaction.');
+            throw new Error('No EC available to pay for the transaction.');
           }
 
           await this.$store.dispatch('identity/generateIdentity', {

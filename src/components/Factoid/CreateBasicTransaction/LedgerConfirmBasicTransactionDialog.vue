@@ -81,7 +81,7 @@ export default {
         transaction.factoidOutputs.length !== 1 ||
         transaction.entryCreditOutputs.length !== 0
       ) {
-        throw new Error('Unsigned Factoid siso transaction only expected in this dialog');
+        throw new Error('Unsigned FCT siso transaction only expected in this dialog');
       }
       this.transaction = transaction;
       this.display = true;

@@ -42,7 +42,7 @@ export default {
           }
 
           if (!payingEcAddress) {
-            throw new Error('No Entry Credit available to pay for the transaction.');
+            throw new Error('No EC available to pay for the transaction.');
           }
 
           const factomd = this.$store.getters['factomd/cli'];

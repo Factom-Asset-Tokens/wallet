@@ -39,8 +39,8 @@
         <v-tabs slot="extension" v-model="tab" grow color="primary">
           <v-tabs-slider color="secondary"></v-tabs-slider>
 
-          <v-tab active-class="active-tab">Factoid</v-tab>
-          <v-tab active-class="active-tab">Entry Credit</v-tab>
+          <v-tab active-class="active-tab">FCT</v-tab>
+          <v-tab active-class="active-tab">EC</v-tab>
         </v-tabs>
       </v-toolbar>
 
