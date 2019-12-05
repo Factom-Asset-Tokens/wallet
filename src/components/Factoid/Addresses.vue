@@ -63,7 +63,7 @@
               <td>{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog :return-value.sync="props.item.name" lazy>
-                  <span v-if="props.item.name">{{ props.item.name }}</span>
+                  <span v-if="props.item.name" class="break-word">{{ props.item.name }}</span>
                   <v-icon v-else color="lighterGrey">edit</v-icon>
                   <v-text-field
                     slot="input"
@@ -242,5 +242,8 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 12px;
+}
+.break-word {
+  word-break: break-all;
 }
 </style>
