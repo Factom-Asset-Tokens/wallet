@@ -8,3 +8,6 @@
   color: #eeb71c !important;
   font-weight: 1000;
 }
+.break-word {
+  word-break: break-all;
+}

@@ -5,7 +5,7 @@
         <v-list-tile :key="mvt.txId + mvt.sign + mvt.address" @click.stop="openDetails(mvt.txId)">
           <v-layout wrap>
             <v-flex xs2>{{ mvt.timestamp | formatTimestamp }}</v-flex>
-            <v-flex xs7 class="font-italic">{{ displayAddress(mvt.address) }}</v-flex>
+            <v-flex xs7 class="font-italic break-word">{{ displayAddress(mvt.address) }}</v-flex>
             <v-flex xs3 class="font-weight-bold" :class="amountColorClass(mvt.sign)" text-xs-right>
               <v-icon v-if="mvt.coinbase" color="secondary" title="Coinbase transaction" left>star</v-icon>
               <v-icon v-if="mvt.burn" color="secondary" title="Burn transaction" left>fas fa-fire-alt</v-icon>

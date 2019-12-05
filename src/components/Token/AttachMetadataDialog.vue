@@ -10,7 +10,15 @@
             or removed in any way. Do not attach any sensitive data to your transactions.
           </v-flex>
           <v-flex xs12>
-            <v-textarea v-model="metadata" ref="metadataInput" box label="Metadata" clearable autofocus></v-textarea>
+            <v-textarea
+              v-model="metadata"
+              ref="metadataInput"
+              box
+              label="Metadata"
+              clearable
+              autofocus
+              counter="9000"
+            ></v-textarea>
           </v-flex>
         </v-layout>
       </v-card-text>

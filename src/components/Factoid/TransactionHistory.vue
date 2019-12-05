@@ -8,7 +8,7 @@
         <v-list-tile :key="mvt.key" @click.stop="openDetails(mvt.txId)">
           <v-layout wrap>
             <v-flex xs2>{{ mvt.date | formatDate }}</v-flex>
-            <v-flex xs7 class="font-italic">{{ displayAddress(mvt.address) }}</v-flex>
+            <v-flex xs7 class="font-italic break-word">{{ displayAddress(mvt.address) }}</v-flex>
             <v-flex xs3 class="font-weight-bold" :class="amountColorClass(mvt.sign)" text-xs-right>
               <v-icon v-if="mvt.coinbase" color="secondary" title="Coinbase" left>star</v-icon>
               {{ mvt.sign }}

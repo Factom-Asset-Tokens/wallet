@@ -243,7 +243,4 @@ export default {
   align-items: center;
   padding: 12px;
 }
-.break-word {
-  word-break: break-all;
-}
 </style>

@@ -24,7 +24,7 @@
               <v-flex xs12>
                 <v-sheet color="grey darken-2">
                   <v-container>
-                    <pre>{{ metadata }}</pre>
+                    <div class="break-word">{{ metadata }}</div>
                   </v-container>
                 </v-sheet>
               </v-flex>
