@@ -2,3 +2,9 @@
   background-color: #535353 !important;
   border-color: #535353 !important;
 }
+
+.active-tab {
+  opacity: 1 !important;
+  color: #eeb71c !important;
+  font-weight: 700;
+}
