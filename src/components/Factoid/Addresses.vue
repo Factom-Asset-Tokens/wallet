@@ -102,9 +102,11 @@
               <td>{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog lazy>
-                  <span v-if="props.item.name">{{ props.item.name }}</span>
+                  <span v-if="props.item.name" class="break-word">{{ props.item.name }}</span>
                   <v-icon v-else color="lighterGrey">edit</v-icon>
                   <v-text-field
+                    maxlength="120"
+                    counter="120"
                     slot="input"
                     :value="props.item.name"
                     @input="updateAddressName(props.item.address, $event)"
