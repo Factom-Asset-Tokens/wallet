@@ -17,7 +17,8 @@
               label="Metadata"
               clearable
               autofocus
-              counter="9000"
+              counter="10000"
+              maxlength="10000"
             ></v-textarea>
           </v-flex>
         </v-layout>
