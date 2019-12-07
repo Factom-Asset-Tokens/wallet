@@ -6,9 +6,7 @@
         <v-layout wrap>
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ amountText }} FCT</v-flex>
-          <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2>
-            (+ {{ txFeeText }} FCT of fee burned)
-          </v-flex>
+          <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2> (+ {{ txFeeText }} FCT of fee) </v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>from</v-flex>
           <v-layout v-for="(input, index) in inputsText" :key="'input-' + index">
             <v-flex xs10 class="title secondary--text" my-2>{{ input.address }}</v-flex>

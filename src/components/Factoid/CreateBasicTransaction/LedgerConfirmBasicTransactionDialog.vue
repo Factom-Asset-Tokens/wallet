@@ -6,9 +6,7 @@
         <v-layout wrap>
           <v-flex xs12 text-xs-center class="subheading" my-2>Sending</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" mt-2>{{ amountText }} FCT</v-flex>
-          <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2>
-            (+ {{ feeText }} FCT of fee burned)
-          </v-flex>
+          <v-flex xs12 text-xs-center class="subheading secondary--text" mb-2> (+ {{ feeText }} FCT of fee) </v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>from</v-flex>
           <v-flex xs12 text-xs-center class="title secondary--text" my-2>{{ inputAddress }}</v-flex>
           <v-flex xs12 text-xs-center class="subheading" my-2>to</v-flex>
