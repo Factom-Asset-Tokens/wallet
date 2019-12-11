@@ -49,7 +49,7 @@
                 <v-flex xs12 v-else class="font-italic subheading primary--text">
                   Start selecting tokens from the "Available Tokens" section.
                 </v-flex>
-                <v-flex md8 mt-4>
+                <v-flex lg8 mt-4>
                   <v-text-field
                     v-model="address"
                     label="Recipient address"
@@ -62,7 +62,7 @@
                     box
                   ></v-text-field>
                 </v-flex>
-                <v-flex md2 mt-4 text-xs-left>
+                <v-flex lg2 mt-4 text-xs-left>
                   <v-btn icon>
                     <v-icon title="Burn tokens" :color="burnIconColor" @click="toggleBurnAddress">
                       fas fa-fire-alt
@@ -73,7 +73,7 @@
                   </v-btn>
                 </v-flex>
 
-                <v-flex md2 text-xs-right mt-4>
+                <v-flex lg2 text-xs-right mt-4>
                   <v-btn
                     color="primary"
                     large
@@ -259,7 +259,10 @@ export default {
 
       const outputAddress = this.burn ? 'FA1zT4aFpEvcnPqPCigB3fvGu4Q4mTXY22iiuV69DqE1pNhdF2MC' : this.address;
 
-      txBuilder.output(outputAddress, this.selectedTokens.map(id => (id.min === id.max ? id.min : id)));
+      txBuilder.output(
+        outputAddress,
+        this.selectedTokens.map(id => (id.min === id.max ? id.min : id))
+      );
 
       if (this.metadata) {
         txBuilder.metadata(this.metadata);
