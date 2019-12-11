@@ -9,5 +9,6 @@
   font-weight: 1000;
 }
 .break-word {
-  word-break: break-all;
+  word-wrap: break-word;
+  word-break: break-word;  
 }
