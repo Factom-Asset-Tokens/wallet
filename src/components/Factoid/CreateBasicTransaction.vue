@@ -8,7 +8,7 @@
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
             <!-- Input address selection -->
-            <v-flex xs12 md8 offset-md2>
+            <v-flex xs12 lg8 offset-lg2>
               <v-select
                 :items="inputAddresses"
                 label="Paying FCT address"
@@ -20,7 +20,7 @@
             </v-flex>
 
             <!-- Output address -->
-            <v-flex xs12 md8 offset-md2>
+            <v-flex xs12 lg8 offset-lg2>
               <v-text-field
                 v-model="outputAddress"
                 label="Recipient FCT address"
@@ -34,7 +34,7 @@
             </v-flex>
 
             <!-- Amount -->
-            <v-flex xs12 md6 offset-md2>
+            <v-flex xs12 lg6 offset-lg2>
               <v-text-field
                 placeholder="Amount"
                 type="number"
@@ -47,21 +47,21 @@
                 box
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 md2 text-xs-right>
+            <v-flex xs12 lg2 text-xs-right>
               <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">
                 Send
                 <v-icon right>send</v-icon>
               </v-btn>
             </v-flex>
             <!-- Alerts -->
-            <v-flex v-show="showFee" xs12 md8 offset-md2>
+            <v-flex v-show="showFee" xs12 lg8 offset-lg2>
               <v-alert :value="true" icon="info" color="primary" outline>
                 An additional transaction fee of
                 <strong>{{ feeText }} FCT</strong>
                 will be deducted.
               </v-alert>
             </v-flex>
-            <v-flex v-if="errorMessage" xs12 md8 offset-md2>
+            <v-flex v-if="errorMessage" xs12 lg8 offset-lg2>
               <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
             </v-flex>
             <v-flex xs12>

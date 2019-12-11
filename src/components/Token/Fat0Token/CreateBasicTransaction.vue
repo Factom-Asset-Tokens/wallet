@@ -8,7 +8,7 @@
           </v-flex>
         </v-layout>
         <v-layout>
-          <v-flex xs8 offset-xs2>
+          <v-flex xs12 lg8 offset-lg2>
             <v-toolbar flat color="grey darken-3">
               <v-spacer></v-spacer>
               <v-btn icon>
@@ -23,7 +23,7 @@
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap align-baseline>
             <!-- Input address selection -->
-            <v-flex xs12 md8 offset-md2>
+            <v-flex xs12 lg8 offset-lg2>
               <v-select
                 v-model="inputAddress"
                 :items="inputAddresses"
@@ -36,7 +36,7 @@
             </v-flex>
 
             <!-- Output address -->
-            <v-flex xs12 md8 offset-md2>
+            <v-flex xs12 lg8 offset-lg2>
               <v-text-field
                 v-model="outputAddress"
                 label="Recipient address"
@@ -51,7 +51,7 @@
             </v-flex>
 
             <!-- Amount -->
-            <v-flex xs12 md6 offset-md2>
+            <v-flex xs12 lg6 offset-lg2>
               <v-text-field
                 placeholder="Amount"
                 type="number"
@@ -65,7 +65,7 @@
               ></v-text-field>
             </v-flex>
 
-            <v-flex xs12 md2 text-xs-right>
+            <v-flex xs12 lg2 text-xs-right>
               <v-btn color="primary" large :disabled="!valid" type="submit" :loading="sending">
                 Send
                 <v-icon right>send</v-icon>
@@ -73,7 +73,7 @@
             </v-flex>
 
             <!-- Alerts transaction success/failure-->
-            <v-flex v-show="errorMessage" xs12 md8 offset-md2>
+            <v-flex v-show="errorMessage" xs12 lg8 offset-lg2>
               <v-alert :value="errorMessage" type="error" outline dismissible>{{ errorMessage }}</v-alert>
             </v-flex>
             <v-flex xs12>
