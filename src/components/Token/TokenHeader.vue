@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs12 md8 offset-md2>
+  <v-flex xs12 :lg8="!showDetails" :offset-lg2="!showDetails">
     <v-card color="primary">
       <v-card-text>
         <v-layout align-center justify-center wrap>
@@ -13,7 +13,7 @@
         </v-layout>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions class="no-padding-top">
         <v-spacer></v-spacer>
         <v-btn icon @click="showDetails = !showDetails">
           <v-icon>{{ showDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
@@ -92,5 +92,8 @@ export default {
 }
 .clickable {
   cursor: pointer;
+}
+.no-padding-top {
+  padding-top: 0 !important;
 }
 </style>
