@@ -82,14 +82,14 @@
 
             <v-layout align-center wrap>
               <!-- Transaction building error -->
-              <v-flex xs12 sm10>
+              <v-flex xs12>
                 <v-alert :value="!validTransaction" color="error" icon="warning" outline>
                   {{ transactionError }}
                 </v-alert>
               </v-flex>
 
               <!-- Send button -->
-              <v-flex xs12 sm2 text-xs-right pt-3>
+              <v-flex xs12 text-xs-right pt-3>
                 <v-btn color="primary" large :disabled="!validForm || !validFees" type="submit" :loading="sending">
                   Send
                   <v-icon right>send</v-icon>

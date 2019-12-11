@@ -5,6 +5,7 @@
         :items="availableAddresses"
         :rules="addressRules"
         label="Address"
+        class="break-word"
         v-model="address"
         @input="$emit('input', { address, amount, id: value.id })"
         dense
