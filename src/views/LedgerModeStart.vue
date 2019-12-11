@@ -69,8 +69,11 @@
               </a>
             </v-alert>
           </v-flex>
-          <v-flex xs12 text-xs-center mt-5>
-            <v-btn color="primary" @click="initialize" :disabled="!ready">Start Ledger Mode</v-btn>
+          <v-flex xs12 text-xs-center mt-4>
+            <v-btn color="primary" large @click="initialize" :disabled="!ready">Start Ledger Mode</v-btn>
+          </v-flex>
+          <v-flex xs12 mt-2>
+            <v-btn flat @click="back">Back</v-btn>
           </v-flex>
         </v-layout>
       </v-container>
@@ -138,6 +141,9 @@ export default {
     }
   },
   methods: {
+    back() {
+      this.$router.replace({ name: 'Start' });
+    },
     openLedgerHelpPage() {
       shell.openExternal('https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues');
     },
