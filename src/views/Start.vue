@@ -8,13 +8,13 @@
             <div class="display-2 font-weight-light">Factom Asset Token Wallet</div>
           </v-flex>
           <v-flex xs12 text-xs-center>
-            <img src="@/assets/img/fat-icon.png" width="100px" />
+            <img src="@/assets/img/fat-icon.png" width="80px" />
           </v-flex>
         </v-layout>
         <WalletLogin v-if="showLogin" @newWallet="showNewWalletSelection()"></WalletLogin>
         <NewWalletSelection v-else></NewWalletSelection>
         <v-layout wrap>
-          <v-flex xs12 text-xs-center>
+          <v-flex xs12 text-xs-center :mt-5="showLogin">
             <v-btn large color="primary" :to="{ name: 'LedgerModeStart' }">
               <img src="@/assets/img/ledger.svg" width="120px" />
             </v-btn>
