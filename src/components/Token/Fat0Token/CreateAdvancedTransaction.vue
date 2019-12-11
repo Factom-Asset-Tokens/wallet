@@ -78,13 +78,13 @@
 
             <!-- Send & alerts -->
             <v-layout align-center wrap>
-              <v-flex xs12 sm9>
+              <v-flex xs12>
                 <v-alert v-if="sendClicked" :value="!validTransaction" color="error" icon="warning" outline>
                   {{ transactionError }}
                 </v-alert>
               </v-flex>
 
-              <v-flex xs12 sm3 text-xs-right pt-3>
+              <v-flex xs12 text-xs-right pt-3>
                 <v-btn icon>
                   <v-icon title="Attach metadata" :color="metadataIconColor" @click="attachMetadata">more</v-icon>
                 </v-btn>
