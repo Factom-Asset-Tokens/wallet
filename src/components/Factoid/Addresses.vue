@@ -99,7 +99,7 @@
                 <v-icon v-if="props.item.preferred" color="secondary">star</v-icon>
                 <v-icon v-else @click="setPreferredEcAddress(props.item.address)">star_outline</v-icon>
               </td>
-              <td>{{ props.item.address }}</td>
+              <td class="no-padding-left">{{ props.item.address }}</td>
               <td>
                 <v-edit-dialog lazy>
                   <span v-if="props.item.name" class="break-word">{{ props.item.name }}</span>
@@ -246,5 +246,8 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 12px;
+}
+.no-padding-left {
+  padding-left: 0 !important;
 }
 </style>
