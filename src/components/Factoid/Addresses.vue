@@ -126,6 +126,7 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce';
 import Big from 'bignumber.js';
 import AddressImportDialog from './Addresses/AddressImportDialog';
 
@@ -149,6 +150,9 @@ export default {
         sortBy: 'value'
       }
     };
+  },
+  created() {
+    this.debouncedUpdateAddressNames = debounce(this.$store.commit.bind(this, 'address/updateAddressNames'), 500);
   },
   async mounted() {
     this.loading = true;
@@ -228,7 +232,7 @@ export default {
       }
     },
     updateAddressName(address, name) {
-      this.$store.commit('address/updateAddressNames', { address, name });
+      this.debouncedUpdateAddressNames({ address, name });
     },
     setPreferredEcAddress(address) {
       this.$store.commit('address/setPreferredEcAddress', address);

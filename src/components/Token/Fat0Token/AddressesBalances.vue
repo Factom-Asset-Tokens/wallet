@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce';
+
 export default {
   props: ['balances', 'symbol'],
   data() {
@@ -48,6 +50,9 @@ export default {
         sortBy: 'value'
       }
     };
+  },
+  created() {
+    this.debouncedUpdateAddressNames = debounce(this.$store.commit.bind(this, 'address/updateAddressNames'), 500);
   },
   computed: {
     items() {
@@ -61,7 +66,7 @@ export default {
   },
   methods: {
     updateAddressName(address, name) {
-      this.$store.commit('address/updateAddressNames', { address, name });
+      this.debouncedUpdateAddressNames({ address, name });
     }
   }
 };

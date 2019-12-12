@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce';
+
 import { displayIds, sortIds } from '@/components/Token/Fat1Token/nf-token-ids.js';
 import NfTokenDetailsDialog from '@/components/Token/Fat1Token/NfTokenDetailsDialog';
 
@@ -76,13 +78,16 @@ export default {
       }
     };
   },
+  created() {
+    this.debouncedUpdateAddressNames = debounce(this.$store.commit.bind(this, 'address/updateAddressNames'), 500);
+  },
   methods: {
     sortIds,
     showTokenDetails(id) {
       this.$refs.detailsDialog.show(id);
     },
     updateAddressName(address, name) {
-      this.$store.commit('address/updateAddressNames', { address, name });
+      this.debouncedUpdateAddressNames({ address, name });
     }
   },
   filters: {
