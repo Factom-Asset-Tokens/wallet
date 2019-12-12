@@ -34,8 +34,17 @@
             </v-flex>
 
             <!-- Amount -->
-            <v-flex xs12 lg6 offset-lg2>
+            <v-flex xs12 lg1 offset-lg2>
+              <v-checkbox
+                v-model="maxCheck"
+                color="primary"
+                label="Max"
+                title="Send all the input address FCT while accounting for fees"
+              ></v-checkbox
+            ></v-flex>
+            <v-flex xs12 lg5>
               <v-text-field
+                :disabled="maxCheck"
                 placeholder="Amount"
                 type="number"
                 v-model="outputAmount"
@@ -103,6 +112,7 @@ export default {
   components: { ConfirmBasicTransactionDialog, LedgerConfirmBasicTransactionDialog, AddressBook },
   data() {
     return {
+      maxCheck: false,
       inputAddress: '',
       outputAddress: '',
       outputAmount: '',
@@ -119,6 +129,9 @@ export default {
     this.refreshFee();
   },
   computed: {
+    maxAmountWatchh() {
+      return [this.inputAddress, this.maxCheck];
+    },
     showFee() {
       return this.inputAddress && this.outputAddress && this.outputAmount;
     },
@@ -154,7 +167,7 @@ export default {
     },
     amountRules() {
       return [
-        amount => (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
+        amount => this.maxCheck || (amount && ZERO.lt(amount)) || 'Amount must be strictly positive',
         amount => {
           if (!this.inputAddress) {
             return true;
@@ -236,6 +249,17 @@ export default {
     async refreshFee() {
       const ecRate = await this.getEcRate();
       this.fee = computeSisoRequiredFees(ecRate);
+    }
+  },
+  watch: {
+    maxAmountWatchh() {
+      if (this.maxCheck && this.inputAddress) {
+        this.outputAmount = this.balances[this.inputAddress]
+          .minus(this.fee)
+          .div(FACTOSHI_MULTIPLIER)
+          .toNumber();
+        console.log(this.outputAmount);
+      }
     }
   },
   beforeDestroy() {
