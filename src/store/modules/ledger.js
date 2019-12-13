@@ -89,7 +89,7 @@ export default {
         if (e.statusCode === 27013) {
           throw new Error('Transaction declined by the user.');
         } else {
-          throw new Error('Failed to sign transaction with Ledger.');
+          throw new Error(`Failed to sign transaction with Ledger. Error code: ${e.statusCode}`);
         }
       }
     },
@@ -113,8 +113,10 @@ export default {
       } catch (e) {
         if (e.statusCode === 27013) {
           throw new Error('Transaction declined by the user.');
+        } else if (e.statusCode === 27264) {
+          throw new Error('Ledger error. Transaction metadata likely too big for Ledger signing.');
         } else {
-          throw new Error('Failed to sign transaction with Ledger.');
+          throw new Error(`Failed to sign transaction with Ledger. Error code: ${e.statusCode}`);
         }
       }
     },
@@ -134,7 +136,7 @@ export default {
         if (e.statusCode === 27013) {
           throw new Error('Transaction declined by the user.');
         } else {
-          throw new Error('Failed to sign transaction with Ledger.');
+          throw new Error(`Failed to sign transaction with Ledger. Error code: ${e.statusCode}`);
         }
       }
     },
