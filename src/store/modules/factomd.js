@@ -5,7 +5,7 @@ import { getIntegerPort } from './common';
 export default {
   namespaced: true,
   state: {
-    endpoint: 'https://dev.factomd.net/v2',
+    endpoint: 'https://api.factomd.net/v2',
     status: null,
     errorMessage: '',
     version: null

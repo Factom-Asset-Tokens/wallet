@@ -96,21 +96,19 @@ export default {
   data() {
     return {
       factomdEndpointList: [
-        { name: 'Open Node Network (testnet)', endpoint: 'https://dev.factomd.net/v2' },
-        { name: 'Localhost', endpoint: 'http://localhost:8088/v2' }
+        { name: 'Open Node Network', endpoint: 'https://api.factomd.net/v2' },
+        { name: 'Factom Inc. Courtesy', endpoint: 'http://courtesy-node.factom.com/v2' }
       ],
-      fatdEndpointList: [
-        { name: 'DBGrow Courtesy node (testnet)', endpoint: 'http://0.testnet.fat.dbgrow.com:8078' },
-        { name: 'Localhost', endpoint: 'http://localhost:8078' }
-      ]
+      fatdEndpointList: [{ name: 'DBGrow Courtesy node', endpoint: 'http://0.testnet.fat.dbgrow.com:8078' }]
     };
   },
   created: function() {
     this.debouncedUpdateFatd = debounce(this.$store.dispatch.bind(this, 'fatd/update'), 600);
     this.debouncedUpdateFactomd = debounce(this.$store.dispatch.bind(this, 'factomd/update'), 600);
-    Promise.all([this.$store.dispatch('factomd/checkStatus'), this.$store.dispatch('fatd/checkStatus')]).catch(
-      () => {}
-    );
+    Promise.all([
+      this.$store.dispatch('factomd/checkStatus'),
+      this.$store.dispatch('fatd/checkStatus')
+    ]).catch(() => {});
   },
   computed: {
     ...mapState({
