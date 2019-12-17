@@ -42,7 +42,7 @@ import { buildTransactionsMovements } from './TransactionHistory/transaction-his
 import TransactionDetailsDialog from './TransactionHistory/TransactionDetailsDialog';
 
 const tfaApi = axios.create({
-  baseURL: 'https://testnet.factoid.org/api/v1/address/transactions/'
+  baseURL: 'https://explorer.factoid.org/api/v1/address/transactions/'
 });
 
 const PAGINATION_LIMIT = 10;
