@@ -1,5 +1,5 @@
-const assert = require('chai').assert,
-  BackupCypher = require('../src/lib/BackupCypher');
+import { assert } from 'chai';
+import BackupCypher from '../../src/lib/BackupCypher';
 
 const PASSWORD = 'password';
 

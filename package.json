@@ -16,7 +16,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "start": "npm run serve",
-    "test": "mocha 'test/**/*.spec.js'"
+    "test:unit": "vue-cli-service test:unit",
+    "test": "npm run test:unit"
   },
   "main": "background.js",
   "dependencies": {
@@ -34,7 +35,10 @@
     "@ledgerhq/hw-transport-node-hid-noevents": "^4.78.0",
     "@vue/cli-plugin-babel": "^4.1.1",
     "@vue/cli-plugin-eslint": "^4.1.1",
+    "@vue/cli-plugin-unit-mocha": "^4.1.1",
     "@vue/cli-service": "^4.1.1",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/test-utils": "^1.0.0-beta.30",
     "ajv": "^6.10.2",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.3",
@@ -50,6 +54,7 @@
     "electron-icon-builder": "^1.0.1",
     "electron-store": "^5.1.0",
     "eslint": "^6.7.2",
+    "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-vue": "^6.0.1",
     "factom": "1.2.7",
     "factom-identity-lib": "^0.2.0-rc6",
@@ -61,7 +66,6 @@
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
     "material-design-icons-iconfont": "^5.0.1",
-    "mocha": "^6.2.2",
     "moment": "^2.24.0",
     "node-cache": "^5.0.2",
     "prettier": "^1.19.1",
