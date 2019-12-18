@@ -52,6 +52,7 @@ export default {
   props: ['token', 'tokenCli'],
   data() {
     return {
+      fetch: true,
       intervalId: 0
     };
   },
@@ -81,8 +82,16 @@ export default {
     }
   },
   methods: {
+    stopFetchingBalances() {
+      clearTimeout(this.intervalId);
+      this.intervalId = null;
+      this.fetch = false;
+    },
     async fetchBalances() {
-      return this.$store.dispatch('tokens/fetchBalances', this.token.chainId);
+      await this.$store.dispatch('tokens/fetchBalances', this.token.chainId);
+      if (this.fetch) {
+        this.intervalId = setTimeout(() => this.fetchBalances(), 5000);
+      }
     }
   },
   watch: {
@@ -92,13 +101,9 @@ export default {
   },
   created() {
     this.fetchBalances();
-    const that = this;
-    this.intervalId = setInterval(function() {
-      that.fetchBalances();
-    }, 5000);
   },
   beforeDestroy() {
-    clearInterval(this.intervalId);
+    this.stopFetchingBalances();
   }
 };
 </script>

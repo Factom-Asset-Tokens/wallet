@@ -1,5 +1,7 @@
 import Promise from 'bluebird';
 import { standardizeId } from '@/components/Token/Fat1Token/nf-token-ids.js';
+const { mergeContiguousIds } = require('@/components/Token/Fat1Token/nf-token-ids.js');
+import flatmap from 'lodash.flatmap';
 
 export default function getBalances(cli, addresses) {
   switch (cli.getType()) {
@@ -29,15 +31,25 @@ async function getFat1Balances(cli, addresses) {
     async function(acc, address) {
       const result = {};
       result.balance = await cli.getBalance(address);
-
       if (result.balance.gt(0)) {
-        const nfBalance = await cli.getNFBalance({
-          address,
-          // TODO: not optimal
-          limit: result.balance.toNumber()
-        });
+        const nfBalances = [];
+        let nfBalance = [];
 
-        result.ids = nfBalance.map(standardizeId);
+        const limit = 100000;
+        let i = 1;
+        do {
+          nfBalance = await cli.getNFBalance({
+            address,
+            limit,
+            page: i,
+            order: 'asc'
+          });
+          nfBalances.push(nfBalance.map(standardizeId));
+
+          i++;
+        } while (nfBalance.length > 0);
+
+        result.ids = mergeContiguousIds(flatmap(nfBalances));
       } else {
         result.ids = [];
       }

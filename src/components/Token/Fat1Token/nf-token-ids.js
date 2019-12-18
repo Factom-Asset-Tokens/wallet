@@ -16,6 +16,25 @@ export function sortIds(ids) {
   return ids.slice().sort((a, b) => a.min - b.min);
 }
 
+export function mergeContiguousIds(ids) {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const copy = sortIds(ids.map(id => ({ ...id })));
+  const merged = [copy[0]];
+
+  for (let i = 1; i < copy.length; ++i) {
+    if (merged[merged.length - 1].max === copy[i].min - 1) {
+      merged[merged.length - 1].max = copy[i].max;
+    } else {
+      merged.push(copy[i]);
+    }
+  }
+
+  return merged;
+}
+
 export function idsSetDiff(allTokensList, selectedTokensList) {
   const availableTokens = {};
   const selectedTokens = {};

@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import BackupCypher from '../../src/lib/BackupCypher';
+import BackupCypher from '@/lib/BackupCypher';
 
 const PASSWORD = 'password';
 
