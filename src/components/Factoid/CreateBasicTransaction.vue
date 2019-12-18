@@ -67,7 +67,7 @@
               <v-alert :value="true" icon="info" color="primary" outline>
                 An additional transaction fee of
                 <strong>{{ feeText }} FCT</strong>
-                will be deducted.
+                will be added.
               </v-alert>
             </v-flex>
             <v-flex v-if="errorMessage" xs12 lg8 offset-lg2>
