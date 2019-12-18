@@ -82,7 +82,7 @@ export default {
       try {
         await this.$store.dispatch('tokens/fetchBalances', this.token.chainId);
       } catch (e) {
-        //
+        this.$store.commit('snackError', `Error fetching balances: ${e.message}`);
       }
     }
   },
