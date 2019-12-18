@@ -258,7 +258,6 @@ export default {
           .minus(this.fee)
           .div(FACTOSHI_MULTIPLIER)
           .toNumber();
-        console.log(this.outputAmount);
       }
     }
   },
