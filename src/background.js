@@ -4,18 +4,9 @@ import { app, protocol, BrowserWindow, Menu } from 'electron';
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib';
 import path from 'path';
 import Store from 'electron-store';
-import * as Sentry from '@sentry/electron/dist/main';
-import { version } from '../package.json';
 import contextMenu from 'electron-context-menu';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-
-if (!isDevelopment) {
-  Sentry.init({
-    dsn: 'https://ee4a69ddc0494b24a0dd4fdcbc905526@sentry.io/1442979',
-    release: `fat-wallet@${version}`
-  });
-}
 
 const appStore = new Store({ name: 'user-config.v1' });
 appStore.set('latestVersionOpened', app.getVersion());

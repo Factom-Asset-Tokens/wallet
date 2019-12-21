@@ -21,9 +21,6 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@sentry/browser": "^5.10.0",
-    "@sentry/electron": "^1.0.0",
-    "@sentry/integrations": "^5.10.0",
     "node-hid": "^1.0.0"
   },
   "devDependencies": {
