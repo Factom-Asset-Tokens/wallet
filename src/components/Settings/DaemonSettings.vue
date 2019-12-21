@@ -96,10 +96,10 @@ export default {
   data() {
     return {
       factomdEndpointList: [
-        { name: 'Open Node Network', endpoint: 'https://api.factomd.net/v2' },
+        { name: 'Open Node', endpoint: 'https://api.factomd.net/v2' },
         { name: 'Factom Inc. Courtesy', endpoint: 'http://courtesy-node.factom.com/v2' }
       ],
-      fatdEndpointList: [{ name: 'DBGrow Courtesy node', endpoint: 'http://0.testnet.fat.dbgrow.com:8078' }]
+      fatdEndpointList: [{ name: 'DBGrow Courtesy', endpoint: 'http://0.mainnet.fat.dbgrow.com:8078' }]
     };
   },
   created: function() {
