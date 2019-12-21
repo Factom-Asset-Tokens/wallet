@@ -29,6 +29,7 @@
                 :items="inputAddresses"
                 label="Paying address"
                 :rules="addressRules"
+                no-data-text="No address with fund available"
                 single-line
                 box
                 required

@@ -5,6 +5,7 @@
         :items="availableAddresses"
         label="Address"
         v-model="address"
+        no-data-text="No more address with fund available"
         :rules="addressRules"
         @input="$emit('input', { address, amount, id: value.id })"
         dense

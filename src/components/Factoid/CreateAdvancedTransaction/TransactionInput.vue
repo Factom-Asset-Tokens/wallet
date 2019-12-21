@@ -6,6 +6,7 @@
         :rules="addressRules"
         label="Address"
         class="break-word"
+        no-data-text="No more address with fund available"
         v-model="address"
         @input="$emit('input', { address, amount, id: value.id })"
         dense

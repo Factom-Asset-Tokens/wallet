@@ -14,6 +14,7 @@
                 label="Paying FCT address"
                 :rules="addressRules"
                 v-model="inputAddress"
+                no-data-text="No address with fund available"
                 single-line
                 box
               ></v-select>
