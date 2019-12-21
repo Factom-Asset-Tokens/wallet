@@ -1,8 +1,8 @@
 {
   "name": "fat-wallet",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "private": true,
-  "description": "Wallet for FAT tokens. Factom Asset Tokens (FAT) is a protocol of tokenization built on top of the Factom blockchain.",
+  "description": "Desktop wallet for FAT tokens. Factom Asset Tokens (FAT) is a protocol of tokenization built on top of the Factom blockchain.",
   "author": {
     "name": "Luciap Technology Inc.",
     "email": "contact@luciap.ca"
