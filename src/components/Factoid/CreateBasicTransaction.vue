@@ -3,7 +3,9 @@
     <v-sheet class="elevation-1 vsheet-bottom-margin">
       <v-container id="transaction">
         <v-layout wrap>
-          <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalBalanceText }} FCT </v-flex>
+          <v-flex xs12 text-xs-center class="display-1 font-weight-light secondary--text" mb-5>
+            <NumberWithDecimals :number="totalBalanceText"></NumberWithDecimals> FCT
+          </v-flex>
         </v-layout>
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
@@ -105,12 +107,13 @@ import { computeSisoRequiredFees, getFeeAdjustedSisoTransaction } from './Transa
 import ConfirmBasicTransactionDialog from './CreateBasicTransaction/ConfirmBasicTransactionDialog';
 import LedgerConfirmBasicTransactionDialog from './CreateBasicTransaction/LedgerConfirmBasicTransactionDialog';
 import AddressBook from '@/components/AddressBook';
+import NumberWithDecimals from '@/components/NumberWithDecimals';
 
 const ZERO = new Big(0);
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  components: { ConfirmBasicTransactionDialog, LedgerConfirmBasicTransactionDialog, AddressBook },
+  components: { ConfirmBasicTransactionDialog, LedgerConfirmBasicTransactionDialog, AddressBook, NumberWithDecimals },
   data() {
     return {
       maxCheck: false,

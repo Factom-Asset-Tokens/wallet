@@ -3,15 +3,15 @@
     <v-flex xs12 mb-5>
       <v-layout align-center wrap>
         <v-flex xs12 md6>
-          <v-sheet color="secondary" class="white--text display-1 font-weight-medium">
-            <div class="total-balance" :title="`${totalFctBalanceText.exact} FCT`">
+          <v-sheet color="secondary" class="white--text display-1">
+            <div class="total-balance" :title="`${totalFctBalanceText} FCT`">
               <img class="balance-icon" src="@/assets/img/coin-white.png" />
-              <div>{{ totalFctBalanceText.rounded }} FCT</div>
+              <div><NumberWithDecimals :number="totalFctBalanceText"></NumberWithDecimals> FCT</div>
             </div>
           </v-sheet>
         </v-flex>
         <v-flex xs12 md6>
-          <v-sheet color="primary" class="white--text display-1 font-weight-medium">
+          <v-sheet color="primary" class="white--text display-1">
             <div class="total-balance" :title="`${totalEcBalanceText} EC`">
               <img class="balance-icon" src="@/assets/img/entry-credit.png" />
               <div>{{ totalEcBalanceText }} EC</div>
@@ -129,11 +129,12 @@
 import debounce from 'lodash.debounce';
 import Big from 'bignumber.js';
 import AddressImportDialog from './Addresses/AddressImportDialog';
+import NumberWithDecimals from '@/components/NumberWithDecimals';
 
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 
 export default {
-  components: { AddressImportDialog },
+  components: { AddressImportDialog, NumberWithDecimals },
   data: function() {
     return {
       tab: null,
@@ -167,11 +168,7 @@ export default {
       return this.$store.state.ledgerMode;
     },
     totalFctBalanceText() {
-      const fctSum = this.$store.getters['address/totalFctBalance'].div(FACTOSHI_MULTIPLIER);
-      return {
-        rounded: fctSum.toFormat(5),
-        exact: fctSum.toFormat()
-      };
+      return this.$store.getters['address/totalFctBalance'].div(FACTOSHI_MULTIPLIER).toFormat();
     },
     totalEcBalanceText() {
       return this.$store.getters['address/totalEcBalance'].toFormat();

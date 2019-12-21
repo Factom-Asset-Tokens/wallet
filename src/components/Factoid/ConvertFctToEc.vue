@@ -3,8 +3,12 @@
     <v-sheet class="elevation-1 vsheet-bottom-margin">
       <v-container id="transaction">
         <v-layout wrap>
-          <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-1> {{ totalFctBalanceText }} FCT </v-flex>
-          <v-flex xs12 text-xs-center class="display-1 secondary--text" mb-5> {{ totalEcBalanceText }} EC </v-flex>
+          <v-flex xs12 text-xs-center class="display-1 font-weight-light secondary--text" mb-1>
+            <NumberWithDecimals :number="totalFctBalanceText"></NumberWithDecimals> FCT
+          </v-flex>
+          <v-flex xs12 text-xs-center class="display-1 font-weight-light secondary--text" mb-5>
+            {{ totalEcBalanceText }} EC
+          </v-flex>
         </v-layout>
         <v-form v-model="valid" ref="form" @submit.prevent="confirmTransaction" lazy-validation>
           <v-layout wrap>
@@ -98,12 +102,13 @@ import { computeSisoRequiredFees, getFeeAdjustedSisoTransaction } from './Transa
 import ConfirmFctToEcConversionDialog from './ConvertFctToEc/ConfirmFctToEcConversionDialog';
 import LedgerConfirmFctToEcConversionDialog from './ConvertFctToEc/LedgerConfirmFctToEcConversionDialog';
 import AddressBook from '@/components/AddressBook';
+import NumberWithDecimals from '@/components/NumberWithDecimals';
 
 const FACTOSHI_MULTIPLIER = new Big(100000000);
 const ZERO = new Big(0);
 
 export default {
-  components: { ConfirmFctToEcConversionDialog, LedgerConfirmFctToEcConversionDialog, AddressBook },
+  components: { ConfirmFctToEcConversionDialog, LedgerConfirmFctToEcConversionDialog, AddressBook, NumberWithDecimals },
   data() {
     return {
       inputAddress: '',
