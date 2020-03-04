@@ -44,7 +44,7 @@ export default new Vuex.Store({
   },
   mutations: {
     acceptLicense: state => (state.licenseAccepted = true),
-    setLedgerNode: state => (state.ledgerMode = true),
+    enableLedgerMode: state => (state.ledgerMode = true),
     showAppSideBar: state => (state.displayAppSideBar = true),
     updateSnack: (state, value) => (state.snack = value),
     snackError(state, message) {
@@ -81,7 +81,7 @@ export default new Vuex.Store({
       }
     },
     async initLedgerMode({ commit, dispatch }) {
-      commit('setLedgerNode');
+      commit('enableLedgerMode');
       try {
         await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus')]);
         await Promise.all([dispatch('address/init'), dispatch('tokens/init')]);
