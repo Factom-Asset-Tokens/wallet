@@ -158,7 +158,7 @@ export default {
         transport.close();
         return addresses.map(a => a.address);
       } catch (e) {
-        throw new Error('Failed to fetch next FCT addresses from Ledger');
+        throw new Error('Failed to fetch next FCT addresses from Ledger: ' + e.message);
       }
     },
     async fetchNextEcAddresses({ state, commit }, nb = 1) {
@@ -175,7 +175,7 @@ export default {
         transport.close();
         return addresses.map(a => a.address);
       } catch (e) {
-        throw new Error('Failed to fetch next EC addresses from Ledger');
+        throw new Error('Failed to fetch next EC addresses from Ledger: ' + e.message);
       }
     }
   }

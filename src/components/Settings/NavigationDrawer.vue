@@ -21,7 +21,10 @@ export default {
   computed: {
     items() {
       if (this.$store.state.ledgerMode) {
-        return [{ text: 'Connection', icon: 'wifi', to: 'connection' }];
+        return [
+          { text: 'Connection', icon: 'wifi', to: 'connection' },
+          { text: 'Ledger', icon: 'usb', to: 'ledger' }
+        ];
       } else {
         return [
           { text: 'Connection', icon: 'wifi', to: 'connection' },

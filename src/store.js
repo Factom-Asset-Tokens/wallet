@@ -64,7 +64,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async initKeystoreMode({ dispatch }, { password, seed, backup }) {
+    async initKeystoreMode({ commit, dispatch }, { password, seed, backup }) {
       if (backup) {
         await dispatch('restoreFromBackup', backup);
         await dispatch('keystore/init', { password, seed, backup: backup.keystore });
@@ -78,6 +78,7 @@ export default new Vuex.Store({
       } catch (e) {
         // Do not fail the initialization (and log in) of the wallet because of errors
         // in getting information from remote sources (factomd/fatd)
+        commit('snackError', e.message);
       }
     },
     async initLedgerMode({ commit, dispatch }) {
@@ -86,6 +87,7 @@ export default new Vuex.Store({
         await Promise.all([dispatch('factomd/checkStatus'), dispatch('fatd/checkStatus')]);
         await Promise.all([dispatch('address/init'), dispatch('tokens/init')]);
       } catch (e) {
+        commit('snackError', e.message);
         // Do not fail the initialization of the wallet because of errors
         // in getting information from remote sources (factomd/fatd)
       }
