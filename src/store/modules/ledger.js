@@ -16,11 +16,14 @@ export default {
   state: {
     factomAppConf: null,
     productName: '',
-
+    // The legacy derivation path (v1.0.2 and prior) was using hardened keys for all levels,
+    // which was not compatible with MFW.
+    legacyDerivation: false,
     nextFctAddress: 0,
     nextEcAddress: 0
   },
   mutations: {
+    setLegacyDerivation: (state, b) => (state.legacyDerivation = b),
     setProductName: (state, productName) => (state.productName = productName),
     setFctAppConfig: (state, factomAppConf) => (state.factomAppConf = factomAppConf),
     setNextFctAddress: (state, nextFctAddress) => (state.nextFctAddress = nextFctAddress),
@@ -38,7 +41,7 @@ export default {
         const fctApp = new Fct(transport);
         if (await dispatch('isFctAppOpen', fctApp)) {
           try {
-            await fctApp.getAddress(`44'/131'/0'/0'/0'`);
+            await fctApp.getAddress(`44'/131'/0'/0/0`);
             transport.close();
             return LEDGER_STATUS.UNLOCKED;
           } catch (e) {
@@ -67,11 +70,11 @@ export default {
 
     ////////////
 
-    async signTransactionForInput({ rootState }, { unsignedTX, inputIndex }) {
+    async signTransactionForInput({ state, rootState }, { unsignedTX, inputIndex }) {
       const addresses = [...rootState.address.fctAddresses];
       const inputAddress = unsignedTX.inputs[inputIndex].address;
       const index = addresses.findIndex(a => a === inputAddress);
-      const path = `44'/131'/0'/0'/${index}'`;
+      const path = getFctPath(state, index);
 
       const txHex = unsignedTX.marshalBinarySig.toString('hex');
 
@@ -94,10 +97,10 @@ export default {
       }
     },
 
-    async signFatTransactionForInput({ rootState }, { unsignedTx, type, inputAddress }) {
+    async signFatTransactionForInput({ state, rootState }, { unsignedTx, type, inputAddress }) {
       const addresses = [...rootState.address.fctAddresses];
       const pathIndex = addresses.findIndex(a => a === inputAddress);
-      const path = `44'/131'/0'/0'/${pathIndex}'`;
+      const path = getFctPath(state, pathIndex);
 
       try {
         const transport = await Transport.create();
@@ -120,10 +123,10 @@ export default {
         }
       }
     },
-    async signEntry({ rootState }, { entryDataToSign, ecPublicAddress }) {
+    async signEntry({ state, rootState }, { entryDataToSign, ecPublicAddress }) {
       const addresses = [...rootState.address.ecAddresses];
       const pathIndex = addresses.findIndex(a => a === ecPublicAddress);
-      const path = `44'/132'/0'/0'/${pathIndex}'`;
+      const path = getEcPath(state, pathIndex);
 
       try {
         const transport = await Transport.create();
@@ -149,7 +152,8 @@ export default {
 
         const transport = await Transport.create();
         const fctApp = new Fct(transport);
-        const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/131'/0'/0'/${n}'`));
+        const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(getFctPath(state, n)));
+
         commit('setNextFctAddress', state.nextFctAddress + nb);
         transport.close();
         return addresses.map(a => a.address);
@@ -166,7 +170,7 @@ export default {
 
         const transport = await Transport.create();
         const fctApp = new Fct(transport);
-        const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(`44'/132'/0'/0'/${n}'`));
+        const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(getEcPath(state, n)));
         commit('setNextEcAddress', state.nextEcAddress + nb);
         transport.close();
         return addresses.map(a => a.address);
@@ -176,3 +180,11 @@ export default {
     }
   }
 };
+
+function getFctPath(state, index) {
+  return state.legacyDerivation ? `44'/131'/0'/0'/${index}'` : `44'/131'/0'/0/${index}`;
+}
+
+function getEcPath(state, index) {
+  return state.legacyDerivation ? `44'/132'/0'/0'/${index}'` : `44'/132'/0'/0/${index}`;
+}

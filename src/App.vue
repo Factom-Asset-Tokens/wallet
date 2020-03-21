@@ -14,8 +14,13 @@
 </template>
 
 <script>
+const { app } = require('electron').remote;
+import Store from 'electron-store';
+import semverLte from 'semver/functions/lte';
 import SideBar from './views/SideBar';
 import { mapState } from 'vuex';
+
+const appStore = new Store({ name: 'user-config.v1' });
 
 export default {
   name: 'App',
@@ -32,6 +37,17 @@ export default {
         this.$store.commit('updateSnack', value);
       }
     }
+  },
+  mounted() {
+    const latestVersionOpened = appStore.get('latestVersionOpened');
+    if (latestVersionOpened) {
+      // Version 1.0.2 (and prior) were using the Ledger legacy path
+      if (semverLte(latestVersionOpened, '1.0.2')) {
+        this.$store.commit('ledger/setLegacyDerivation', true);
+      }
+    }
+
+    appStore.set('latestVersionOpened', app.getVersion());
   }
 };
 </script>

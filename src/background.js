@@ -3,13 +3,9 @@
 import { app, protocol, BrowserWindow, Menu } from 'electron';
 import { createProtocol, installVueDevtools } from 'vue-cli-plugin-electron-builder/lib';
 import path from 'path';
-import Store from 'electron-store';
 import contextMenu from 'electron-context-menu';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
-
-const appStore = new Store({ name: 'user-config.v1' });
-appStore.set('latestVersionOpened', app.getVersion());
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

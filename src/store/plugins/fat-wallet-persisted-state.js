@@ -18,7 +18,8 @@ export default createPersistedState({
     'identity/updateIdentities',
     'identity/addIdentity',
     'identity/unlinkIdentity',
-    'keystore/updateFilename'
+    'keystore/updateFilename',
+    'ledger/setLegacyDerivation'
   ],
   statePick: state => ({
     licenseAccepted: state.licenseAccepted,
@@ -41,6 +42,9 @@ export default createPersistedState({
     },
     keystore: {
       filename: state.keystore.filename
+    },
+    ledger: {
+      legacyDerivation: state.ledger.legacyDerivation
     }
   })
 });
