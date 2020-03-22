@@ -94,12 +94,6 @@ import { shell } from 'electron';
 
 import { LEDGER_STATUS } from '@/store/modules/ledger';
 
-function sleep(ms) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
-}
-
 export default {
   name: 'LedgerStart',
   data() {
@@ -158,11 +152,11 @@ export default {
       try {
         this.initializing = true;
         this.stopPollingLedgerStatus();
-        // If the Ledger is being accessed at the same time for status
-        // wait for a few ms to finish and avoid 'initLedgerMode' calls to collide
+
         if (this.ledgerBeingAccessed) {
-          await sleep(300);
+          await this.waitForLedgerAccess();
         }
+
         await this.$store.dispatch('initLedgerMode');
         this.$router.replace({ name: 'Factoid', query: { view: 'addresses' } });
         this.$store.commit('showAppSideBar');
@@ -173,6 +167,16 @@ export default {
         this.initializing = false;
       }
     },
+    waitForLedgerAccess() {
+      return new Promise(resolve => {
+        const intervalId = setInterval(() => {
+          if (this.ledgerBeingAccessed === false) {
+            clearInterval(intervalId);
+            resolve();
+          }
+        }, 100);
+      });
+    },
     stopPollingLedgerStatus() {
       clearTimeout(this.timeoutId);
       this.poll = false;
@@ -181,7 +185,7 @@ export default {
     async pollLedgerStatus() {
       await this.getLedgerStatus();
       if (this.poll) {
-        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 800);
+        this.timeoutId = setTimeout(() => this.pollLedgerStatus(), 500);
       }
     }
   },

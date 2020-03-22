@@ -31,8 +31,9 @@ export default {
   },
   actions: {
     async getStatus({ state, commit, dispatch }) {
+      let transport;
       try {
-        const transport = await Transport.create();
+        transport = await Transport.create();
         if (!state.productName) {
           const info = transport.device.getDeviceInfo();
           commit('setProductName', `${info.manufacturer} ${info.product}`);
@@ -42,19 +43,20 @@ export default {
         if (await dispatch('isFctAppOpen', fctApp)) {
           try {
             await fctApp.getAddress(`44'/131'/0'/0/0`);
-            transport.close();
             return LEDGER_STATUS.UNLOCKED;
           } catch (e) {
-            transport.close();
             return LEDGER_STATUS.FCT_APP_LAUNCHED;
           }
         } else {
-          transport.close();
           return LEDGER_STATUS.DEVICE_CONNECTED;
         }
       } catch (e) {
         commit('setFctAppConfig', null);
         return LEDGER_STATUS.DISCONNECTED;
+      } finally {
+        if (transport) {
+          transport.close();
+        }
       }
     },
     async isFctAppOpen({ commit }, fctApp) {
@@ -78,11 +80,11 @@ export default {
 
       const txHex = unsignedTX.marshalBinarySig.toString('hex');
 
+      let transport;
       try {
-        const transport = await Transport.create();
+        transport = await Transport.create();
         const fctApp = new Fct(transport);
         const signed = await fctApp.signTransaction(path, txHex);
-        transport.close();
 
         return {
           rcd: signed.r,
@@ -94,6 +96,10 @@ export default {
         } else {
           throw new Error(`Failed to sign transaction with Ledger. Error code: ${e.statusCode}`);
         }
+      } finally {
+        if (transport) {
+          transport.close();
+        }
       }
     },
 
@@ -102,15 +108,15 @@ export default {
       const pathIndex = addresses.findIndex(a => a === inputAddress);
       const path = getFctPath(state, pathIndex);
 
+      let transport;
       try {
-        const transport = await Transport.create();
+        transport = await Transport.create();
         const fctApp = new Fct(transport);
         const inputIndex = Object.keys(unsignedTx.getInputs()).findIndex(a => {
           return a === inputAddress;
         });
 
         const signed = await fctApp.signFatTransaction(path, type, unsignedTx.getMarshalDataSig(inputIndex));
-        transport.close();
 
         return signed;
       } catch (e) {
@@ -121,6 +127,10 @@ export default {
         } else {
           throw new Error(`Failed to sign transaction with Ledger. Error code: ${e.statusCode}`);
         }
+      } finally {
+        if (transport) {
+          transport.close();
+        }
       }
     },
     async signEntry({ state, rootState }, { entryDataToSign, ecPublicAddress }) {
@@ -128,11 +138,11 @@ export default {
       const pathIndex = addresses.findIndex(a => a === ecPublicAddress);
       const path = getEcPath(state, pathIndex);
 
+      let transport;
       try {
-        const transport = await Transport.create();
+        transport = await Transport.create();
         const fctApp = new Fct(transport);
         const signed = await fctApp.signCommit(path, entryDataToSign.toString('hex'), false);
-        transport.close();
 
         return signed.s;
       } catch (e) {
@@ -141,41 +151,55 @@ export default {
         } else {
           throw new Error(`Failed to sign transaction with Ledger. Error code: ${e.statusCode}`);
         }
+      } finally {
+        if (transport) {
+          transport.close();
+        }
       }
     },
     async fetchNextFctAddresses({ state, commit }, nb = 1) {
-      try {
-        const range = [];
-        for (let i = state.nextFctAddress; i < state.nextFctAddress + nb; ++i) {
-          range.push(i);
-        }
+      const range = [];
+      for (let i = state.nextFctAddress; i < state.nextFctAddress + nb; ++i) {
+        range.push(i);
+      }
 
-        const transport = await Transport.create();
+      let transport;
+      try {
+        transport = await Transport.create();
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(getFctPath(state, n)));
 
         commit('setNextFctAddress', state.nextFctAddress + nb);
-        transport.close();
+
         return addresses.map(a => a.address);
       } catch (e) {
         throw new Error('Failed to fetch next FCT addresses from Ledger: ' + e.message);
+      } finally {
+        if (transport) {
+          transport.close();
+        }
       }
     },
     async fetchNextEcAddresses({ state, commit }, nb = 1) {
-      try {
-        const range = [];
-        for (let i = state.nextEcAddress; i < state.nextEcAddress + nb; ++i) {
-          range.push(i);
-        }
+      const range = [];
+      for (let i = state.nextEcAddress; i < state.nextEcAddress + nb; ++i) {
+        range.push(i);
+      }
 
-        const transport = await Transport.create();
+      let transport;
+      try {
+        transport = await Transport.create();
         const fctApp = new Fct(transport);
         const addresses = await Promise.mapSeries(range, n => fctApp.getAddress(getEcPath(state, n)));
         commit('setNextEcAddress', state.nextEcAddress + nb);
-        transport.close();
+
         return addresses.map(a => a.address);
       } catch (e) {
         throw new Error('Failed to fetch next EC addresses from Ledger: ' + e.message);
+      } finally {
+        if (transport) {
+          transport.close();
+        }
       }
     }
   }
