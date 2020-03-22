@@ -6,7 +6,7 @@
           <v-checkbox
             v-model="legacyDerivation"
             color="primary"
-            label="Use legacy derivation path. Use this option to access addresses generated with an old version of the FAT Wallet (<=v1.0.2). The wallet needs to exit to apply this change and it then must be restarted manually."
+            label="Use legacy derivation path. Use this option to access addresses generated with an old version (<=v1.0.2) of the FAT Wallet. The wallet will be closed to apply the change."
           ></v-checkbox>
         </v-flex>
       </v-layout>
