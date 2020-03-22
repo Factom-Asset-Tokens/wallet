@@ -29,7 +29,7 @@ export default {
       },
       set(value) {
         this.$store.commit('ledger/setLegacyDerivation', value);
-        // Small delay to be sure the commit above has time to be asynchroniusly replicated on disk
+        // Small delay to be sure the commit above has time to be asynchronously replicated on disk
         setTimeout(() => app.exit(0), 50);
       }
     }
