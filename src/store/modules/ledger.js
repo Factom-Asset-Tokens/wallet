@@ -42,7 +42,7 @@ export default {
         const fctApp = new Fct(transport);
         if (await dispatch('isFctAppOpen', fctApp)) {
           try {
-            await fctApp.getAddress(`44'/131'/0'/0/0`);
+            await fctApp.getAddress(`44'/131'/0'/0'/0'`);
             return LEDGER_STATUS.UNLOCKED;
           } catch (e) {
             return LEDGER_STATUS.FCT_APP_LAUNCHED;
