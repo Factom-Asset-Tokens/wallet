@@ -63,7 +63,7 @@
     "lodash.flatmap": "^4.5.0",
     "lodash.groupby": "^4.6.0",
     "material-design-icons-iconfont": "^5.0.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "node-cache": "^5.1.0",
     "prettier": "^1.19.1",
     "roboto-fontface": "*",
