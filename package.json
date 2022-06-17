@@ -46,7 +46,7 @@
     "chai": "^4.2.0",
     "core-js": "^3.6.0",
     "deepmerge": "^4.2.2",
-    "electron": "^7.1.7",
+    "electron": "^15.5.5",
     "electron-context-menu": "^0.15.1",
     "electron-icon-builder": "^1.0.2",
     "electron-store": "^5.1.0",
