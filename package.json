@@ -32,7 +32,7 @@
     "@ledgerhq/hw-transport-node-hid-noevents": "^4.78.0",
     "@vue/cli-plugin-babel": "^4.1.1",
     "@vue/cli-plugin-eslint": "^4.1.1",
-    "@vue/cli-plugin-unit-mocha": "^4.1.1",
+    "@vue/cli-plugin-unit-mocha": "^5.0.8",
     "@vue/cli-service": "^4.1.1",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/test-utils": "^1.0.0-beta.30",
